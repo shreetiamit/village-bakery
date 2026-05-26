@@ -252,6 +252,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
         <div class="stat-card"><div class="stat-val gold" id="stat-today">0</div><div class="stat-lbl">Due today</div></div>
         <div class="stat-card"><div class="stat-val green-c" id="stat-units">0</div><div class="stat-lbl">Total units</div></div>
       </div>
+      <div style="display:flex;justify-content:flex-end;margin-bottom:20px">
+        <button onclick="exportCSV()" class="print-btn">Export CSV</button>
+      </div>
       <div id="orders-list"><div class="empty-state">No orders yet.</div></div>
     </div>
     <div class="panel" id="panel-vendors">
@@ -406,6 +409,7 @@ function renderOrders() {
               <option value="Done" ${order.status==='Done'?'selected':''}>Done</option>
             </select>
             <button class="btn-invoice" onclick="openInvoice('${order.id}')">Invoice</button>
+            <button class="btn-invoice" style="color:var(--err);border-color:var(--err)" onclick="deleteOrderAdmin('${order.id}')">Delete</button>
           </div>
         </div>`
       }).join('')}
@@ -1090,6 +1094,58 @@ async function clearPricing(vendorId) {
   await batch.commit()
   vendorPricingCache[vendorId] = {}
   renderPricingRows(vendorId)
+}
+
+// ── DELETE ORDER (admin) ──
+async function deleteOrderAdmin(orderId) {
+  if (!confirm('Delete this order? This cannot be undone.')) return
+  try {
+    await db.collection('orders').doc(orderId).delete()
+    allOrders = allOrders.filter(o => o.id !== orderId)
+    renderOrders()
+    document.getElementById('badge-orders').textContent = allOrders.length
+    document.getElementById('stat-new').textContent = allOrders.filter(o=>o.status==='New').length
+    document.getElementById('stat-today').textContent = allOrders.filter(o=>o.delivery_date===TODAY).length
+    document.getElementById('stat-units').textContent = allOrders.reduce((s,o)=>s+(o.items||[]).reduce((ss,i)=>ss+i.quantity,0),0)
+  } catch(e) { alert('Could not delete order: ' + e.message) }
+}
+
+// ── EXPORT CSV ──
+function exportCSV() {
+  if (!allOrders.length) { alert('No orders to export.'); return }
+  const rows = [['Order ID','Vendor','Delivery Date','Delivery Time','Status','Item','Quantity','Unit','Price','Notes','Order Placed']]
+  allOrders.forEach(order => {
+    const items = order.items || []
+    const created = order.created_at ? new Date(order.created_at.seconds*1000).toLocaleDateString('en-US') : ''
+    if (!items.length) {
+      rows.push([order.id.slice(0,8).toUpperCase(),order.vendor_name,order.delivery_date,
+        (order.delivery_time||'').slice(0,5),order.status||'New','','','','',order.notes||'',created])
+    } else {
+      items.forEach((item, idx) => {
+        rows.push([
+          idx===0 ? order.id.slice(0,8).toUpperCase() : '',
+          idx===0 ? order.vendor_name : '',
+          idx===0 ? order.delivery_date : '',
+          idx===0 ? (order.delivery_time||'').slice(0,5) : '',
+          idx===0 ? (order.status||'New') : '',
+          item.item_name,
+          item.quantity,
+          item.unit,
+          item.price ? '$'+Number(item.price).toFixed(2) : '',
+          idx===0 ? (order.notes||'') : '',
+          idx===0 ? created : ''
+        ])
+      })
+    }
+  })
+  const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n')
+  const blob = new Blob([csv], { type: 'text/csv' })
+  const url  = URL.createObjectURL(blob)
+  const a    = document.createElement('a')
+  a.href     = url
+  a.download = `village-bakery-orders-${new Date().toISOString().split('T')[0]}.csv`
+  a.click()
+  URL.revokeObjectURL(url)
 }
 
 init()
