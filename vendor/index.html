@@ -26,12 +26,7 @@
 html{font-size:16px;}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;}
 .hidden{display:none!important;}
-
-/* ── Wordmark ── */
 .wordmark{font-family:'Cormorant Garamond',serif;font-size:13px;font-weight:600;letter-spacing:.25em;text-transform:uppercase;color:var(--text);display:block;}
-.wordmark-sub{font-family:'DM Sans',sans-serif;font-size:10px;font-weight:400;letter-spacing:.2em;text-transform:uppercase;color:var(--text2);margin-top:3px;}
-
-/* ── Loading ── */
 #v-loading{display:flex;align-items:center;justify-content:center;min-height:100vh;}
 .spinner{width:20px;height:20px;border:1.5px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
@@ -50,8 +45,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .auth-form{padding:28px;}
 .field{margin-bottom:18px;}
 .field label{display:block;font-size:10px;font-weight:500;letter-spacing:.15em;text-transform:uppercase;color:var(--text2);margin-bottom:8px;}
-.field input,.field textarea,.field select{width:100%;padding:10px 0;border:none;border-bottom:1px solid var(--border);background:transparent;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);outline:none;transition:border-color .15s;border-radius:0;}
-.field input:focus,.field textarea:focus{border-bottom-color:var(--text);}
+.field input{width:100%;padding:10px 0;border:none;border-bottom:1px solid var(--border);background:transparent;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);outline:none;transition:border-color .15s;border-radius:0;}
+.field input:focus{border-bottom-color:var(--text);}
 .field input::placeholder{color:var(--text3);}
 .btn-submit{width:100%;padding:14px;background:var(--dark);color:white;border:none;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:background .15s;margin-top:8px;}
 .btn-submit:hover{background:#2e2e2a;}
@@ -62,9 +57,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 /* ── Pending ── */
 #v-pending{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px 24px;}
 .pending-wrap{max-width:400px;width:100%;text-align:center;}
-.pending-wrap .wordmark{justify-content:center;margin-bottom:48px;}
 .pending-box{border:1px solid var(--border);padding:40px 32px;}
-.pending-box h2{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;margin-bottom:14px;letter-spacing:.02em;}
+.pending-box h2{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;margin-bottom:14px;}
 .pending-box p{font-size:14px;color:var(--text2);line-height:1.8;margin-bottom:24px;}
 .btn-text{background:none;border:none;font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--text2);cursor:pointer;text-decoration:underline;text-underline-offset:3px;}
 
@@ -73,50 +67,40 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .app-header-center{position:absolute;left:50%;transform:translateX(-50%);}
 .header-right{display:flex;align-items:center;gap:20px;}
 .header-user-name{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text2);}
-
-/* ── App nav ── */
 .app-nav{border-bottom:1px solid var(--border);display:flex;padding:0 32px;background:var(--surface);}
 .nav-btn{padding:14px 0;margin-right:28px;font-size:10px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--text2);cursor:pointer;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;background:none;transition:all .15s;}
 .nav-btn.active{color:var(--text);border-bottom-color:var(--text);}
-
-/* ── App content ── */
-.app-content{max-width:640px;margin:0 auto;padding:40px 24px 80px;}
+.app-content{max-width:700px;margin:0 auto;padding:40px 24px 80px;}
 .form-section{margin-bottom:36px;}
 .section-title{font-size:10px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--text2);margin-bottom:20px;padding-bottom:10px;border-bottom:1px solid var(--border);}
 
 /* ── Products list ── */
 #products-grid{width:100%;}
-.product-row{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--border);gap:12px;transition:all .1s;}
-.product-row.has-qty .product-name{font-weight:500;color:var(--text);}
+.product-row{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--border);gap:12px;}
+.product-row.has-qty .product-name{font-weight:500;}
 .product-row.has-qty{border-left:2px solid var(--accent);padding-left:12px;margin-left:-14px;}
 .product-info{flex:1;}
-.product-name{font-size:14px;font-weight:300;color:var(--text);letter-spacing:.01em;}
+.product-name{font-size:14px;font-weight:300;letter-spacing:.01em;}
 .product-unit{font-size:11px;color:var(--text3);margin-top:2px;letter-spacing:.05em;}
-.qty-ctrl{display:flex;align-items:center;gap:0;flex-shrink:0;}
-.qty-btn{width:28px;height:28px;border:1px solid var(--border);background:transparent;color:var(--text);font-size:14px;font-weight:300;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .12s;line-height:1;}
+.qty-ctrl{display:flex;align-items:center;flex-shrink:0;}
+.qty-btn{width:28px;height:28px;border:1px solid var(--border);background:transparent;color:var(--text);font-size:14px;font-weight:300;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .12s;}
 .qty-btn:hover{background:var(--bg);border-color:var(--border2);}
-.qty-input{width:36px!important;padding:4px!important;text-align:center;font-size:13px!important;font-weight:400!important;border-radius:0!important;border:1px solid var(--border)!important;border-left:none!important;border-right:none!important;background:transparent;font-family:'DM Sans',sans-serif;color:var(--text);outline:none;}
-
-/* ── Order summary ── */
+.qty-input{width:36px!important;padding:4px!important;text-align:center;font-size:13px!important;border-radius:0!important;border:1px solid var(--border)!important;border-left:none!important;border-right:none!important;background:transparent;font-family:'DM Sans',sans-serif;color:var(--text);outline:none;}
 .order-summary{margin-top:20px;padding:16px 0;border-top:1px solid var(--border);font-size:13px;color:var(--text2);}
 .order-summary.has-items{color:var(--text);}
 .summary-item{display:flex;justify-content:space-between;padding:4px 0;font-size:13px;}
 .summary-total{display:flex;justify-content:space-between;padding:12px 0 0;margin-top:8px;border-top:1px solid var(--border);font-size:12px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;}
-
-/* ── Date time row ── */
 .date-time-row{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:18px;}
 @media(max-width:480px){.date-time-row{grid-template-columns:1fr;}}
-
-/* ── Success ── */
 .success-box{display:none;text-align:center;padding:60px 0;}
-.success-box h2{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;margin-bottom:10px;letter-spacing:.02em;}
+.success-box h2{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;margin-bottom:10px;}
 .success-box p{font-size:14px;color:var(--text2);margin-bottom:24px;}
 .success-id{display:inline-block;font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--text2);border:1px solid var(--border);padding:8px 16px;margin-bottom:28px;}
 
 /* ── History ── */
 .order-card{border-bottom:1px solid var(--border);padding:18px 0;}
 .order-card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;}
-.order-date{font-size:13px;font-weight:500;letter-spacing:.02em;}
+.order-date{font-size:13px;font-weight:500;}
 .order-id{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);margin-top:3px;}
 .order-units{font-size:11px;color:var(--text2);text-align:right;margin-top:3px;}
 .order-items-text{font-size:13px;color:var(--text2);line-height:1.6;}
@@ -126,6 +110,31 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .status-badge.seen{color:#1a5c8a;}
 .status-badge.done{color:var(--green);}
 .empty-state{text-align:center;padding:48px 0;font-size:13px;color:var(--text2);letter-spacing:.05em;}
+
+/* ── Weekly Order ── */
+.weekly-days-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;}
+.day-pill{padding:10px 12px;border:1px solid var(--border);background:transparent;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .15s;text-align:center;min-width:62px;flex:1;}
+.day-pill:hover{border-color:var(--border2);}
+.day-pill.selected{background:var(--dark);border-color:var(--dark);color:white;}
+.day-pill .day-name{display:block;font-size:10px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;}
+.day-pill .day-date{display:block;font-size:10px;margin-top:3px;opacity:.65;}
+.weekly-hint{font-size:11px;color:var(--text3);margin-bottom:20px;letter-spacing:.02em;}
+.weekly-table-wrap{overflow-x:auto;}
+.weekly-table{width:100%;border-collapse:collapse;min-width:360px;}
+.weekly-table th{padding:8px 6px;text-align:center;font-size:9px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--text2);border-bottom:2px solid var(--dark);white-space:nowrap;}
+.weekly-table th.item-col{text-align:left;min-width:120px;}
+.weekly-table td{padding:10px 6px;border-bottom:1px solid var(--border);vertical-align:middle;}
+.weekly-table td.item-col{padding-right:16px;}
+.weekly-item-name{font-size:13px;font-weight:300;}
+.weekly-item-unit{font-size:10px;color:var(--text3);margin-top:2px;letter-spacing:.05em;}
+.weekly-qty{width:52px;padding:5px 4px;text-align:center;border:1px solid var(--border);background:transparent;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none;border-radius:0;display:block;margin:0 auto;}
+.weekly-qty:focus{border-color:var(--border2);}
+.weekly-empty{font-size:13px;color:var(--text3);padding:24px 0;text-align:center;font-style:italic;}
+.weekly-summary{margin-top:16px;padding:12px 0;border-top:1px solid var(--border);font-size:13px;color:var(--text2);}
+.weekly-summary.has-items{color:var(--text);font-weight:500;}
+.weekly-orders-preview{margin-top:8px;}
+.weekly-preview-row{display:flex;justify-content:space-between;font-size:12px;color:var(--text2);padding:3px 0;}
+.weekly-preview-row.has-items{color:var(--text);}
 </style>
 </head>
 <body>
@@ -186,9 +195,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
   </div>
   <div class="app-nav">
     <button class="nav-btn active" data-tab="tab-order" onclick="showTab('tab-order',this)">Order</button>
+    <button class="nav-btn" data-tab="tab-weekly" onclick="showTab('tab-weekly',this);buildWeeklyForm()">Weekly</button>
     <button class="nav-btn" data-tab="tab-history" onclick="showTab('tab-history',this);loadHistory()">History</button>
   </div>
   <div class="app-content">
+
+    <!-- ── Single Order Tab ── -->
     <div id="tab-order">
       <div id="order-form-area">
         <div class="form-section">
@@ -214,38 +226,71 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
         <button class="btn-submit" style="max-width:220px;margin:0 auto;display:block" onclick="resetForm()">Place Another Order</button>
       </div>
     </div>
+
+    <!-- ── Weekly Order Tab ── -->
+    <div id="tab-weekly" class="hidden">
+      <div id="weekly-form-area">
+        <div class="form-section">
+          <div class="section-title">Select Days</div>
+          <div class="weekly-days-row" id="weekly-days-row"></div>
+          <p class="weekly-hint">Tap the days you need — then enter quantities for each.</p>
+        </div>
+        <div class="form-section">
+          <div class="section-title">Quantities per Day</div>
+          <div class="weekly-table-wrap">
+            <div id="weekly-grid"><div class="weekly-empty">Select days above to get started.</div></div>
+          </div>
+          <div class="weekly-summary" id="weekly-summary"></div>
+        </div>
+        <div class="form-section">
+          <div class="section-title">Delivery Details</div>
+          <div class="field"><label>Delivery Time (same for all days)</label><input type="time" id="weekly-time" value="08:00"></div>
+          <div class="field"><label>Notes (optional)</label><input type="text" id="weekly-notes" placeholder="Special requests, sliced, timing..."></div>
+        </div>
+        <p class="error-msg" id="weekly-error" style="margin-bottom:14px;"></p>
+        <button class="btn-submit" id="weekly-submit-btn" onclick="handleWeeklySubmit()">Place Weekly Orders</button>
+      </div>
+      <div class="success-box" id="weekly-success">
+        <h2>Orders Placed</h2>
+        <p id="weekly-success-msg"></p>
+        <button class="btn-submit" style="max-width:220px;margin:0 auto;display:block" onclick="resetWeeklyForm()">Place Another Week</button>
+      </div>
+    </div>
+
+    <!-- ── History Tab ── -->
     <div id="tab-history" class="hidden">
       <div id="history-list"><div class="empty-state">Loading...</div></div>
     </div>
+
   </div>
 </div>
 
 <script>
-// ── REPLACE THESE WITH YOUR FIREBASE CONFIG ──
+// ── REPLACE WITH YOUR FIREBASE CONFIG ──
 const firebaseConfig = {
-  apiKey: "AIzaSyDpzmw5NGHagj1fv4L2v74Wfj1E2_KmmdY",
+  apiKey: "YOUR_API_KEY",
   authDomain: "village-bakery-6885a.firebaseapp.com",
   projectId: "village-bakery-6885a",
-  storageBucket: "village-bakery-6885a.firebasestorage.app",
-  messagingSenderId: "735648711607",
-  appId: "1:735648711607:web:423ff3ca56572d9e7d9e32"
+  storageBucket: "village-bakery-6885a.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
 }
 firebase.initializeApp(firebaseConfig)
 const auth = firebase.auth()
 const db   = firebase.firestore()
 
 let currentUser = null, currentProfile = null, menuItems = [], quantities = {}, vendorPricing = {}
+let selectedDays = [], weeklyQuantities = {}
 
 function getItemPrice(item) {
   return vendorPricing[item.id] !== undefined ? vendorPricing[item.id] : (item.price || 0)
 }
-
 function show(id) {
   ['v-loading','v-auth','v-pending','v-app'].forEach(v =>
     document.getElementById(v).classList.toggle('hidden', v !== id))
 }
 function showTab(id, btn) {
-  ['tab-order','tab-history'].forEach(t =>
+  ['tab-order','tab-weekly','tab-history'].forEach(t =>
     document.getElementById(t).classList.toggle('hidden', t !== id))
   document.querySelectorAll('.nav-btn').forEach(b =>
     b.classList.toggle('active', b.dataset.tab === id))
@@ -282,64 +327,48 @@ async function handleLogin() {
     currentUser = user
     await loadProfile()
     if (!currentProfile?.approved) { show('v-pending'); return }
-    await loadMenu()
-    await loadVendorPricing()
-    buildOrderForm()
-    show('v-app')
+    await loadMenu(); await loadVendorPricing(); buildOrderForm(); show('v-app')
   } catch(e) { showErr('login-error', e.message) }
 }
-
 async function handleSignup() {
   const bname = document.getElementById('signup-bname').value.trim()
   const email = document.getElementById('signup-email').value.trim()
   const pass  = document.getElementById('signup-password').value
   hideErr('signup-error')
-  if (!bname) { showErr('signup-error', 'Please enter your business name.'); return }
-  if (pass.length < 6) { showErr('signup-error', 'Password must be at least 6 characters.'); return }
+  if (!bname) { showErr('signup-error','Please enter your business name.'); return }
+  if (pass.length < 6) { showErr('signup-error','Password must be at least 6 characters.'); return }
   try {
     const { user } = await auth.createUserWithEmailAndPassword(email, pass)
     currentUser = user
     await db.collection('profiles').doc(user.uid).set({
-      business_name: bname,
-      email,
-      approved: false,
-      active: true,
-      is_admin: false,
+      business_name: bname, email, approved: false, active: true, is_admin: false,
       created_at: firebase.firestore.FieldValue.serverTimestamp()
     })
-    await loadProfile()
-    show('v-pending')
+    await loadProfile(); show('v-pending')
   } catch(e) { showErr('signup-error', e.message) }
 }
-
 async function handleSignout() {
   await auth.signOut()
   currentUser = null; currentProfile = null; menuItems = []; quantities = {}
+  selectedDays = []; weeklyQuantities = {}
   show('v-auth')
 }
-
 async function loadProfile() {
   const snap = await db.collection('profiles').doc(currentUser.uid).get()
   currentProfile = snap.exists ? { id: snap.id, ...snap.data() } : null
-  if (currentProfile) {
-    document.getElementById('user-name').textContent = currentProfile.business_name || currentProfile.email
-  }
+  if (currentProfile) document.getElementById('user-name').textContent = currentProfile.business_name || currentProfile.email
 }
-
 async function loadMenu() {
-  const snap = await db.collection('menu_items').where('active', '==', true).orderBy('sort_order').get()
+  const snap = await db.collection('menu_items').where('active','==',true).orderBy('sort_order').get()
   menuItems = snap.docs.map(d => ({ id: d.id, ...d.data() }))
 }
-
 async function loadVendorPricing() {
-  const snap = await db.collection('vendor_pricing').where('vendor_id', '==', currentUser.uid).get()
+  const snap = await db.collection('vendor_pricing').where('vendor_id','==',currentUser.uid).get()
   vendorPricing = {}
-  snap.docs.forEach(d => {
-    const data = d.data()
-    vendorPricing[data.menu_item_id] = Number(data.price)
-  })
+  snap.docs.forEach(d => { const data = d.data(); vendorPricing[data.menu_item_id] = Number(data.price) })
 }
 
+// ── Single Order ──
 function buildOrderForm() {
   const grid = document.getElementById('products-grid')
   quantities = {}
@@ -363,7 +392,6 @@ function buildOrderForm() {
   document.getElementById('delivery-time').value = '08:00'
   updateSummary()
 }
-
 function changeQty(id, delta) {
   const el = document.getElementById('qty-'+id)
   el.value = Math.max(0,(parseInt(el.value)||0)+delta)
@@ -387,14 +415,11 @@ function updateSummary() {
   let orderTotal = 0
   const rows = keys.map(k => {
     const m = menuItems.find(m=>m.id===k)
-    const price = getItemPrice(m)
-    const subtotal = price * quantities[k]
-    orderTotal += subtotal
-    return `<div class="summary-item"><span>${m.name} &times; ${quantities[k]}</span><span>${subtotal > 0 ? '$'+subtotal.toFixed(2) : quantities[k]+' '+(m.unit==='each'?'each':(quantities[k]!==1?m.unit+'s':m.unit))}</span></div>`
+    const price = getItemPrice(m); const subtotal = price*quantities[k]; orderTotal += subtotal
+    return `<div class="summary-item"><span>${m.name} &times; ${quantities[k]}</span><span>${subtotal>0?'$'+subtotal.toFixed(2):quantities[k]+' '+(m.unit==='each'?'each':(quantities[k]!==1?m.unit+'s':m.unit))}</span></div>`
   }).join('')
-  el.innerHTML = rows + `<div class="summary-total"><span>Total</span><span>${total} units${hasPrice && orderTotal > 0 ? '&ensp;&middot;&ensp;$'+orderTotal.toFixed(2) : ''}</span></div>`
+  el.innerHTML = rows + `<div class="summary-total"><span>Total</span><span>${total} units${hasPrice&&orderTotal>0?'&ensp;&middot;&ensp;$'+orderTotal.toFixed(2):''}</span></div>`
 }
-
 async function handleSubmit() {
   const date  = document.getElementById('delivery-date').value
   const time  = document.getElementById('delivery-time').value
@@ -403,61 +428,183 @@ async function handleSubmit() {
   if (!date) { showErr('order-error','Please choose a delivery date.'); return }
   if (!time) { showErr('order-error','Please choose a delivery time.'); return }
   if (!Object.keys(quantities).length) { showErr('order-error','Please add at least one item.'); return }
-  const now = new Date()
-  const today = now.toISOString().split('T')[0]
+  const now = new Date(); const today = now.toISOString().split('T')[0]
   if (date === today) {
-    const [h, m] = time.split(':').map(Number)
-    const deliveryMins = h * 60 + m
-    const nowMins = now.getHours() * 60 + now.getMinutes()
-    if (deliveryMins <= nowMins + 60) {
-      showErr('order-error', 'Same-day orders must be placed at least 1 hour before the delivery time.')
-      return
+    const [h,m] = time.split(':').map(Number)
+    if ((h*60+m) <= (now.getHours()*60+now.getMinutes()+60)) {
+      showErr('order-error','Same-day orders must be placed at least 1 hour before delivery.'); return
     }
   }
   const btn = document.getElementById('submit-btn')
   btn.disabled=true; btn.textContent='Placing order...'
   try {
-    const items = Object.entries(quantities).map(([id, qty]) => {
-      const m = menuItems.find(m => m.id === id)
+    const items = Object.entries(quantities).map(([id,qty]) => {
+      const m = menuItems.find(m=>m.id===id)
       return { item_name: m.name, quantity: qty, unit: m.unit, price: getItemPrice(m) }
     })
     const orderRef = await db.collection('orders').add({
-      vendor_id:   currentUser.uid,
-      vendor_name: currentProfile.business_name || currentProfile.email,
-      delivery_date: date,
-      delivery_time: time,
-      notes,
-      status: 'New',
-      created_at: firebase.firestore.FieldValue.serverTimestamp(),
-      items
+      vendor_id: currentUser.uid, vendor_name: currentProfile.business_name||currentProfile.email,
+      delivery_date: date, delivery_time: time, notes, status: 'New',
+      created_at: firebase.firestore.FieldValue.serverTimestamp(), items
     })
     document.getElementById('order-form-area').style.display='none'
     document.getElementById('order-success').style.display='block'
-    document.getElementById('success-order-id').textContent = 'Order #'+orderRef.id.slice(0,8).toUpperCase()
-    quantities = {}
-  } catch(e) {
-    showErr('order-error', e.message)
-    btn.disabled=false; btn.textContent='Place Order'
-  }
+    document.getElementById('success-order-id').textContent='Order #'+orderRef.id.slice(0,8).toUpperCase()
+    quantities={}
+  } catch(e) { showErr('order-error',e.message); btn.disabled=false; btn.textContent='Place Order' }
 }
-
 function resetForm() {
   document.getElementById('order-form-area').style.display='block'
   document.getElementById('order-success').style.display='none'
   buildOrderForm()
-  document.getElementById('submit-btn').disabled=false
-  document.getElementById('submit-btn').textContent='Place Order'
+  const btn = document.getElementById('submit-btn')
+  btn.disabled=false; btn.textContent='Place Order'
 }
 
+// ── Weekly Order ──
+function buildWeeklyForm() {
+  const daysRow = document.getElementById('weekly-days-row')
+  const DAY_NAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
+  selectedDays = []; weeklyQuantities = {}
+  daysRow.innerHTML = ''
+  for (let i = 1; i <= 7; i++) {
+    const d = new Date(); d.setDate(d.getDate()+i)
+    const dateStr = d.toISOString().split('T')[0]
+    const dayName = DAY_NAMES[d.getDay()]
+    const dateLabel = (d.getMonth()+1)+'/'+(d.getDate())
+    daysRow.innerHTML += `
+      <button class="day-pill" id="day-pill-${dateStr}" onclick="toggleDay('${dateStr}')">
+        <span class="day-name">${dayName}</span>
+        <span class="day-date">${dateLabel}</span>
+      </button>`
+  }
+  document.getElementById('weekly-grid').innerHTML = '<div class="weekly-empty">Select days above to get started.</div>'
+  document.getElementById('weekly-summary').innerHTML = ''
+  document.getElementById('weekly-form-area').style.display = 'block'
+  document.getElementById('weekly-success').style.display = 'none'
+  const btn = document.getElementById('weekly-submit-btn')
+  btn.disabled=false; btn.textContent='Place Weekly Orders'
+}
+
+function toggleDay(dateStr) {
+  const btn = document.getElementById('day-pill-'+dateStr)
+  if (selectedDays.includes(dateStr)) {
+    selectedDays = selectedDays.filter(d=>d!==dateStr)
+    btn.classList.remove('selected')
+    delete weeklyQuantities[dateStr]
+  } else {
+    selectedDays.push(dateStr); selectedDays.sort()
+    btn.classList.add('selected')
+    weeklyQuantities[dateStr] = {}
+  }
+  renderWeeklyGrid()
+}
+
+function renderWeeklyGrid() {
+  const container = document.getElementById('weekly-grid')
+  if (!selectedDays.length) {
+    container.innerHTML = '<div class="weekly-empty">Select days above to get started.</div>'
+    updateWeeklySummary(); return
+  }
+  const DAY_NAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
+  const headers = selectedDays.map(d => {
+    const date = new Date(d+'T12:00:00')
+    return `<th>${DAY_NAMES[date.getDay()]}<br><span style="font-weight:300;font-size:9px;opacity:.7">${(date.getMonth()+1)+'/'+date.getDate()}</span></th>`
+  }).join('')
+  const rows = menuItems.map(item => {
+    const cells = selectedDays.map(d => {
+      const qty = weeklyQuantities[d]?.[item.id] || ''
+      return `<td><input class="weekly-qty" type="number" min="0" max="999" value="${qty}" placeholder="—"
+        oninput="setWeeklyQty('${d}','${item.id}',this.value)"></td>`
+    }).join('')
+    return `<tr>
+      <td class="item-col">
+        <div class="weekly-item-name">${item.name}</div>
+        <div class="weekly-item-unit">per ${item.unit}${getItemPrice(item)>0?' · $'+getItemPrice(item).toFixed(2):''}</div>
+      </td>${cells}</tr>`
+  }).join('')
+  container.innerHTML = `
+    <table class="weekly-table">
+      <thead><tr><th class="item-col">Item</th>${headers}</tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`
+  updateWeeklySummary()
+}
+
+function setWeeklyQty(dateStr, itemId, val) {
+  const qty = Math.max(0,parseInt(val)||0)
+  if (!weeklyQuantities[dateStr]) weeklyQuantities[dateStr]={}
+  if (qty>0) weeklyQuantities[dateStr][itemId]=qty
+  else delete weeklyQuantities[dateStr][itemId]
+  updateWeeklySummary()
+}
+
+function updateWeeklySummary() {
+  const el = document.getElementById('weekly-summary')
+  if (!el) return
+  const DAY_NAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
+  const daysWithItems = selectedDays.filter(d=>Object.keys(weeklyQuantities[d]||{}).length>0)
+  if (!daysWithItems.length) { el.innerHTML=''; return }
+  const totalUnits = daysWithItems.reduce((s,d)=>s+Object.values(weeklyQuantities[d]).reduce((ss,q)=>ss+q,0),0)
+  const previewRows = daysWithItems.map(d => {
+    const date = new Date(d+'T12:00:00')
+    const units = Object.values(weeklyQuantities[d]).reduce((s,q)=>s+q,0)
+    const itemCount = Object.keys(weeklyQuantities[d]).length
+    return `<div class="weekly-preview-row has-items">
+      <span>${DAY_NAMES[date.getDay()]} ${(date.getMonth()+1)+'/'+date.getDate()}</span>
+      <span>${itemCount} item${itemCount!==1?'s':''} · ${units} unit${units!==1?'s':''}</span>
+    </div>`
+  }).join('')
+  el.className = 'weekly-summary has-items'
+  el.innerHTML = `
+    <div style="font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--text2);margin-bottom:10px">${daysWithItems.length} Order${daysWithItems.length!==1?'s':''} · ${totalUnits} Total Units</div>
+    <div class="weekly-orders-preview">${previewRows}</div>`
+}
+
+async function handleWeeklySubmit() {
+  const time  = document.getElementById('weekly-time').value
+  const notes = document.getElementById('weekly-notes').value.trim()
+  hideErr('weekly-error')
+  if (!time) { showErr('weekly-error','Please choose a delivery time.'); return }
+  const daysWithItems = selectedDays.filter(d=>Object.keys(weeklyQuantities[d]||{}).length>0)
+  if (!daysWithItems.length) { showErr('weekly-error','Please enter quantities for at least one day.'); return }
+  const btn = document.getElementById('weekly-submit-btn')
+  btn.disabled=true; btn.textContent='Placing orders...'
+  try {
+    let placed = 0
+    for (const date of daysWithItems) {
+      const items = Object.entries(weeklyQuantities[date])
+        .filter(([,qty])=>qty>0)
+        .map(([id,qty])=>{ const m=menuItems.find(m=>m.id===id); return {item_name:m.name,quantity:qty,unit:m.unit,price:getItemPrice(m)} })
+      if (!items.length) continue
+      await db.collection('orders').add({
+        vendor_id: currentUser.uid,
+        vendor_name: currentProfile.business_name||currentProfile.email,
+        delivery_date: date, delivery_time: time, notes, status: 'New',
+        created_at: firebase.firestore.FieldValue.serverTimestamp(), items
+      })
+      placed++
+    }
+    document.getElementById('weekly-form-area').style.display='none'
+    document.getElementById('weekly-success').style.display='block'
+    document.getElementById('weekly-success-msg').textContent =
+      `${placed} order${placed!==1?'s':''} placed for the week.`
+    selectedDays=[]; weeklyQuantities={}
+  } catch(e) { showErr('weekly-error',e.message); btn.disabled=false; btn.textContent='Place Weekly Orders' }
+}
+
+function resetWeeklyForm() { buildWeeklyForm() }
+
+// ── History ──
 async function loadHistory() {
   const container = document.getElementById('history-list')
-  container.innerHTML = '<div class="empty-state">Loading...</div>'
-  const snap = await db.collection('orders').where('vendor_id', '==', currentUser.uid).get()
-  const data = snap.docs.map(d => ({ id: d.id, ...d.data() }))
-  data.sort((a, b) => (b.created_at?.seconds || 0) - (a.created_at?.seconds || 0))
+  container.innerHTML='<div class="empty-state">Loading...</div>'
+  const snap = await db.collection('orders').where('vendor_id','==',currentUser.uid).get()
+  const data = snap.docs.map(d=>({id:d.id,...d.data()}))
+  data.sort((a,b)=>(b.created_at?.seconds||0)-(a.created_at?.seconds||0))
   if (!data.length) { container.innerHTML='<div class="empty-state">No orders yet.</div>'; return }
   container.innerHTML = data.map(order => {
-    const orderItems = order.items || []
+    const orderItems = order.items||[]
     const total = orderItems.reduce((s,i)=>s+i.quantity,0)
     const d = new Date(order.delivery_date+'T12:00:00')
     const dateStr = d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})
@@ -475,7 +622,7 @@ async function loadHistory() {
         </div>
       </div>
       <div class="order-items-text">${itemsText}</div>
-      ${order.notes ? `<div class="order-notes-text">${order.notes}</div>` : ''}
+      ${order.notes?`<div class="order-notes-text">${order.notes}</div>`:''}
     </div>`
   }).join('')
 }
