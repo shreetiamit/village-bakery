@@ -108,6 +108,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .status-badge{font-size:10px;letter-spacing:.12em;text-transform:uppercase;font-weight:500;}
 .status-badge.new{color:#8a6e00;}.status-badge.seen{color:#1a5c8a;}.status-badge.done{color:var(--green);}
 .empty-state{text-align:center;padding:48px 0;font-size:13px;color:var(--text2);letter-spacing:.05em;}
+.btn-cancel-order{background:none;border:1px solid var(--border);color:var(--err);padding:4px 10px;font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .15s;margin-top:8px;}
+.btn-cancel-order:hover{background:#fff5f5;border-color:var(--err);}
+.btn-cancel-order:disabled{color:var(--text3);border-color:var(--border);cursor:not-allowed;background:none;}
+.cancel-note{font-size:10px;color:var(--text3);margin-top:4px;letter-spacing:.02em;}
 
 /* ── Weekly ── */
 .weekly-days-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;}
@@ -474,8 +478,9 @@ function buildOrderForm() {
         <button class="qty-btn" onclick="changeQty('${item.id}',1)">+</button>
       </div>
     </div>`).join('')
-  const tmr = new Date(); tmr.setDate(tmr.getDate()+1)
-  const iso = tmr.toISOString().split('T')[0]
+  // Min date = 24 hours from now
+  const minDate = new Date(); minDate.setHours(minDate.getHours() + 24)
+  const iso = minDate.toISOString().split('T')[0]
   document.getElementById('delivery-date').value = iso
   document.getElementById('delivery-date').min = iso
   document.getElementById('delivery-time').value = '08:00'
@@ -516,10 +521,12 @@ async function handleSubmit() {
   if(!date){showErr('order-error','Please choose a delivery date.');return}
   if(!time){showErr('order-error','Please choose a delivery time.');return}
   if(!Object.keys(quantities).length){showErr('order-error','Please add at least one item.');return}
-  const now=new Date();const today=now.toISOString().split('T')[0]
-  if(date===today){
-    const [h,m]=time.split(':').map(Number)
-    if((h*60+m)<=(now.getHours()*60+now.getMinutes()+60)){showErr('order-error','Same-day orders must be at least 1 hour before delivery.');return}
+  // Must be at least 24 hours from now
+  const deliveryDateTime = new Date(date + 'T' + time)
+  const hoursUntil = (deliveryDateTime - new Date()) / (1000 * 60 * 60)
+  if (hoursUntil < 24) {
+    showErr('order-error', 'Orders must be placed at least 24 hours before delivery.')
+    return
   }
   const btn=document.getElementById('submit-btn')
   btn.disabled=true;btn.textContent='Placing order...'
@@ -631,6 +638,17 @@ async function handleWeeklySubmit() {
   if(!time){showErr('weekly-error','Please choose a delivery time.');return}
   const daysWithItems=selectedDays.filter(d=>Object.keys(weeklyQuantities[d]||{}).length>0)
   if(!daysWithItems.length){showErr('weekly-error','Please enter quantities for at least one day.');return}
+  // Check all selected days are at least 24 hours away
+  for (const date of daysWithItems) {
+    const deliveryDateTime = new Date(date + 'T' + time)
+    const hoursUntil = (deliveryDateTime - new Date()) / (1000 * 60 * 60)
+    if (hoursUntil < 24) {
+      const d = new Date(date + 'T12:00:00')
+      const dayLabel = d.toLocaleDateString('en-US', {weekday:'long', month:'short', day:'numeric'})
+      showErr('weekly-error', `Orders for ${dayLabel} require at least 24 hours notice.`)
+      return
+    }
+  }
   const btn=document.getElementById('weekly-submit-btn')
   btn.disabled=true;btn.textContent='Placing orders...'
   try {
@@ -667,6 +685,19 @@ async function handleWeeklySubmit() {
 function resetWeeklyForm(){buildWeeklyForm()}
 
 // ── History ──
+function canDeleteOrder(order) {
+  const deliveryDateTime = new Date(order.delivery_date + 'T' + (order.delivery_time || '23:59'))
+  return (deliveryDateTime - new Date()) / (1000 * 60 * 60) > 24
+}
+
+async function deleteOrder(orderId) {
+  if (!confirm('Cancel this order? This cannot be undone.')) return
+  try {
+    await db.collection('orders').doc(orderId).delete()
+    loadHistory()
+  } catch(e) { alert('Could not cancel order: ' + e.message) }
+}
+
 async function loadHistory() {
   const container=document.getElementById('history-list')
   container.innerHTML='<div class="empty-state">Loading...</div>'
@@ -681,6 +712,7 @@ async function loadHistory() {
     const dateStr=d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})
     const itemsText=orderItems.map(i=>`${i.item_name} &times; ${i.quantity}`).join(', ')
     const st=(order.status||'new').toLowerCase()
+    const canDelete = canDeleteOrder(order)
     return`<div class="order-card">
       <div class="order-card-header">
         <div>
@@ -694,6 +726,13 @@ async function loadHistory() {
       </div>
       <div class="order-items-text">${itemsText}</div>
       ${order.notes?`<div class="order-notes-text">${order.notes}</div>`:''}
+      <div>
+        ${canDelete
+          ? `<button class="btn-cancel-order" onclick="deleteOrder('${order.id}')">Cancel Order</button>`
+          : `<button class="btn-cancel-order" disabled>Cancel Order</button>
+             <div class="cancel-note">Cannot cancel within 24 hours of delivery.</div>`
+        }
+      </div>
     </div>`
   }).join('')
 }
