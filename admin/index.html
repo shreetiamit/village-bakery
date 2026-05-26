@@ -11,20 +11,17 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
-  --bg:#f8f6f2;
-  --surface:#ffffff;
-  --text:#1a1916;
-  --text2:#6b6860;
-  --text3:#a09d98;
-  --border:#dedad4;
-  --border2:#c8c4bc;
-  --accent:#7a5c48;
-  --dark:#1a1916;
-  --header:#1a1916;
-  --err:#a03a26;
-  --green:#2d6040;
-  --gold:#7a6000;
-  --blue:#1a4a7a;
+  --bg:#F5EDD8;
+  --surface:#FFFDF5;
+  --text:#2C1A0E;
+  --text2:#7A5530;
+  --text3:#B8906A;
+  --border:#E2C99A;
+  --border2:#C9A96E;
+  --accent:#C4852A;
+  --dark:#2C1A0E;
+  --err:#A03A26;
+  --green:#3A6B37;
 }
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;}
 .hidden{display:none!important;}
@@ -203,6 +200,38 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
   .panel{display:block!important;}
   .prod-date-block,.pack-date-block{page-break-inside:avoid;}
 }
+
+/* ── Redesign: Warm Amber ── */
+#v-auth{
+  background:linear-gradient(150deg,#F9F2E2 0%,#EFE3C8 55%,#E6D1A0 100%);
+}
+.header{background:linear-gradient(135deg,#2C1A0E 0%,#3D2410 100%);}
+.auth-card{border-color:var(--border);box-shadow:0 4px 24px rgba(44,26,14,.07);}
+.btn-primary:hover{background:var(--accent);opacity:1;}
+.tabs{border-bottom:1.5px solid var(--border);}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+.tab.active .tab-badge{background:var(--accent);border-color:var(--accent);}
+.tab-badge.alert{background:#FFF3DC;border-color:var(--accent);color:var(--accent);}
+.tab.active .tab-badge.alert{background:var(--accent);border-color:var(--accent);color:white;}
+.stat-val.rust{color:var(--accent);}
+.stat-val.gold{color:#8A6200;}
+.date-header{border-bottom-color:var(--accent);}
+.date-header-label{color:var(--text);}
+.section-heading{border-bottom-color:var(--border);}
+.btn-approve{background:var(--accent);}
+.btn-approve:hover{opacity:.85;}
+.status-select.new{background:#FEF8EE;color:#8A5C00;border-color:#D4A800;}
+.status-select.seen{background:#ECF4FF;color:#1A4A7A;border-color:#80AAE6;}
+.status-select.done{background:#ECFAF2;color:var(--green);border-color:#80C4A0;}
+.add-form-title{color:var(--accent);}
+.btn-add{background:var(--accent);}
+.btn-add:hover{opacity:.85;}
+.btn-save-prices{background:var(--accent);}
+.filter-btn.active{background:var(--accent);border-color:var(--accent);}
+.prod-date-heading{border-bottom-color:var(--accent);}
+.pack-date-heading{border-bottom-color:var(--accent);}
+.field input:focus{border-bottom-color:var(--accent);}
+  
 </style>
 </head>
 <body>
