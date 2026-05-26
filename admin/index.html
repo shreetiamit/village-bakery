@@ -22,30 +22,34 @@
   --dark:#2C1A0E;
   --err:#A03A26;
   --green:#3A6B37;
+  --gold:#8A6200;
+  --blue:#1A4A7A;
+  --header:#2C1A0E;
 }
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;}
 .hidden{display:none!important;}
 /* ── Loading ── */
 #v-loading{display:flex;align-items:center;justify-content:center;min-height:100vh;}
-.spinner{width:20px;height:20px;border:1.5px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;}
-@keyframes spin{to{transform:rotate(360deg);}}
+.spinner-logo{width:72px;height:72px;object-fit:contain;animation:logoPulse 1.6s ease-in-out infinite;}
+@keyframes logoPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.9)}}
 /* ── Auth ── */
-#v-auth{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px 24px;}
+#v-auth{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px 24px;background:linear-gradient(150deg,#F9F2E2 0%,#EFE3C8 55%,#E6D1A0 100%);}
 .auth-wrap{width:100%;max-width:340px;}
 .auth-brand{text-align:center;margin-bottom:40px;}
+.auth-logo{width:64px;height:64px;display:block;margin:0 auto 20px;object-fit:contain;}
 .wordmark{font-family:'Cormorant Garamond',serif;font-size:13px;font-weight:600;letter-spacing:.25em;text-transform:uppercase;color:var(--text);}
 .auth-divider{width:32px;height:1px;background:var(--border2);margin:14px auto;}
 .auth-sub{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--text2);}
-.auth-card{background:var(--surface);border:1px solid var(--border);padding:28px;margin-top:0;}
+.auth-card{background:var(--surface);border:1px solid var(--border);padding:28px;box-shadow:0 4px 24px rgba(44,26,14,.07);}
 .field{margin-bottom:18px;}
 .field label{display:block;font-size:10px;font-weight:500;letter-spacing:.15em;text-transform:uppercase;color:var(--text2);margin-bottom:8px;}
 .field input{width:100%;padding:10px 0;border:none;border-bottom:1px solid var(--border);background:transparent;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);outline:none;transition:border-color .15s;border-radius:0;}
-.field input:focus{border-bottom-color:var(--text);}
-.btn-primary{width:100%;padding:13px;background:var(--dark);color:white;border:none;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:opacity .15s;}
-.btn-primary:hover{opacity:.85;}
+.field input:focus{border-bottom-color:var(--accent);}
+.btn-primary{width:100%;padding:13px;background:var(--dark);color:white;border:none;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:background .15s,transform .12s,box-shadow .12s;}
+.btn-primary:hover{background:var(--accent);transform:translateY(-1px);box-shadow:0 4px 14px rgba(196,133,42,.3);}
 .error-msg{font-size:12px;color:var(--err);margin-top:10px;display:none;}
 /* ── Header ── */
-.header{background:var(--header);color:white;display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:52px;position:sticky;top:0;z-index:100;}
+.header{background:linear-gradient(135deg,#2C1A0E 0%,#3D2410 100%);color:white;display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:52px;position:sticky;top:0;z-index:100;}
 .header-brand{display:flex;align-items:center;gap:16px;}
 .header-wordmark{font-family:'Cormorant Garamond',serif;font-size:12px;font-weight:600;letter-spacing:.25em;text-transform:uppercase;color:white;}
 .header-sep{width:1px;height:16px;background:rgba(255,255,255,.2);}
@@ -53,14 +57,14 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .btn-signout{background:none;border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.7);padding:6px 14px;font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;transition:all .15s;}
 .btn-signout:hover{border-color:rgba(255,255,255,.5);color:white;}
 /* ── Tabs ── */
-.tabs{background:var(--surface);border-bottom:1px solid var(--border);display:flex;padding:0 32px;}
+.tabs{background:var(--surface);border-bottom:1.5px solid var(--border);display:flex;padding:0 32px;}
 .tab{padding:14px 0;margin-right:28px;font-size:10px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--text2);cursor:pointer;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;background:none;display:flex;align-items:center;gap:8px;transition:all .15s;}
 .tab:hover{color:var(--text);}
-.tab.active{color:var(--text);border-bottom-color:var(--text);}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent);}
 .tab-badge{background:var(--bg);border:1px solid var(--border);color:var(--text2);border-radius:2px;padding:1px 6px;font-size:9px;letter-spacing:.08em;}
-.tab.active .tab-badge{background:var(--dark);border-color:var(--dark);color:white;}
-.tab-badge.alert{background:#fff8e0;border-color:#d4a800;color:#7a6000;}
-.tab.active .tab-badge.alert{background:#d4a800;border-color:#d4a800;color:white;}
+.tab.active .tab-badge{background:var(--accent);border-color:var(--accent);color:white;}
+.tab-badge.alert{background:#FFF3DC;border-color:var(--accent);color:var(--accent);}
+.tab.active .tab-badge.alert{background:var(--accent);border-color:var(--accent);color:white;}
 /* ── Content ── */
 .content{max-width:900px;margin:0 auto;padding:32px 24px 80px;}
 .panel{display:none;}.panel.active{display:block;}
@@ -68,13 +72,13 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin-bottom:32px;}
 .stat-card{background:var(--surface);padding:20px 24px;}
 .stat-val{font-family:'DM Sans',sans-serif;font-size:28px;font-weight:700;line-height:1;color:var(--text);}
-.stat-val.rust{color:#a03a26;}
+.stat-val.rust{color:var(--accent);}
 .stat-val.gold{color:var(--gold);}
 .stat-val.green-c{color:var(--green);}
 .stat-lbl{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--text2);margin-top:6px;}
 /* ── Date groups ── */
 .date-group{margin-bottom:28px;}
-.date-header{display:flex;justify-content:space-between;align-items:baseline;padding:10px 0;border-bottom:2px solid var(--dark);margin-bottom:0;}
+.date-header{display:flex;justify-content:space-between;align-items:baseline;padding:10px 0;border-bottom:2px solid var(--accent);margin-bottom:0;}
 .date-header-label{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;}
 .date-header-stats{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text2);}
 .order-row{display:flex;justify-content:space-between;align-items:flex-start;padding:14px 0;border-bottom:1px solid var(--border);gap:16px;background:var(--surface);margin:0 -1px;padding-left:1px;padding-right:1px;}
@@ -86,9 +90,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .order-time{font-size:11px;letter-spacing:.08em;color:var(--text2);}
 .order-units{font-size:11px;color:var(--text3);}
 .status-select{padding:4px 8px;border:1px solid var(--border);font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;outline:none;background:var(--surface);color:var(--text);border-radius:0;}
-.status-select.new{background:#fffbec;color:var(--gold);border-color:#e6d080;}
-.status-select.seen{background:#ecf4ff;color:var(--blue);border-color:#80aae6;}
-.status-select.done{background:#ecfaf2;color:var(--green);border-color:#80c4a0;}
+.status-select.new{background:#FEF8EE;color:#8A5C00;border-color:#D4A800;}
+.status-select.seen{background:#ECF4FF;color:var(--blue);border-color:#80AAE6;}
+.status-select.done{background:#ECFAF2;color:var(--green);border-color:#80C4A0;}
 .btn-invoice{background:none;border:1px solid var(--border);color:var(--text2);padding:4px 10px;font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .15s;white-space:nowrap;}
 .btn-invoice:hover{border-color:var(--border2);color:var(--text);}
 /* ── Vendors ── */
@@ -101,8 +105,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .vendor-email{font-size:11px;color:var(--text2);letter-spacing:.02em;}
 .vendor-date{font-size:10px;color:var(--text3);margin-top:2px;letter-spacing:.05em;}
 .vendor-actions{display:flex;gap:8px;flex-shrink:0;}
-.btn-approve{background:var(--dark);color:white;border:none;padding:7px 16px;font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;transition:opacity .15s;}
-.btn-approve:hover{opacity:.8;}
+.btn-approve{background:var(--accent);color:white;border:none;padding:7px 16px;font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;transition:opacity .15s;}
+.btn-approve:hover{opacity:.85;}
 .btn-deactivate{background:none;border:1px solid var(--border);color:var(--text2);padding:6px 12px;font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:all .15s;}
 .btn-deactivate:hover{border-color:var(--border2);color:var(--text);}
 .btn-activate{background:none;border:1px solid var(--border2);color:var(--text);padding:6px 12px;font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;}
@@ -123,8 +127,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .price-override-input{width:72px;padding:4px 6px;border:1px solid var(--border);background:white;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none;border-radius:0;text-align:right;}
 .price-override-input:focus{border-color:var(--border2);}
 .pricing-actions{display:flex;gap:10px;margin-top:16px;padding-top:14px;border-top:1px solid var(--border);}
-.btn-save-prices{background:var(--dark);color:white;border:none;padding:8px 18px;font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;transition:opacity .15s;}
-.btn-save-prices:hover{opacity:.8;}
+.btn-save-prices{background:var(--accent);color:white;border:none;padding:8px 18px;font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;transition:opacity .15s;}
+.btn-save-prices:hover{opacity:.85;}
 .btn-clear-prices{background:none;border:1px solid var(--border);color:var(--text2);padding:7px 14px;font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:all .15s;}
 .btn-clear-prices:hover{border-color:#c08080;color:var(--err);}
 /* ── Menu ── */
@@ -141,14 +145,14 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .btn-hide:hover,.btn-show:hover{border-color:var(--border2);color:var(--text);}
 .btn-delete:hover{border-color:#c08080;color:var(--err);}
 .add-form{padding:20px 0 0;border-top:1px solid var(--border);margin-top:8px;}
-.add-form-title{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--text2);margin-bottom:12px;}
+.add-form-title{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;}
 .add-form-row{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;}
 .add-input{padding:8px 0;border:none;border-bottom:1px solid var(--border);background:transparent;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);outline:none;flex:1;min-width:140px;border-radius:0;}
-.add-input:focus{border-bottom-color:var(--text);}
+.add-input:focus{border-bottom-color:var(--accent);}
 .add-input::placeholder{color:var(--text3);}
 .add-select{padding:8px 10px;border:1px solid var(--border);background:var(--surface);font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none;cursor:pointer;border-radius:0;}
-.btn-add{background:var(--dark);color:white;border:none;padding:9px 20px;font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;white-space:nowrap;transition:opacity .15s;}
-.btn-add:hover{opacity:.8;}
+.btn-add{background:var(--accent);color:white;border:none;padding:9px 20px;font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;white-space:nowrap;transition:opacity .15s;}
+.btn-add:hover{opacity:.85;}
 .section-label{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--text2);padding:14px 0 8px;border-bottom:1px solid var(--border);}
 .empty-state{text-align:center;padding:40px;font-size:13px;color:var(--text2);letter-spacing:.05em;}
 /* ── Unauthorized ── */
@@ -160,7 +164,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .filter-bar{display:flex;align-items:center;gap:10px;margin-bottom:28px;flex-wrap:wrap;}
 .filter-btn{padding:7px 14px;font-family:'DM Sans',sans-serif;font-size:10px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;transition:all .15s;}
 .filter-btn:hover{border-color:var(--border2);color:var(--text);}
-.filter-btn.active{background:var(--dark);border-color:var(--dark);color:white;}
+.filter-btn.active{background:var(--accent);border-color:var(--accent);color:white;}
 .filter-sep{width:1px;height:20px;background:var(--border);flex-shrink:0;}
 .filter-date-input{padding:7px 10px;border:1px solid var(--border);background:transparent;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--text);outline:none;cursor:pointer;}
 .filter-date-input:focus{border-color:var(--border2);}
@@ -173,7 +177,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .prod-stat-val{font-family:'DM Sans',sans-serif;font-size:26px;font-weight:600;line-height:1;}
 .prod-stat-lbl{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--text2);margin-top:4px;}
 .prod-date-block{margin-bottom:32px;}
-.prod-date-heading{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;letter-spacing:.02em;padding:10px 0;border-bottom:2px solid var(--dark);margin-bottom:0;display:flex;justify-content:space-between;align-items:baseline;}
+.prod-date-heading{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;letter-spacing:.02em;padding:10px 0;border-bottom:2px solid var(--accent);margin-bottom:0;display:flex;justify-content:space-between;align-items:baseline;}
 .prod-date-sub{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text2);}
 .prod-item-row{display:flex;align-items:baseline;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--border);}
 .prod-item-name{font-size:14px;font-weight:400;}
@@ -182,7 +186,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .prod-item-unit{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text2);margin-left:4px;}
 /* ── Packing + delivery ── */
 .pack-date-block{margin-bottom:36px;}
-.pack-date-heading{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;padding:10px 0;border-bottom:2px solid var(--dark);margin-bottom:16px;display:flex;justify-content:space-between;align-items:baseline;}
+.pack-date-heading{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;padding:10px 0;border-bottom:2px solid var(--accent);margin-bottom:16px;display:flex;justify-content:space-between;align-items:baseline;}
 .pack-vendor-card{border:1px solid var(--border);margin-bottom:12px;}
 .pack-vendor-header{background:var(--bg);padding:11px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);}
 .pack-vendor-name{font-size:13px;font-weight:500;letter-spacing:.02em;}
@@ -193,71 +197,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .pack-item-qty{font-size:13px;font-weight:500;color:var(--text);}
 .pack-notes{padding:8px 16px;font-size:11px;color:var(--text2);font-style:italic;background:#fbf9f6;border-top:1px dashed var(--border);}
 .pack-vendor-total{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text2);}
-/* ── Print styles ── */
-@media print {
-  .header,.tabs,.filter-bar,.print-btn,.stats-row,.pricing-panel{display:none!important;}
-  .content{padding:0!important;max-width:100%!important;}
-  .panel{display:block!important;}
-  .prod-date-block,.pack-date-block{page-break-inside:avoid;}
-}
-
-/* ── Redesign: Warm Amber ── */
-#v-auth{
-  background:linear-gradient(150deg,#F9F2E2 0%,#EFE3C8 55%,#E6D1A0 100%);
-}
-.header{background:linear-gradient(135deg,#2C1A0E 0%,#3D2410 100%);}
-.auth-card{border-color:var(--border);box-shadow:0 4px 24px rgba(44,26,14,.07);}
-.btn-primary:hover{background:var(--accent);opacity:1;}
-.tabs{border-bottom:1.5px solid var(--border);}
-.tab.active{color:var(--accent);border-bottom-color:var(--accent);}
-.tab.active .tab-badge{background:var(--accent);border-color:var(--accent);}
-.tab-badge.alert{background:#FFF3DC;border-color:var(--accent);color:var(--accent);}
-.tab.active .tab-badge.alert{background:var(--accent);border-color:var(--accent);color:white;}
-.stat-val.rust{color:var(--accent);}
-.stat-val.gold{color:#8A6200;}
-.date-header{border-bottom-color:var(--accent);}
-.date-header-label{color:var(--text);}
-.section-heading{border-bottom-color:var(--border);}
-.btn-approve{background:var(--accent);}
-.btn-approve:hover{opacity:.85;}
-.status-select.new{background:#FEF8EE;color:#8A5C00;border-color:#D4A800;}
-.status-select.seen{background:#ECF4FF;color:#1A4A7A;border-color:#80AAE6;}
-.status-select.done{background:#ECFAF2;color:var(--green);border-color:#80C4A0;}
-.add-form-title{color:var(--accent);}
-.btn-add{background:var(--accent);}
-.btn-add:hover{opacity:.85;}
-.btn-save-prices{background:var(--accent);}
-.filter-btn.active{background:var(--accent);border-color:var(--accent);}
-.prod-date-heading{border-bottom-color:var(--accent);}
-.pack-date-heading{border-bottom-color:var(--accent);}
-.field input:focus{border-bottom-color:var(--accent);}
-
-/* ── Logo on auth ── */
-.auth-logo{width:64px;height:64px;display:block;margin:0 auto 20px;object-fit:contain;}
-
-/* ── Logo loading spinner ── */
-.spinner-logo{width:72px;height:72px;object-fit:contain;animation:logoPulse 1.6s ease-in-out infinite;}
-@keyframes logoPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.9)}}
-
-/* ── Page fade-in ── */
+/* ── Animations ── */
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-#v-auth,#v-pending,#v-business-name,{animation:fadeUp .4s ease forwards;}
-
-/* ── Button lift ── */
-.btn-submit{transition:background .15s,transform .12s,box-shadow .12s;}
-.btn-submit:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 6px 18px rgba(196,133,42,.25);}
-.btn-submit:active:not(:disabled){transform:translateY(0);box-shadow:none;}
-.btn-google{transition:all .15s;}
-.btn-google:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(44,26,14,.1);}
-
-/* ── Qty button press ── */
-.qty-btn{transition:all .1s;}
-.qty-btn:active{transform:scale(.85);background:var(--border);}
-
-/* ── Tab fade ── */
-@keyframes tabFade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-
-/* ── Order card stagger ── */
+#v-auth{animation:fadeUp .4s ease forwards;}
 @keyframes cardSlide{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 .order-card{animation:cardSlide .3s ease forwards;}
 .order-card:nth-child(2){animation-delay:.05s}
@@ -265,6 +207,13 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .order-card:nth-child(4){animation-delay:.15s}
 .order-card:nth-child(5){animation-delay:.2s}
 .order-card:nth-child(6){animation-delay:.25s}
+/* ── Print styles ── */
+@media print {
+  .header,.tabs,.filter-bar,.print-btn,.stats-row,.pricing-panel{display:none!important;}
+  .content{padding:0!important;max-width:100%!important;}
+  .panel{display:block!important;}
+  .prod-date-block,.pack-date-block{page-break-inside:avoid;}
+}
 </style>
 </head>
 <body>
@@ -272,7 +221,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 <div id="v-auth" class="hidden">
   <div class="auth-wrap">
     <div class="auth-brand">
-      <div class="auth-brand">
       <img src="../assets/logo.png" class="auth-logo" alt="Village Bakery">
       <div class="wordmark" style="text-align:center">Village Bakery + Provisions</div>
       <div class="auth-divider"></div>
@@ -336,7 +284,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
   </div>
 </div>
 <script>
-// ── REPLACE THESE WITH YOUR FIREBASE CONFIG ──
 const firebaseConfig = {
   apiKey: "AIzaSyDpzmw5NGHagj1fv4L2v74Wfj1E2_KmmdY",
   authDomain: "village-bakery-6885a.firebaseapp.com",
@@ -755,7 +702,6 @@ function generateInvoiceHtml(order) {
 </body></html>`
 }
 
-// ── DATE FILTER HELPERS ──
 function getDateRange(mode) {
   const now = new Date()
   const todayStr = now.toISOString().split('T')[0]
@@ -799,11 +745,9 @@ function filterBarHtml(tab) {
         onclick="setFilter('${tab}','${m.key}',this)">${m.label}</button>`).join('')}
       <div class="filter-sep"></div>
       <span class="filter-label" id="custom-label-${tab}" style="display:${fs.mode==='custom'?'flex':'none'};align-items:center;gap:8px">
-        <input class="filter-date-input" type="date" id="filter-from-${tab}" value="${fs.from}"
-               onchange="setCustomRange('${tab}')">
+        <input class="filter-date-input" type="date" id="filter-from-${tab}" value="${fs.from}" onchange="setCustomRange('${tab}')">
         <span style="font-size:11px;color:var(--text3)">to</span>
-        <input class="filter-date-input" type="date" id="filter-to-${tab}" value="${fs.to}"
-               onchange="setCustomRange('${tab}')">
+        <input class="filter-date-input" type="date" id="filter-to-${tab}" value="${fs.to}" onchange="setCustomRange('${tab}')">
       </span>
     </div>
     <div style="display:flex;justify-content:flex-end;margin-top:-16px;margin-bottom:24px">
@@ -833,7 +777,6 @@ function setCustomRange(tab) {
   if (tab === 'packing')    renderPackingContent()
 }
 
-// ── PRODUCTION TAB ──
 function renderProduction() {
   const el = document.getElementById('production-content')
   el.innerHTML = filterBarHtml('production')
@@ -846,20 +789,15 @@ function renderProductionContent() {
   if (!el) return
   if (!orders.length) { el.innerHTML = '<div class="empty-state">No orders for this period.</div>'; return }
   const byDate = {}
-  orders.forEach(o => {
-    if (!byDate[o.delivery_date]) byDate[o.delivery_date] = []
-    byDate[o.delivery_date].push(o)
-  })
+  orders.forEach(o => { if (!byDate[o.delivery_date]) byDate[o.delivery_date]=[]; byDate[o.delivery_date].push(o) })
   const totalItems = new Set(orders.flatMap(o => (o.items||[]).map(i => i.item_name))).size
   const totalUnits = orders.reduce((s,o) => s + (o.items||[]).reduce((ss,i) => ss+i.quantity, 0), 0)
-  const totalOrders = orders.length
-  let html = `
-    <div class="prod-summary">
-      <div class="prod-stat"><div class="prod-stat-val">${Object.keys(byDate).length}</div><div class="prod-stat-lbl">Days</div></div>
-      <div class="prod-stat"><div class="prod-stat-val">${totalOrders}</div><div class="prod-stat-lbl">Orders</div></div>
-      <div class="prod-stat"><div class="prod-stat-val">${totalItems}</div><div class="prod-stat-lbl">Products</div></div>
-      <div class="prod-stat"><div class="prod-stat-val">${totalUnits}</div><div class="prod-stat-lbl">Total Units</div></div>
-    </div>`
+  let html = `<div class="prod-summary">
+    <div class="prod-stat"><div class="prod-stat-val">${Object.keys(byDate).length}</div><div class="prod-stat-lbl">Days</div></div>
+    <div class="prod-stat"><div class="prod-stat-val">${orders.length}</div><div class="prod-stat-lbl">Orders</div></div>
+    <div class="prod-stat"><div class="prod-stat-val">${totalItems}</div><div class="prod-stat-lbl">Products</div></div>
+    <div class="prod-stat"><div class="prod-stat-val">${totalUnits}</div><div class="prod-stat-lbl">Total Units</div></div>
+  </div>`
   Object.keys(byDate).sort().forEach(date => {
     const dayOrders = byDate[date]
     const dayUnits  = dayOrders.reduce((s,o) => s + (o.items||[]).reduce((ss,i) => ss+i.quantity, 0), 0)
@@ -868,34 +806,28 @@ function renderProductionContent() {
       (o.items||[]).forEach(i => {
         if (!itemMap[i.item_name]) itemMap[i.item_name] = { qty: 0, unit: i.unit, vendors: [] }
         itemMap[i.item_name].qty += i.quantity
-        if (!itemMap[i.item_name].vendors.includes(o.vendor_name))
-          itemMap[i.item_name].vendors.push(o.vendor_name)
+        if (!itemMap[i.item_name].vendors.includes(o.vendor_name)) itemMap[i.item_name].vendors.push(o.vendor_name)
       })
     })
     const sortedItems = Object.entries(itemMap).sort((a,b) => b[1].qty - a[1].qty)
-    html += `
-      <div class="prod-date-block">
-        <div class="prod-date-heading">
-          <span>${date === TODAY ? 'Today &mdash; ' : ''}${fmtDate(date)}</span>
-          <span class="prod-date-sub">${dayOrders.length} order${dayOrders.length!==1?'s':''} &middot; ${dayUnits} units</span>
-        </div>
-        ${sortedItems.map(([name, data]) => `
-          <div class="prod-item-row">
-            <div>
-              <div class="prod-item-name">${name}</div>
-              <div class="prod-item-vendors">${data.vendors.join(', ')}</div>
-            </div>
-            <div style="text-align:right;flex-shrink:0">
-              <span class="prod-item-qty">${data.qty}</span>
-              <span class="prod-item-unit">${data.unit === 'each' ? 'each' : (data.qty !== 1 ? data.unit + 's' : data.unit)}</span>
-            </div>
-          </div>`).join('')}
-      </div>`
+    html += `<div class="prod-date-block">
+      <div class="prod-date-heading">
+        <span>${date===TODAY?'Today &mdash; ':''}${fmtDate(date)}</span>
+        <span class="prod-date-sub">${dayOrders.length} order${dayOrders.length!==1?'s':''} &middot; ${dayUnits} units</span>
+      </div>
+      ${sortedItems.map(([name,data])=>`
+        <div class="prod-item-row">
+          <div><div class="prod-item-name">${name}</div><div class="prod-item-vendors">${data.vendors.join(', ')}</div></div>
+          <div style="text-align:right;flex-shrink:0">
+            <span class="prod-item-qty">${data.qty}</span>
+            <span class="prod-item-unit">${data.unit==='each'?'each':(data.qty!==1?data.unit+'s':data.unit)}</span>
+          </div>
+        </div>`).join('')}
+    </div>`
   })
   el.innerHTML = html
 }
 
-// ── PACKING + DELIVERY TAB ──
 function renderPacking() {
   const el = document.getElementById('packing-content')
   el.innerHTML = filterBarHtml('packing')
@@ -904,312 +836,232 @@ function renderPacking() {
 }
 function renderPackingContent() {
   const orders = filterOrders('packing')
-  const el     = document.getElementById('pack-body')
+  const el = document.getElementById('pack-body')
   if (!el) return
-  if (!orders.length) { el.innerHTML = '<div class="empty-state">No orders for this period.</div>'; return }
+  if (!orders.length) { el.innerHTML='<div class="empty-state">No orders for this period.</div>'; return }
   const byDate = {}
-  orders.forEach(o => {
-    if (!byDate[o.delivery_date]) byDate[o.delivery_date] = []
-    byDate[o.delivery_date].push(o)
-  })
+  orders.forEach(o => { if (!byDate[o.delivery_date]) byDate[o.delivery_date]=[]; byDate[o.delivery_date].push(o) })
   let html = ''
   Object.keys(byDate).sort().forEach(date => {
     const dayOrders = byDate[date]
-    const sorted = [...dayOrders].sort((a,b) => (a.delivery_time||'').localeCompare(b.delivery_time||''))
-    const dayUnits = sorted.reduce((s,o) => s + (o.items||[]).reduce((ss,i) => ss+i.quantity, 0), 0)
+    const dayUnits = dayOrders.reduce((s,o)=>s+(o.items||[]).reduce((ss,i)=>ss+i.quantity,0),0)
     const byVendor = {}
-    sorted.forEach(o => {
-      if (!byVendor[o.vendor_name]) byVendor[o.vendor_name] = { items: [], time: o.delivery_time, notes: o.notes, total: 0 }
-      ;(o.items||[]).forEach(i => {
-        const existing = byVendor[o.vendor_name].items.find(x => x.item_name === i.item_name)
-        if (existing) existing.quantity += i.quantity
-        else byVendor[o.vendor_name].items.push({ ...i })
-        byVendor[o.vendor_name].total += i.quantity
+    dayOrders.forEach(o => {
+      if (!byVendor[o.vendor_name]) byVendor[o.vendor_name]={items:[],time:o.delivery_time,notes:o.notes,total:0}
+      ;(o.items||[]).forEach(i=>{
+        const ex=byVendor[o.vendor_name].items.find(x=>x.item_name===i.item_name)
+        if(ex)ex.quantity+=i.quantity;else byVendor[o.vendor_name].items.push({...i})
+        byVendor[o.vendor_name].total+=i.quantity
       })
     })
-    html += `
-      <div class="pack-date-block">
-        <div class="pack-date-heading">
-          <span>${date === TODAY ? 'Today &mdash; ' : ''}${fmtDate(date)}</span>
-          <span class="prod-date-sub">${Object.keys(byVendor).length} vendor${Object.keys(byVendor).length!==1?'s':''} &middot; ${dayUnits} units</span>
-        </div>
-        ${Object.entries(byVendor).sort((a,b)=>(a[1].time||'').localeCompare(b[1].time||'')).map(([vendor, data]) => `
-          <div class="pack-vendor-card">
-            <div class="pack-vendor-header">
-              <span class="pack-vendor-name">${vendor}</span>
-              <div style="display:flex;align-items:center;gap:14px">
-                ${data.time ? `<span class="pack-vendor-time">Delivery: ${data.time.slice(0,5)}</span>` : ''}
-                <span class="pack-vendor-total">${data.total} unit${data.total!==1?'s':''}</span>
-              </div>
+    html+=`<div class="pack-date-block">
+      <div class="pack-date-heading">
+        <span>${date===TODAY?'Today &mdash; ':''}${fmtDate(date)}</span>
+        <span class="prod-date-sub">${Object.keys(byVendor).length} vendor${Object.keys(byVendor).length!==1?'s':''} &middot; ${dayUnits} units</span>
+      </div>
+      ${Object.entries(byVendor).sort((a,b)=>(a[1].time||'').localeCompare(b[1].time||'')).map(([vendor,data])=>`
+        <div class="pack-vendor-card">
+          <div class="pack-vendor-header">
+            <span class="pack-vendor-name">${vendor}</span>
+            <div style="display:flex;align-items:center;gap:14px">
+              ${data.time?`<span class="pack-vendor-time">Delivery: ${data.time.slice(0,5)}</span>`:''}
+              <span class="pack-vendor-total">${data.total} unit${data.total!==1?'s':''}</span>
             </div>
-            ${data.items.map(i => `
-              <div class="pack-item-row">
-                <span class="pack-item-name">${i.item_name}</span>
-                <span class="pack-item-qty">${i.quantity} ${i.unit === 'each' ? 'each' : (i.quantity !== 1 ? i.unit + 's' : i.unit)}</span>
-              </div>`).join('')}
-            ${data.notes ? `<div class="pack-notes">Note: ${data.notes}</div>` : ''}
-          </div>`).join('')}
-      </div>`
+          </div>
+          ${data.items.map(i=>`
+            <div class="pack-item-row">
+              <span class="pack-item-name">${i.item_name}</span>
+              <span class="pack-item-qty">${i.quantity} ${i.unit==='each'?'each':(i.quantity!==1?i.unit+'s':i.unit)}</span>
+            </div>`).join('')}
+          ${data.notes?`<div class="pack-notes">Note: ${data.notes}</div>`:''}
+        </div>`).join('')}
+    </div>`
   })
   el.innerHTML = html
 }
 
-// ── PRINT ──
 function printTab(tab) {
   const orders  = filterOrders(tab)
   const fs      = filterState[tab]
-  const range   = fs.mode === 'custom' ? { from: fs.from, to: fs.to } : getDateRange(fs.mode)
-  const title   = tab === 'production' ? 'Production List' : 'Packing + Delivery'
-  const rangeLabel = range.from === range.to
-    ? fmtDate(range.from)
-    : fmtDate(range.from) + ' \u2013 ' + fmtDate(range.to)
+  const range   = fs.mode==='custom'?{from:fs.from,to:fs.to}:getDateRange(fs.mode)
+  const title   = tab==='production'?'Production List':'Packing + Delivery'
+  const rangeLabel = range.from===range.to ? fmtDate(range.from) : fmtDate(range.from)+' \u2013 '+fmtDate(range.to)
   const byDate = {}
-  orders.forEach(o => {
-    if (!byDate[o.delivery_date]) byDate[o.delivery_date] = []
-    byDate[o.delivery_date].push(o)
-  })
+  orders.forEach(o=>{if(!byDate[o.delivery_date])byDate[o.delivery_date]=[];byDate[o.delivery_date].push(o)})
   let body = ''
-  if (!orders.length) {
-    body = '<p style="color:#6b6860;font-size:14px">No orders for this period.</p>'
-  } else if (tab === 'production') {
-    Object.keys(byDate).sort().forEach(date => {
-      const dayOrders = byDate[date]
-      const dayUnits  = dayOrders.reduce((s,o) => s + (o.items||[]).reduce((ss,i) => ss+i.quantity, 0), 0)
-      const itemMap   = {}
-      dayOrders.forEach(o => {
-        (o.items||[]).forEach(i => {
-          if (!itemMap[i.item_name]) itemMap[i.item_name] = { qty: 0, unit: i.unit, vendors: [] }
-          itemMap[i.item_name].qty += i.quantity
-          if (!itemMap[i.item_name].vendors.includes(o.vendor_name))
-            itemMap[i.item_name].vendors.push(o.vendor_name)
-        })
-      })
-      const sorted = Object.entries(itemMap).sort((a,b) => b[1].qty - a[1].qty)
-      body += `
-        <div style="margin-bottom:32px;page-break-inside:avoid">
-          <div style="display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;border-bottom:2px solid #1a1916;margin-bottom:0">
-            <span style="font-family:Arial,sans-serif;font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase">${fmtDate(date)}</span>
-            <span style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#6b6860">${dayOrders.length} order${dayOrders.length!==1?'s':''} &middot; ${dayUnits} units</span>
-          </div>
-          <table style="width:100%;border-collapse:collapse">
-            <thead><tr>
-              <th style="padding:8px 0;text-align:left;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:#6b6860;font-weight:500;border-bottom:1px solid #dedad4">Item</th>
-              <th style="padding:8px 0;text-align:left;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:#6b6860;font-weight:500;border-bottom:1px solid #dedad4">Vendors</th>
-              <th style="padding:8px 0;text-align:right;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:#6b6860;font-weight:500;border-bottom:1px solid #dedad4">Qty</th>
-            </tr></thead>
-            <tbody>
-              ${sorted.map(([name, data]) => `
-                <tr style="border-bottom:1px solid #f0ece6">
-                  <td style="padding:10px 0;font-size:14px">${name}</td>
-                  <td style="padding:10px 0;font-size:12px;color:#6b6860">${data.vendors.join(', ')}</td>
-                  <td style="padding:10px 0;text-align:right;font-family:Arial,sans-serif;font-size:22px;font-weight:700">${data.qty}&thinsp;<span style="font-size:10px;font-weight:400;color:#6b6860;font-family:Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase">${data.unit === 'each' ? 'each' : (data.qty !== 1 ? data.unit + 's' : data.unit)}</span></td>
-                </tr>`).join('')}
-            </tbody>
-          </table>
-        </div>`
+  if (!orders.length) { body='<p style="color:#6b6860;font-size:14px">No orders for this period.</p>' }
+  else if (tab==='production') {
+    Object.keys(byDate).sort().forEach(date=>{
+      const dayOrders=byDate[date]
+      const dayUnits=dayOrders.reduce((s,o)=>s+(o.items||[]).reduce((ss,i)=>ss+i.quantity,0),0)
+      const itemMap={}
+      dayOrders.forEach(o=>{(o.items||[]).forEach(i=>{
+        if(!itemMap[i.item_name])itemMap[i.item_name]={qty:0,unit:i.unit,vendors:[]}
+        itemMap[i.item_name].qty+=i.quantity
+        if(!itemMap[i.item_name].vendors.includes(o.vendor_name))itemMap[i.item_name].vendors.push(o.vendor_name)
+      })})
+      const sorted=Object.entries(itemMap).sort((a,b)=>b[1].qty-a[1].qty)
+      body+=`<div style="margin-bottom:32px;page-break-inside:avoid">
+        <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:2px solid #1a1916">
+          <span style="font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase">${fmtDate(date)}</span>
+          <span style="font-size:10px;color:#6b6860">${dayOrders.length} order${dayOrders.length!==1?'s':''} &middot; ${dayUnits} units</span>
+        </div>
+        <table style="width:100%;border-collapse:collapse">
+          <thead><tr>
+            <th style="padding:8px 0;text-align:left;font-size:10px;color:#6b6860;font-weight:500;border-bottom:1px solid #dedad4">Item</th>
+            <th style="padding:8px 0;text-align:left;font-size:10px;color:#6b6860;font-weight:500;border-bottom:1px solid #dedad4">Vendors</th>
+            <th style="padding:8px 0;text-align:right;font-size:10px;color:#6b6860;font-weight:500;border-bottom:1px solid #dedad4">Qty</th>
+          </tr></thead>
+          <tbody>${sorted.map(([name,data])=>`
+            <tr style="border-bottom:1px solid #f0ece6">
+              <td style="padding:10px 0;font-size:14px">${name}</td>
+              <td style="padding:10px 0;font-size:12px;color:#6b6860">${data.vendors.join(', ')}</td>
+              <td style="padding:10px 0;text-align:right;font-size:22px;font-weight:700">${data.qty} <span style="font-size:10px;font-weight:400;color:#6b6860">${data.unit==='each'?'each':(data.qty!==1?data.unit+'s':data.unit)}</span></td>
+            </tr>`).join('')}</tbody>
+        </table>
+      </div>`
     })
   } else {
-    Object.keys(byDate).sort().forEach(date => {
-      const dayOrders = byDate[date]
-      const byVendor  = {}
-      dayOrders.forEach(o => {
-        if (!byVendor[o.vendor_name]) byVendor[o.vendor_name] = { items: [], time: o.delivery_time, notes: o.notes, total: 0 }
-        ;(o.items||[]).forEach(i => {
-          const ex = byVendor[o.vendor_name].items.find(x => x.item_name === i.item_name)
-          if (ex) ex.quantity += i.quantity
-          else byVendor[o.vendor_name].items.push({ ...i })
-          byVendor[o.vendor_name].total += i.quantity
+    Object.keys(byDate).sort().forEach(date=>{
+      const dayOrders=byDate[date]
+      const byVendor={}
+      dayOrders.forEach(o=>{
+        if(!byVendor[o.vendor_name])byVendor[o.vendor_name]={items:[],time:o.delivery_time,notes:o.notes,total:0}
+        ;(o.items||[]).forEach(i=>{
+          const ex=byVendor[o.vendor_name].items.find(x=>x.item_name===i.item_name)
+          if(ex)ex.quantity+=i.quantity;else byVendor[o.vendor_name].items.push({...i})
+          byVendor[o.vendor_name].total+=i.quantity
         })
       })
-      const sortedVendors = Object.entries(byVendor).sort((a,b) => (a[1].time||'').localeCompare(b[1].time||''))
-      body += `
-        <div style="margin-bottom:32px">
-          <div style="display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;border-bottom:2px solid #1a1916;margin-bottom:16px">
-            <span style="font-family:Arial,sans-serif;font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase">${fmtDate(date)}</span>
-            <span style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#6b6860">${sortedVendors.length} vendor${sortedVendors.length!==1?'s':''}</span>
-          </div>
-          ${sortedVendors.map(([vendor, data]) => `
-            <div style="border:1px solid #dedad4;margin-bottom:10px;page-break-inside:avoid">
-              <div style="background:#f8f6f2;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #dedad4">
-                <span style="font-size:14px;font-weight:600">${vendor}</span>
-                <div>
-                  ${data.time ? `<span style="font-size:11px;color:#6b6860;letter-spacing:.05em">Delivery ${data.time.slice(0,5)}</span>&ensp;` : ''}
-                  <span style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#6b6860">${data.total} unit${data.total!==1?'s':''}</span>
-                </div>
-              </div>
-              <table style="width:100%;border-collapse:collapse">
-                ${data.items.map(i => `
-                  <tr style="border-bottom:1px solid #f0ece6">
-                    <td style="padding:8px 14px;font-size:13px">${i.item_name}</td>
-                    <td style="padding:8px 14px;font-size:13px;font-weight:600;text-align:right">${i.quantity} ${i.unit === 'each' ? 'each' : (i.quantity !== 1 ? i.unit + 's' : i.unit)}</td>
-                  </tr>`).join('')}
-              </table>
-              ${data.notes ? `<div style="padding:7px 14px;font-size:11px;color:#6b6860;font-style:italic;border-top:1px dashed #dedad4">Note: ${data.notes}</div>` : ''}
-            </div>`).join('')}
-        </div>`
+      const sortedVendors=Object.entries(byVendor).sort((a,b)=>(a[1].time||'').localeCompare(b[1].time||''))
+      body+=`<div style="margin-bottom:32px">
+        <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:2px solid #1a1916;margin-bottom:16px">
+          <span style="font-size:13px;font-weight:600">${fmtDate(date)}</span>
+          <span style="font-size:10px;color:#6b6860">${sortedVendors.length} vendor${sortedVendors.length!==1?'s':''}</span>
+        </div>
+        ${sortedVendors.map(([vendor,data])=>`
+          <div style="border:1px solid #dedad4;margin-bottom:10px;page-break-inside:avoid">
+            <div style="background:#f8f6f2;padding:10px 14px;display:flex;justify-content:space-between;border-bottom:1px solid #dedad4">
+              <span style="font-size:14px;font-weight:600">${vendor}</span>
+              <div>${data.time?`<span style="font-size:11px;color:#6b6860">Delivery ${data.time.slice(0,5)}</span>&ensp;`:''}<span style="font-size:10px;color:#6b6860">${data.total} unit${data.total!==1?'s':''}</span></div>
+            </div>
+            <table style="width:100%;border-collapse:collapse">
+              ${data.items.map(i=>`<tr style="border-bottom:1px solid #f0ece6">
+                <td style="padding:8px 14px;font-size:13px">${i.item_name}</td>
+                <td style="padding:8px 14px;font-size:13px;font-weight:600;text-align:right">${i.quantity} ${i.unit==='each'?'each':(i.quantity!==1?i.unit+'s':i.unit)}</td>
+              </tr>`).join('')}
+            </table>
+            ${data.notes?`<div style="padding:7px 14px;font-size:11px;color:#6b6860;font-style:italic;border-top:1px dashed #dedad4">Note: ${data.notes}</div>`:''}
+          </div>`).join('')}
+      </div>`
     })
   }
-  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
-  <title>${title}</title>
-  <style>
-    *{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:'Helvetica Neue',Arial,sans-serif;color:#1a1916;padding:44px;max-width:800px;margin:0 auto;-webkit-font-smoothing:antialiased;}
-    @media print{body{padding:20px;}.no-print{display:none!important;}}
-    .no-print{text-align:center;margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid #dedad4;}
-    .print-btn{background:#1a1916;color:white;border:none;padding:9px 22px;font-family:'Helvetica Neue',Arial,sans-serif;font-size:11px;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;}
-  </style></head><body>
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${title}</title>
+  <style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:'Helvetica Neue',Arial,sans-serif;color:#1a1916;padding:44px;max-width:800px;margin:0 auto;}@media print{body{padding:20px;}.no-print{display:none!important;}}.no-print{text-align:center;margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid #dedad4;}.print-btn{background:#1a1916;color:white;border:none;padding:9px 22px;font-size:11px;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;}</style>
+  </head><body>
   <div class="no-print"><button class="print-btn" onclick="window.print()">Print / Save PDF</button></div>
   <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:28px;padding-bottom:14px;border-bottom:1px solid #dedad4">
-    <div>
-      <div style="font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:#6b6860;margin-bottom:5px">Village Bakery + Provisions</div>
-      <div style="font-family:Arial,sans-serif;font-size:22px;font-weight:700;letter-spacing:.04em;text-transform:uppercase">${title}</div>
-    </div>
-    <div style="text-align:right;font-size:12px;color:#6b6860;line-height:1.8">
-      <div>${rangeLabel}</div>
-      <div>Printed ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}</div>
-    </div>
-  </div>
-  ${body}
-  </body></html>`
-  const w = window.open('', '_blank')
-  w.document.write(html)
-  w.document.close()
-  setTimeout(() => w.print(), 500)
+    <div><div style="font-size:10px;color:#6b6860;margin-bottom:5px;text-transform:uppercase;letter-spacing:.2em">Village Bakery + Provisions</div><div style="font-size:22px;font-weight:700;text-transform:uppercase;letter-spacing:.04em">${title}</div></div>
+    <div style="text-align:right;font-size:12px;color:#6b6860;line-height:1.8"><div>${rangeLabel}</div><div>Printed ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}</div></div>
+  </div>${body}</body></html>`
+  const w=window.open('','_blank');w.document.write(html);w.document.close();setTimeout(()=>w.print(),500)
 }
 
-// ── VENDOR PRICING ──
 let vendorPricingCache = {}
 async function togglePricing(vendorId) {
-  const panel = document.getElementById('pricing-panel-'+vendorId)
-  const btn   = document.getElementById('pricing-btn-'+vendorId)
+  const panel=document.getElementById('pricing-panel-'+vendorId)
+  const btn=document.getElementById('pricing-btn-'+vendorId)
   if (!panel) return
-  const isOpen = panel.style.display === 'block'
-  document.querySelectorAll('.pricing-panel').forEach(p => p.style.display = 'none')
-  document.querySelectorAll('.btn-pricing').forEach(b => b.classList.remove('active'))
+  const isOpen=panel.style.display==='block'
+  document.querySelectorAll('.pricing-panel').forEach(p=>p.style.display='none')
+  document.querySelectorAll('.btn-pricing').forEach(b=>b.classList.remove('active'))
   if (!isOpen) {
-    panel.style.display = 'block'
-    btn.classList.add('active')
-    if (!vendorPricingCache[vendorId]) {
-      await loadVendorPricingForAdmin(vendorId)
-    }
+    panel.style.display='block';btn.classList.add('active')
+    if (!vendorPricingCache[vendorId]) await loadVendorPricingForAdmin(vendorId)
     renderPricingRows(vendorId)
   }
 }
 async function loadVendorPricingForAdmin(vendorId) {
-  const snap = await db.collection('vendor_pricing').where('vendor_id', '==', vendorId).get()
-  vendorPricingCache[vendorId] = {}
-  snap.docs.forEach(d => {
-    const data = d.data()
-    vendorPricingCache[vendorId][data.menu_item_id] = Number(data.price)
-  })
+  const snap=await db.collection('vendor_pricing').where('vendor_id','==',vendorId).get()
+  vendorPricingCache[vendorId]={}
+  snap.docs.forEach(d=>{const data=d.data();vendorPricingCache[vendorId][data.menu_item_id]=Number(data.price)})
 }
 function renderPricingRows(vendorId) {
-  const el     = document.getElementById('pricing-rows-'+vendorId)
-  const prices = vendorPricingCache[vendorId] || {}
-  const active = allMenu.filter(m => m.active)
-  el.innerHTML = active.map(item => {
-    const custom   = prices[item.id]
-    const defaultP = item.price || 0
-    return `<div class="pricing-row">
+  const el=document.getElementById('pricing-rows-'+vendorId)
+  const prices=vendorPricingCache[vendorId]||{}
+  const active=allMenu.filter(m=>m.active)
+  el.innerHTML=active.map(item=>{
+    const custom=prices[item.id];const defaultP=item.price||0
+    return`<div class="pricing-row">
       <div class="pricing-item-name">${item.name}</div>
       <div class="pricing-default">Default: $${defaultP.toFixed(2)}</div>
-      <div class="pricing-override">
-        <span>$</span>
-        <input class="price-override-input" type="number" step="0.01" min="0"
-               id="vp-${vendorId}-${item.id}"
-               value="${custom !== undefined ? custom.toFixed(2) : ''}"
-               placeholder="${defaultP.toFixed(2)}">
+      <div class="pricing-override"><span>$</span>
+        <input class="price-override-input" type="number" step="0.01" min="0" id="vp-${vendorId}-${item.id}" value="${custom!==undefined?custom.toFixed(2):''}" placeholder="${defaultP.toFixed(2)}">
       </div>
     </div>`
   }).join('')
 }
 async function savePricing(vendorId) {
-  const active = allMenu.filter(m => m.active)
-  const batch  = db.batch()
-  active.forEach(item => {
-    const input = document.getElementById(`vp-${vendorId}-${item.id}`)
-    if (!input) return
-    const val    = input.value.trim()
-    const docRef = db.collection('vendor_pricing').doc(`${vendorId}_${item.id}`)
-    if (val !== '' && !isNaN(parseFloat(val))) {
-      batch.set(docRef, { vendor_id: vendorId, menu_item_id: item.id, price: parseFloat(val) })
-    } else {
-      batch.delete(docRef)
-    }
+  const active=allMenu.filter(m=>m.active);const batch=db.batch()
+  active.forEach(item=>{
+    const input=document.getElementById(`vp-${vendorId}-${item.id}`);if(!input)return
+    const val=input.value.trim();const docRef=db.collection('vendor_pricing').doc(`${vendorId}_${item.id}`)
+    if(val!==''&&!isNaN(parseFloat(val)))batch.set(docRef,{vendor_id:vendorId,menu_item_id:item.id,price:parseFloat(val)})
+    else batch.delete(docRef)
   })
   await batch.commit()
-  vendorPricingCache[vendorId] = {}
-  active.forEach(item => {
-    const input = document.getElementById(`vp-${vendorId}-${item.id}`)
-    if (!input) return
-    const val = input.value.trim()
-    if (val !== '' && !isNaN(parseFloat(val))) {
-      vendorPricingCache[vendorId][item.id] = parseFloat(val)
-    }
+  vendorPricingCache[vendorId]={}
+  active.forEach(item=>{
+    const input=document.getElementById(`vp-${vendorId}-${item.id}`);if(!input)return
+    const val=input.value.trim()
+    if(val!==''&&!isNaN(parseFloat(val)))vendorPricingCache[vendorId][item.id]=parseFloat(val)
   })
-  const btn = document.querySelector(`#pricing-panel-${vendorId} .btn-save-prices`)
-  if (btn) { btn.textContent = 'Saved'; setTimeout(() => btn.textContent = 'Save Prices', 1800) }
+  const btn=document.querySelector(`#pricing-panel-${vendorId} .btn-save-prices`)
+  if(btn){btn.textContent='Saved';setTimeout(()=>btn.textContent='Save Prices',1800)}
 }
 async function clearPricing(vendorId) {
-  if (!confirm('Remove all custom prices for this vendor? They will see default menu prices.')) return
-  const snap  = await db.collection('vendor_pricing').where('vendor_id', '==', vendorId).get()
-  const batch = db.batch()
-  snap.docs.forEach(d => batch.delete(d.ref))
-  await batch.commit()
-  vendorPricingCache[vendorId] = {}
-  renderPricingRows(vendorId)
+  if(!confirm('Remove all custom prices for this vendor?'))return
+  const snap=await db.collection('vendor_pricing').where('vendor_id','==',vendorId).get()
+  const batch=db.batch();snap.docs.forEach(d=>batch.delete(d.ref));await batch.commit()
+  vendorPricingCache[vendorId]={};renderPricingRows(vendorId)
 }
 
-// ── DELETE ORDER (admin) ──
 async function deleteOrderAdmin(orderId) {
-  if (!confirm('Delete this order? This cannot be undone.')) return
+  if(!confirm('Delete this order? This cannot be undone.'))return
   try {
     await db.collection('orders').doc(orderId).delete()
-    allOrders = allOrders.filter(o => o.id !== orderId)
-    renderOrders()
-    document.getElementById('badge-orders').textContent = allOrders.length
-    document.getElementById('stat-new').textContent = allOrders.filter(o=>o.status==='New').length
-    document.getElementById('stat-today').textContent = allOrders.filter(o=>o.delivery_date===TODAY).length
-    document.getElementById('stat-units').textContent = allOrders.reduce((s,o)=>s+(o.items||[]).reduce((ss,i)=>ss+i.quantity,0),0)
-  } catch(e) { alert('Could not delete order: ' + e.message) }
+    allOrders=allOrders.filter(o=>o.id!==orderId);renderOrders()
+    document.getElementById('badge-orders').textContent=allOrders.length
+    document.getElementById('stat-new').textContent=allOrders.filter(o=>o.status==='New').length
+    document.getElementById('stat-today').textContent=allOrders.filter(o=>o.delivery_date===TODAY).length
+    document.getElementById('stat-units').textContent=allOrders.reduce((s,o)=>s+(o.items||[]).reduce((ss,i)=>ss+i.quantity,0),0)
+  } catch(e){alert('Could not delete order: '+e.message)}
 }
 
-// ── EXPORT CSV ──
 function exportCSV() {
-  if (!allOrders.length) { alert('No orders to export.'); return }
-  const rows = [['Order ID','Vendor','Delivery Date','Delivery Time','Status','Item','Quantity','Unit','Price','Notes','Order Placed']]
-  allOrders.forEach(order => {
-    const items = order.items || []
-    const created = order.created_at ? new Date(order.created_at.seconds*1000).toLocaleDateString('en-US') : ''
-    if (!items.length) {
-      rows.push([order.id.slice(0,8).toUpperCase(),order.vendor_name,order.delivery_date,
-        (order.delivery_time||'').slice(0,5),order.status||'New','','','','',order.notes||'',created])
+  if(!allOrders.length){alert('No orders to export.');return}
+  const rows=[['Order ID','Vendor','Delivery Date','Delivery Time','Status','Item','Quantity','Unit','Price','Notes','Order Placed']]
+  allOrders.forEach(order=>{
+    const items=order.items||[]
+    const created=order.created_at?new Date(order.created_at.seconds*1000).toLocaleDateString('en-US'):''
+    if(!items.length){
+      rows.push([order.id.slice(0,8).toUpperCase(),order.vendor_name,order.delivery_date,(order.delivery_time||'').slice(0,5),order.status||'New','','','','',order.notes||'',created])
     } else {
-      items.forEach((item, idx) => {
+      items.forEach((item,idx)=>{
         rows.push([
-          idx===0 ? order.id.slice(0,8).toUpperCase() : '',
-          idx===0 ? order.vendor_name : '',
-          idx===0 ? order.delivery_date : '',
-          idx===0 ? (order.delivery_time||'').slice(0,5) : '',
-          idx===0 ? (order.status||'New') : '',
-          item.item_name,
-          item.quantity,
-          item.unit,
-          item.price ? '$'+Number(item.price).toFixed(2) : '',
-          idx===0 ? (order.notes||'') : '',
-          idx===0 ? created : ''
+          idx===0?order.id.slice(0,8).toUpperCase():'',idx===0?order.vendor_name:'',
+          idx===0?order.delivery_date:'',idx===0?(order.delivery_time||'').slice(0,5):'',
+          idx===0?(order.status||'New'):'',item.item_name,item.quantity,item.unit,
+          item.price?'$'+Number(item.price).toFixed(2):'',idx===0?(order.notes||''):'',idx===0?created:''
         ])
       })
     }
   })
-  const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n')
-  const blob = new Blob([csv], { type: 'text/csv' })
-  const url  = URL.createObjectURL(blob)
-  const a    = document.createElement('a')
-  a.href     = url
-  a.download = `village-bakery-orders-${new Date().toISOString().split('T')[0]}.csv`
-  a.click()
-  URL.revokeObjectURL(url)
+  const csv=rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n')
+  const blob=new Blob([csv],{type:'text/csv'});const url=URL.createObjectURL(blob)
+  const a=document.createElement('a');a.href=url
+  a.download=`village-bakery-orders-${new Date().toISOString().split('T')[0]}.csv`
+  a.click();URL.revokeObjectURL(url)
 }
 
 init()
