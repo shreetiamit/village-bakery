@@ -231,14 +231,52 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .prod-date-heading{border-bottom-color:var(--accent);}
 .pack-date-heading{border-bottom-color:var(--accent);}
 .field input:focus{border-bottom-color:var(--accent);}
-  
+/* ── Grain texture ── */
+body::after{content:'';position:fixed;inset:-50%;width:200%;height:200%;pointer-events:none;z-index:2;opacity:.035;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");animation:grain 8s steps(10) infinite;}
+@keyframes grain{0%,100%{transform:translate(0,0)}10%{transform:translate(-5%,-10%)}20%{transform:translate(-15%,5%)}30%{transform:translate(7%,-25%)}40%{transform:translate(-5%,25%)}50%{transform:translate(-15%,10%)}60%{transform:translate(15%,0)}70%{transform:translate(0,15%)}80%{transform:translate(3%,35%)}90%{transform:translate(-10%,10%)}}
+
+/* ── Logo on auth ── */
+.auth-logo{width:64px;height:64px;display:block;margin:0 auto 20px;object-fit:contain;}
+
+/* ── Logo loading spinner ── */
+.spinner-logo{width:72px;height:72px;object-fit:contain;animation:logoPulse 1.6s ease-in-out infinite;}
+@keyframes logoPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.9)}}
+
+/* ── Page fade-in ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+#v-auth,#v-pending,#v-business-name,#v-app{animation:fadeUp .4s ease forwards;}
+
+/* ── Button lift ── */
+.btn-submit{transition:background .15s,transform .12s,box-shadow .12s;}
+.btn-submit:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 6px 18px rgba(196,133,42,.25);}
+.btn-submit:active:not(:disabled){transform:translateY(0);box-shadow:none;}
+.btn-google{transition:all .15s;}
+.btn-google:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(44,26,14,.1);}
+
+/* ── Qty button press ── */
+.qty-btn{transition:all .1s;}
+.qty-btn:active{transform:scale(.85);background:var(--border);}
+
+/* ── Tab fade ── */
+@keyframes tabFade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── Order card stagger ── */
+@keyframes cardSlide{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.order-card{animation:cardSlide .3s ease forwards;}
+.order-card:nth-child(2){animation-delay:.05s}
+.order-card:nth-child(3){animation-delay:.1s}
+.order-card:nth-child(4){animation-delay:.15s}
+.order-card:nth-child(5){animation-delay:.2s}
+.order-card:nth-child(6){animation-delay:.25s}
 </style>
 </head>
 <body>
-<div id="v-loading"><div class="spinner"></div></div>
+<div id="v-loading"><img class="spinner-logo" src="../assets/logo.png" alt=""></div>
 <div id="v-auth" class="hidden">
   <div class="auth-wrap">
     <div class="auth-brand">
+      <div class="auth-brand">
+      <img src="../assets/logo.png" class="auth-logo" alt="Village Bakery">
       <div class="wordmark" style="text-align:center">Village Bakery + Provisions</div>
       <div class="auth-divider"></div>
       <div class="auth-sub" style="text-align:center">Admin Panel</div>
