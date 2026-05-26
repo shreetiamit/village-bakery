@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Village Bakery + Provisions — Admin</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#f8f6f2;
+  --surface:#ffffff;
+  --text:#1a1916;
+  --text2:#6b6860;
+  --text3:#a09d98;
+  --border:#dedad4;
+  --border2:#c8c4bc;
+  --accent:#7a5c48;
+  --dark:#1a1916;
+  --header:#1a1916;
+  --err:#a03a26;
+  --green:#2d6040;
+  --gold:#7a6000;
+  --blue:#1a4a7a;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;}
+.hidden{display:none!important;}
+
+/* ── Loading ── */
+#v-loading{display:flex;align-items:center;justify-content:center;min-height:100vh;}
+.spinner{width:20px;height:20px;border:1.5px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ── Auth ── */
+#v-auth{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px 24px;}
+.auth-wrap{width:100%;max-width:340px;}
+.auth-brand{text-align:center;margin-bottom:40px;}
+.wordmark{font-family:'Cormorant Garamond',serif;font-size:13px;font-weight:600;letter-spacing:.25em;text-transform:uppercase;color:var(--text);}
+.auth-divider{width:32px;height:1px;background:var(--border2);margin:14px auto;}
+.auth-sub{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--text2);}
+.auth-card{background:var(--surface);border:1px solid var(--border);padding:28px;margin-top:0;}
+.field{margin-bottom:18px;}
+.field label{display:block;font-size:10px;font-weight:500;letter-spacing:.15em;text-transform:uppercase;color:var(--text2);margin-bottom:8px;}
+.field input{width:100%;padding:10px 0;border:none;border-bottom:1px solid var(--border);background:transparent;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);outline:none;transition:border-color .15s;border-radius:0;}
+.field input:focus{border-bottom-color:var(--text);}
+.btn-primary{width:100%;padding:13px;background:var(--dark);color:white;border:none;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:opacity .15s;}
+.btn-primary:hover{opacity:.85;}
+.error-msg{font-size:12px;color:var(--err);margin-top:10px;display:none;}
+
+/* ── Header ── */
+.header{background:var(--header);color:white;display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:52px;position:sticky;top:0;z-index:100;}
+.header-brand{display:flex;align-items:center;gap:16px;}
+.header-wordmark{font-family:'Cormorant Garamond',serif;font-size:12px;font-weight:600;letter-spacing:.25em;text-transform:uppercase;color:white;}
+.header-sep{width:1px;height:16px;background:rgba(255,255,255,.2);}
+.header-label{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.5);}
+.btn-signout{background:none;border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.7);padding:6px 14px;font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;transition:all .15s;}
+.btn-signout:hover{border-color:rgba(255,255,255,.5);color:white;}
+
+/* ── Tabs ── */
+.tabs{background:var(--surface);border-bottom:1px solid var(--border);display:flex;padding:0 32px;}
+.tab{padding:14px 0;margin-right:28px;font-size:10px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--text2);cursor:pointer;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;background:none;display:flex;align-items:center;gap:8px;transition:all .15s;}
+.tab:hover{color:var(--text);}
+.tab.active{color:var(--text);border-bottom-color:var(--text);}
+.tab-badge{background:var(--bg);border:1px solid var(--border);color:var(--text2);border-radius:2px;padding:1px 6px;font-size:9px;letter-spacing:.08em;}
+.tab.active .tab-badge{background:var(--dark);border-color:var(--dark);color:white;}
+.tab-badge.alert{background:#fff8e0;border-color:#d4a800;color:#7a6000;}
+.tab.active .tab-badge.alert{background:#d4a800;border-color:#d4a800;color:white;}
+
+/* ── Content ── */
+.content{max-width:900px;margin:0 auto;padding:32px 24px 80px;}
+.panel{display:none;}.panel.active{display:block;}
+
+/* ── Stats ── */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin-bottom:32px;}
+.stat-card{background:var(--surface);padding:20px 24px;}
+.stat-val{font-family:'DM Sans',sans-serif;font-size:28px;font-weight:700;line-height:1;color:var(--text);}
+.stat-val.rust{color:#a03a26;}
+.stat-val.gold{color:var(--gold);}
+.stat-val.green-c{color:var(--green);}
+.stat-lbl{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--text2);margin-top:6px;}
+
+/* ── Date groups ── */
+.date-group{margin-bottom:28px;}
+.date-header{display:flex;justify-content:space-between;align-items:baseline;padding:10px 0;border-bottom:2px solid var(--dark);margin-bottom:0;}
+.date-header-label{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;}
+.date-header-stats{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text2);}
+.order-row{display:flex;justify-content:space-between;align-items:flex-start;padding:14px 0;border-bottom:1px solid var(--border);gap:16px;background:var(--surface);margin:0 -1px;padding-left:1px;padding-right:1px;}
+.order-row:hover{background:var(--bg);}
+.order-vendor{font-size:14px;font-weight:500;margin-bottom:4px;letter-spacing:.01em;}
+.order-items-text{font-size:12px;color:var(--text2);line-height:1.6;}
+.order-notes-text{font-size:11px;color:var(--text3);margin-top:4px;font-style:italic;}
+.order-row-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0;}
+.order-time{font-size:11px;letter-spacing:.08em;color:var(--text2);}
+.order-units{font-size:11px;color:var(--text3);}
+.status-select{padding:4px 8px;border:1px solid var(--border);font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;outline:none;background:var(--surface);color:var(--text);border-radius:0;}
+.status-select.new{background:#fffbec;color:var(--gold);border-color:#e6d080;}
+.status-select.seen{background:#ecf4ff;color:var(--blue);border-color:#80aae6;}
+.status-select.done{background:#ecfaf2;color:var(--green);border-color:#80c4a0;}
+.btn-invoice{background:none;border:1px solid var(--border);color:var(--text2);padding:4px 10px;font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.btn-invoice:hover{border-color:var(--border2);color:var(--text);}
+
+/* ── Vendors ── */
+.vendors-section{margin-bottom:28px;}
+.section-heading{font-size:10px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--text2);padding:10px 0;border-bottom:1px solid var(--border);margin-bottom:0;}
+.vendor-row{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid var(--border);gap:16px;}
+.vendor-row.pending{background:transparent;}
+.vendor-row.inactive{opacity:.5;}
+.vendor-name{font-size:14px;font-weight:400;margin-bottom:3px;}
+.vendor-email{font-size:11px;color:var(--text2);letter-spacing:.02em;}
+.vendor-date{font-size:10px;color:var(--text3);margin-top:2px;letter-spacing:.05em;}
+.vendor-actions{display:flex;gap:8px;flex-shrink:0;}
+.btn-approve{background:var(--dark);color:white;border:none;padding:7px 16px;font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;transition:opacity .15s;}
+.btn-approve:hover{opacity:.8;}
+.btn-deactivate{background:none;border:1px solid var(--border);color:var(--text2);padding:6px 12px;font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:all .15s;}
+.btn-deactivate:hover{border-color:var(--border2);color:var(--text);}
+.btn-activate{background:none;border:1px solid var(--border2);color:var(--text);padding:6px 12px;font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;}
+.btn-pricing{background:none;border:1px solid var(--border);color:var(--text2);padding:6px 12px;font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:all .15s;}
+.btn-pricing:hover{border-color:var(--accent);color:var(--accent);}
+.btn-pricing.active{background:var(--accent);border-color:var(--accent);color:white;}
+
+/* ── Pricing panel ── */
+.pricing-panel{border:1px solid var(--border);border-top:none;background:#fbf9f6;padding:20px 20px 16px;display:none;}
+.pricing-panel-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px;}
+.pricing-panel-title{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--text2);font-weight:500;}
+.pricing-panel-note{font-size:11px;color:var(--text3);font-style:italic;}
+.pricing-row{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border);}
+.pricing-row:last-of-type{border-bottom:none;}
+.pricing-item-name{font-size:13px;flex:1;color:var(--text);}
+.pricing-default{font-size:11px;color:var(--text3);white-space:nowrap;}
+.pricing-override{display:flex;align-items:center;gap:3px;flex-shrink:0;}
+.pricing-override span{font-size:12px;color:var(--text2);}
+.price-override-input{width:72px;padding:4px 6px;border:1px solid var(--border);background:white;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none;border-radius:0;text-align:right;}
+.price-override-input:focus{border-color:var(--border2);}
+.pricing-actions{display:flex;gap:10px;margin-top:16px;padding-top:14px;border-top:1px solid var(--border);}
+.btn-save-prices{background:var(--dark);color:white;border:none;padding:8px 18px;font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;transition:opacity .15s;}
+.btn-save-prices:hover{opacity:.8;}
+.btn-clear-prices{background:none;border:1px solid var(--border);color:var(--text2);padding:7px 14px;font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:all .15s;}
+.btn-clear-prices:hover{border-color:#c08080;color:var(--err);}
+
+/* ── Menu ── */
+.menu-row{display:flex;align-items:center;padding:12px 0;border-bottom:1px solid var(--border);gap:12px;}
+.menu-row.inactive{opacity:.4;}
+.menu-item-name{font-size:14px;font-weight:300;flex:1;}
+.menu-item-unit{font-size:11px;color:var(--text2);width:60px;letter-spacing:.05em;}
+.price-field{display:flex;align-items:center;gap:4px;flex-shrink:0;}
+.price-symbol{font-size:12px;color:var(--text2);}
+.price-input{width:64px;padding:4px 6px;border:1px solid var(--border);background:transparent;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none;border-radius:0;text-align:right;}
+.price-input:focus{border-color:var(--border2);}
+.menu-actions{display:flex;gap:6px;flex-shrink:0;}
+.btn-hide,.btn-show,.btn-delete{background:none;border:1px solid var(--border);color:var(--text2);padding:4px 10px;font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .15s;}
+.btn-hide:hover,.btn-show:hover{border-color:var(--border2);color:var(--text);}
+.btn-delete:hover{border-color:#c08080;color:var(--err);}
+.add-form{padding:20px 0 0;border-top:1px solid var(--border);margin-top:8px;}
+.add-form-title{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--text2);margin-bottom:12px;}
+.add-form-row{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;}
+.add-input{padding:8px 0;border:none;border-bottom:1px solid var(--border);background:transparent;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);outline:none;flex:1;min-width:140px;border-radius:0;}
+.add-input:focus{border-bottom-color:var(--text);}
+.add-input::placeholder{color:var(--text3);}
+.add-select{padding:8px 10px;border:1px solid var(--border);background:var(--surface);font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none;cursor:pointer;border-radius:0;}
+.btn-add{background:var(--dark);color:white;border:none;padding:9px 20px;font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;white-space:nowrap;transition:opacity .15s;}
+.btn-add:hover{opacity:.8;}
+.section-label{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--text2);padding:14px 0 8px;border-bottom:1px solid var(--border);}
+.empty-state{text-align:center;padding:40px;font-size:13px;color:var(--text2);letter-spacing:.05em;}
+
+/* ── Unauthorized ── */
+#v-unauthorized{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px;}
+.unauth-card{background:var(--surface);border:1px solid var(--border);padding:40px;max-width:340px;text-align:center;}
+.unauth-card h2{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;margin-bottom:10px;}
+.unauth-card p{font-size:13px;color:var(--text2);margin-bottom:24px;line-height:1.7;}
+
+/* ── Date filter controls ── */
+.filter-bar{display:flex;align-items:center;gap:10px;margin-bottom:28px;flex-wrap:wrap;}
+.filter-btn{padding:7px 14px;font-family:'DM Sans',sans-serif;font-size:10px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;transition:all .15s;}
+.filter-btn:hover{border-color:var(--border2);color:var(--text);}
+.filter-btn.active{background:var(--dark);border-color:var(--dark);color:white;}
+.filter-sep{width:1px;height:20px;background:var(--border);flex-shrink:0;}
+.filter-date-input{padding:7px 10px;border:1px solid var(--border);background:transparent;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--text);outline:none;cursor:pointer;}
+.filter-date-input:focus{border-color:var(--border2);}
+.filter-label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text2);}
+.print-btn{margin-left:auto;padding:7px 16px;font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:.14em;text-transform:uppercase;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;transition:all .15s;}
+.print-btn:hover{border-color:var(--border2);color:var(--text);}
+
+/* ── Production list ── */
+.prod-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);margin-bottom:28px;}
+.prod-stat{background:var(--surface);padding:16px 20px;}
+.prod-stat-val{font-family:'DM Sans',sans-serif;font-size:26px;font-weight:600;line-height:1;}
+.prod-stat-lbl{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--text2);margin-top:4px;}
+.prod-date-block{margin-bottom:32px;}
+.prod-date-heading{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;letter-spacing:.02em;padding:10px 0;border-bottom:2px solid var(--dark);margin-bottom:0;display:flex;justify-content:space-between;align-items:baseline;}
+.prod-date-sub{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text2);}
+.prod-item-row{display:flex;align-items:baseline;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--border);}
+.prod-item-name{font-size:14px;font-weight:400;}
+.prod-item-vendors{font-size:11px;color:var(--text3);margin-top:2px;}
+.prod-item-qty{font-family:'DM Sans',sans-serif;font-size:22px;font-weight:600;color:var(--text);}
+.prod-item-unit{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text2);margin-left:4px;}
+
+/* ── Packing + delivery ── */
+.pack-date-block{margin-bottom:36px;}
+.pack-date-heading{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;padding:10px 0;border-bottom:2px solid var(--dark);margin-bottom:16px;display:flex;justify-content:space-between;align-items:baseline;}
+.pack-vendor-card{border:1px solid var(--border);margin-bottom:12px;}
+.pack-vendor-header{background:var(--bg);padding:11px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);}
+.pack-vendor-name{font-size:13px;font-weight:500;letter-spacing:.02em;}
+.pack-vendor-time{font-size:11px;color:var(--text2);letter-spacing:.08em;}
+.pack-item-row{display:flex;justify-content:space-between;align-items:center;padding:9px 16px;border-bottom:1px solid var(--border);}
+.pack-item-row:last-child{border-bottom:none;}
+.pack-item-name{font-size:13px;color:var(--text);}
+.pack-item-qty{font-size:13px;font-weight:500;color:var(--text);}
+.pack-notes{padding:8px 16px;font-size:11px;color:var(--text2);font-style:italic;background:#fbf9f6;border-top:1px dashed var(--border);}
+.pack-vendor-total{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text2);}
+
+/* ── Print styles ── */
+@media print {
+  .header,.tabs,.filter-bar,.print-btn,.stats-row,.pricing-panel{display:none!important;}
+  .content{padding:0!important;max-width:100%!important;}
+  .panel{display:block!important;}
+  .prod-date-block,.pack-date-block{page-break-inside:avoid;}
+}
+</style>
+</head>
+<body>
+
+<div id="v-loading"><div class="spinner"></div></div>
+
+<div id="v-auth" class="hidden">
+  <div class="auth-wrap">
+    <div class="auth-brand">
+      <div class="wordmark" style="text-align:center">Village Bakery + Provisions</div>
+      <div class="auth-divider"></div>
+      <div class="auth-sub" style="text-align:center">Admin Panel</div>
+    </div>
+    <div class="auth-card" style="margin-top:32px">
+      <div class="field"><label>Email</label><input type="email" id="admin-email" placeholder="orders@..."></div>
+      <div class="field"><label>Password</label><input type="password" id="admin-pass" placeholder=""></div>
+      <p class="error-msg" id="auth-error"></p>
+      <button class="btn-primary" style="margin-top:8px" onclick="handleLogin()">Sign In</button>
+    </div>
+  </div>
+</div>
+
+<div id="v-unauthorized" class="hidden">
+  <div class="unauth-card">
+    <h2>Not Authorized</h2>
+    <p>This account does not have admin access.</p>
+    <button class="btn-primary" onclick="handleLogout()">Sign Out</button>
+  </div>
+</div>
+
+<div id="v-app" class="hidden">
+  <div class="header">
+    <div class="header-brand">
+      <span class="header-wordmark">Village Bakery + Provisions</span>
+      <div class="header-sep"></div>
+      <span class="header-label">Admin</span>
+    </div>
+    <button class="btn-signout" onclick="handleLogout()">Sign Out</button>
+  </div>
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('orders',this)">Orders <span class="tab-badge" id="badge-orders">0</span></button>
+    <button class="tab" onclick="switchTab('vendors',this)">Vendors <span class="tab-badge alert" id="badge-vendors">0</span></button>
+    <button class="tab" onclick="switchTab('menu',this)">Menu <span class="tab-badge" id="badge-menu">0</span></button>
+    <button class="tab" onclick="switchTab('production',this)">Production</button>
+    <button class="tab" onclick="switchTab('packing',this)">Packing + Delivery</button>
+  </div>
+  <div class="content">
+    <div class="panel active" id="panel-orders">
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-val rust" id="stat-new">0</div><div class="stat-lbl">New orders</div></div>
+        <div class="stat-card"><div class="stat-val gold" id="stat-today">0</div><div class="stat-lbl">Due today</div></div>
+        <div class="stat-card"><div class="stat-val green-c" id="stat-units">0</div><div class="stat-lbl">Total units</div></div>
+      </div>
+      <div id="orders-list"><div class="empty-state">No orders yet.</div></div>
+    </div>
+    <div class="panel" id="panel-vendors">
+      <div id="vendors-list"><div class="empty-state">Loading...</div></div>
+    </div>
+    <div class="panel" id="panel-menu">
+      <div id="menu-card"><div class="empty-state">Loading...</div></div>
+    </div>
+    <div class="panel" id="panel-production">
+      <div id="production-content"></div>
+    </div>
+    <div class="panel" id="panel-packing">
+      <div id="packing-content"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://jomfqvloybvbkdcvpbuq.supabase.co'
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpvbWZxdmxveWJ2YmtkY3ZwYnVxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1NDg0NjksImV4cCI6MjA5MjEyNDQ2OX0.8tyONJKxVL08rzy8Kq15lVLQo3155HgiA9UjI869Ioo'
+const { createClient } = window.supabase
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY)
+
+let currentUser = null, profile = null
+let allOrders = [], allVendors = [], allMenu = []
+const TODAY = new Date().toISOString().split('T')[0]
+
+// Date filter state — shared between production and packing tabs
+const filterState = {
+  production: { mode: 'today', from: TODAY, to: TODAY },
+  packing:    { mode: 'today', from: TODAY, to: TODAY },
+}
+
+function show(id) {
+  ['v-loading','v-auth','v-unauthorized','v-app'].forEach(v =>
+    document.getElementById(v).classList.toggle('hidden', v !== id))
+}
+function switchTab(name, el) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'))
+  el.classList.add('active')
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'))
+  document.getElementById('panel-'+name).classList.add('active')
+  if (name === 'production') renderProduction()
+  if (name === 'packing')    renderPacking()
+}
+
+async function init() {
+  try {
+    const { data: { session } } = await sb.auth.getSession()
+    if (!session) { show('v-auth'); return }
+    currentUser = session.user
+    const { data } = await sb.from('profiles').select('*').eq('id', currentUser.id).single()
+    profile = data
+    if (!profile?.is_admin) { show('v-unauthorized'); return }
+    await Promise.all([loadOrders(), loadVendors(), loadMenu()])
+    renderOrders(); renderVendors(); renderMenu()
+    show('v-app')
+  } catch(e) { show('v-auth') }
+}
+
+async function handleLogin() {
+  const email = document.getElementById('admin-email').value.trim()
+  const pass  = document.getElementById('admin-pass').value
+  const errEl = document.getElementById('auth-error')
+  errEl.style.display='none'
+  try {
+    const { data, error } = await sb.auth.signInWithPassword({ email, password: pass })
+    if (error) throw error
+    currentUser = data.user
+    const { data: p } = await sb.from('profiles').select('*').eq('id', currentUser.id).single()
+    profile = p
+    if (!profile?.is_admin) { show('v-unauthorized'); return }
+    await Promise.all([loadOrders(), loadVendors(), loadMenu()])
+    renderOrders(); renderVendors(); renderMenu()
+    show('v-app')
+  } catch(e) { errEl.textContent=e.message; errEl.style.display='block' }
+}
+
+async function handleLogout() {
+  await sb.auth.signOut(); show('v-auth')
+}
+
+async function loadOrders() {
+  const { data } = await sb.from('orders').select('*, order_items(*)').order('delivery_date').order('delivery_time')
+  allOrders = data || []
+  const newCount = allOrders.filter(o=>o.status==='New').length
+  document.getElementById('badge-orders').textContent = allOrders.length
+  document.getElementById('stat-new').textContent = newCount
+  document.getElementById('stat-today').textContent = allOrders.filter(o=>o.delivery_date===TODAY).length
+  document.getElementById('stat-units').textContent = allOrders.reduce((s,o)=>s+o.order_items.reduce((ss,i)=>ss+i.quantity,0),0)
+}
+
+async function loadVendors() {
+  const { data } = await sb.from('profiles').select('*').eq('is_admin',false).order('created_at',{ascending:false})
+  allVendors = data || []
+  const pending = allVendors.filter(v=>!v.approved).length
+  const badgeEl = document.getElementById('badge-vendors')
+  badgeEl.textContent = pending || allVendors.length
+  if (pending > 0) badgeEl.classList.add('alert'); else badgeEl.classList.remove('alert')
+}
+
+async function loadMenu() {
+  const { data } = await sb.from('menu_items').select('*').order('sort_order')
+  allMenu = data || []
+  document.getElementById('badge-menu').textContent = allMenu.filter(m=>m.active).length
+}
+
+function renderOrders() {
+  const el = document.getElementById('orders-list')
+  if (!allOrders.length) { el.innerHTML='<div class="empty-state">No orders yet.</div>'; return }
+  const byDate = {}
+  allOrders.forEach(o => { if (!byDate[o.delivery_date]) byDate[o.delivery_date]=[]; byDate[o.delivery_date].push(o); })
+  el.innerHTML = Object.entries(byDate).sort(([a],[b])=>a.localeCompare(b)).map(([date,orders]) => {
+    const d = new Date(date+'T12:00:00')
+    const label = d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})
+    const units = orders.reduce((s,o)=>s+o.order_items.reduce((ss,i)=>ss+i.quantity,0),0)
+    return `<div class="date-group">
+      <div class="date-header">
+        <div class="date-header-label">${date===TODAY?'Today — ':''}${label}</div>
+        <div class="date-header-stats">${orders.length} order${orders.length!==1?'s':''}&ensp;&middot;&ensp;${units} units</div>
+      </div>
+      ${orders.map(order => {
+        const total = order.order_items.reduce((s,i)=>s+i.quantity,0)
+        const items = order.order_items.map(i=>`${i.item_name} &times; ${i.quantity}`).join(', ')
+        const st = (order.status||'new').toLowerCase()
+        return `<div class="order-row">
+          <div style="flex:1">
+            <div class="order-vendor">${order.vendor_name}</div>
+            <div class="order-items-text">${items}</div>
+            ${order.notes?`<div class="order-notes-text">${order.notes}</div>`:''}
+          </div>
+          <div class="order-row-right">
+            <div class="order-time">${(order.delivery_time||'').slice(0,5)}</div>
+            <div class="order-units">${total} units</div>
+            <select class="status-select ${st}" onchange="updateStatus('${order.id}',this)">
+              <option value="New" ${order.status==='New'?'selected':''}>New</option>
+              <option value="Seen" ${order.status==='Seen'?'selected':''}>Seen</option>
+              <option value="Done" ${order.status==='Done'?'selected':''}>Done</option>
+            </select>
+            <button class="btn-invoice" onclick="openInvoice('${order.id}')">Invoice</button>
+          </div>
+        </div>`
+      }).join('')}
+    </div>`
+  }).join('')
+}
+
+async function updateStatus(orderId, sel) {
+  const status = sel.value
+  sel.className = 'status-select '+status.toLowerCase()
+  await sb.from('orders').update({status}).eq('id',orderId)
+  const o = allOrders.find(o=>o.id===orderId); if (o) o.status = status
+  document.getElementById('stat-new').textContent = allOrders.filter(o=>o.status==='New').length
+}
+
+function renderVendors() {
+  const el = document.getElementById('vendors-list')
+  const pending  = allVendors.filter(v=>!v.approved)
+  const active   = allVendors.filter(v=>v.approved&&v.active)
+  const inactive = allVendors.filter(v=>v.approved&&!v.active)
+
+  const pendingHtml = pending.length ? `
+    <div class="vendors-section">
+      <div class="section-heading" style="color:#7a6000">Pending Approval &mdash; ${pending.length}</div>
+      ${pending.map(v=>`
+        <div class="vendor-row pending">
+          <div>
+            <div class="vendor-name">${v.business_name||'No name'}</div>
+            <div class="vendor-email">${v.email}</div>
+            <div class="vendor-date">Signed up ${new Date(v.created_at).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}</div>
+          </div>
+          <div class="vendor-actions">
+            <button class="btn-approve" onclick="approveVendor('${v.id}')">Approve</button>
+          </div>
+        </div>`).join('')}
+    </div>` : ''
+
+  const activeHtml = `
+    <div class="vendors-section">
+      <div class="section-heading">Active Vendors &mdash; ${active.length}</div>
+      ${active.length ? active.map(v=>`
+        <div class="vendor-row">
+          <div style="flex:1">
+            <div style="display:flex;align-items:center;gap:8px">
+              <div class="vendor-name" id="vname-${v.id}">${v.business_name||'No name'}</div>
+              <button onclick="editVendorName('${v.id}')" style="background:none;border:none;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);cursor:pointer;padding:0;text-decoration:underline;text-underline-offset:2px">Edit</button>
+            </div>
+            <div class="vendor-email">${v.email}</div>
+          </div>
+          <div class="vendor-actions">
+            <button class="btn-pricing" id="pricing-btn-${v.id}" onclick="togglePricing('${v.id}')">Pricing</button>
+            <button class="btn-deactivate" onclick="toggleActive('${v.id}',false)">Deactivate</button>
+          </div>
+        </div>
+        <div class="pricing-panel" id="pricing-panel-${v.id}">
+          <div class="pricing-panel-header">
+            <span class="pricing-panel-title">Custom Prices for ${v.business_name||v.email}</span>
+            <span class="pricing-panel-note">Leave blank to use the default menu price</span>
+          </div>
+          <div id="pricing-rows-${v.id}"><div style="font-size:13px;color:var(--text3);padding:8px 0">Loading...</div></div>
+          <div class="pricing-actions">
+            <button class="btn-save-prices" onclick="savePricing('${v.id}')">Save Prices</button>
+            <button class="btn-clear-prices" onclick="clearPricing('${v.id}')">Clear All Custom</button>
+          </div>
+        </div>`).join('') : '<div class="empty-state" style="padding:20px 0;text-align:left">No active vendors yet.</div>'}
+    </div>`
+
+  const inactiveHtml = inactive.length ? `
+    <div class="vendors-section">
+      <div class="section-heading">Inactive &mdash; ${inactive.length}</div>
+      ${inactive.map(v=>`
+        <div class="vendor-row inactive">
+          <div>
+            <div class="vendor-name">${v.business_name||'No name'}</div>
+            <div class="vendor-email">${v.email}</div>
+          </div>
+          <button class="btn-activate" onclick="toggleActive('${v.id}',true)">Reactivate</button>
+        </div>`).join('')}
+    </div>` : ''
+
+  el.innerHTML = pendingHtml + activeHtml + inactiveHtml
+}
+
+async function approveVendor(id) {
+  await sb.from('profiles').update({approved:true}).eq('id',id)
+  const v = allVendors.find(v=>v.id===id); if (v) v.approved=true
+  const pending = allVendors.filter(v=>!v.approved).length
+  const badgeEl = document.getElementById('badge-vendors')
+  badgeEl.textContent = pending || allVendors.length
+  if (pending > 0) badgeEl.classList.add('alert'); else badgeEl.classList.remove('alert')
+  renderVendors()
+}
+
+async function toggleActive(id, active) {
+  await sb.from('profiles').update({active}).eq('id',id)
+  const v = allVendors.find(v=>v.id===id); if (v) v.active=active
+  renderVendors()
+}
+
+async function editVendorName(id) {
+  const v = allVendors.find(v=>v.id===id)
+  if (!v) return
+  const name = prompt('Business name for ' + (v.email) + ':', v.business_name || '')
+  if (name === null) return // cancelled
+  await sb.from('profiles').update({ business_name: name.trim() }).eq('id', id)
+  v.business_name = name.trim()
+  renderVendors()
+}
+
+function renderMenu() {
+  const active   = allMenu.filter(m=>m.active)
+  const inactive = allMenu.filter(m=>!m.active)
+  document.getElementById('badge-menu').textContent = active.length
+
+  document.getElementById('menu-card').innerHTML = `
+    <div class="section-label">Active Items &mdash; ${active.length}</div>
+    ${active.map(item=>`
+      <div class="menu-row">
+        <div class="menu-item-name">${item.name}</div>
+        <div class="menu-item-unit">${item.unit}</div>
+        <div class="price-field">
+          <span class="price-symbol">$</span>
+          <input class="price-input" type="number" step="0.01" min="0" value="${Number(item.price||0).toFixed(2)}"
+                 onblur="updatePrice('${item.id}',this.value)" onkeydown="if(event.key==='Enter')this.blur()" title="Price per unit">
+        </div>
+        <div class="menu-actions">
+          <button class="btn-hide" onclick="toggleItem('${item.id}',false)">Hide</button>
+          <button class="btn-delete" onclick="deleteItem('${item.id}')">Delete</button>
+        </div>
+      </div>`).join('')}
+    ${inactive.length ? `
+      <div class="section-label" style="margin-top:8px">Hidden &mdash; ${inactive.length}</div>
+      ${inactive.map(item=>`
+        <div class="menu-row inactive">
+          <div class="menu-item-name">${item.name}</div>
+          <div class="menu-item-unit">${item.unit}</div>
+          <div class="price-field">
+            <span class="price-symbol">$</span>
+            <input class="price-input" type="number" step="0.01" min="0" value="${Number(item.price||0).toFixed(2)}"
+                   onblur="updatePrice('${item.id}',this.value)" onkeydown="if(event.key==='Enter')this.blur()">
+          </div>
+          <div class="menu-actions">
+            <button class="btn-show" onclick="toggleItem('${item.id}',true)">Show</button>
+            <button class="btn-delete" onclick="deleteItem('${item.id}')">Delete</button>
+          </div>
+        </div>`).join('')}` : ''}
+    <div class="add-form">
+      <div class="add-form-title">Add New Item</div>
+      <div class="add-form-row">
+        <input class="add-input" id="new-name" type="text" placeholder="Item name">
+        <select class="add-select" id="new-unit">
+          <option value="each">each</option>
+          <option value="loaf">loaf</option>
+          <option value="tray">tray</option>
+          <option value="8-pack">8-pack</option>
+          <option value="dozen">dozen</option>
+          <option value="box">box</option>
+        </select>
+        <input class="add-input" id="new-price" type="number" step="0.01" min="0" placeholder="Price $" style="max-width:90px">
+        <button class="btn-add" onclick="addItem()">Add</button>
+      </div>
+    </div>`
+}
+
+async function updatePrice(id, price) {
+  const p = parseFloat(price) || 0
+  await sb.from('menu_items').update({price: p}).eq('id', id)
+  const m = allMenu.find(m=>m.id===id); if(m) m.price = p
+}
+
+async function toggleItem(id, active) {
+  await sb.from('menu_items').update({active}).eq('id',id)
+  const m = allMenu.find(m=>m.id===id); if (m) m.active=active
+  renderMenu()
+}
+
+async function deleteItem(id) {
+  if (!confirm('Delete this item from the menu?')) return
+  await sb.from('menu_items').delete().eq('id',id)
+  allMenu = allMenu.filter(m=>m.id!==id)
+  renderMenu()
+}
+
+async function addItem() {
+  const name  = document.getElementById('new-name').value.trim()
+  const unit  = document.getElementById('new-unit').value
+  const price = parseFloat(document.getElementById('new-price').value) || 0
+  if (!name) return
+  const sortOrder = Math.max(0,...allMenu.map(m=>m.sort_order)) + 1
+  const { data } = await sb.from('menu_items').insert({name,unit,price,sort_order:sortOrder}).select().single()
+  if (data) { allMenu.push(data); renderMenu() }
+}
+
+function openInvoice(orderId) {
+  const order = allOrders.find(o=>o.id===orderId)
+  if (!order) return
+  const w = window.open('','_blank')
+  w.document.write(generateInvoiceHtml(order))
+  w.document.close()
+  setTimeout(()=>w.print(), 600)
+}
+
+function generateInvoiceHtml(order) {
+  const items = order.order_items || []
+  const totalUnits = items.reduce((s,i)=>s+i.quantity,0)
+  const totalPrice = items.reduce((s,i)=>s+(i.price||0)*i.quantity,0)
+  const issued = new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})
+  const d = new Date((order.delivery_date||'')+'T12:00:00')
+  const deliveryStr = d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'})
+
+  const rows = items.map(i => {
+    const subtotal = (i.price||0)*i.quantity
+    return `<tr>
+      <td style="padding:10px 0;border-bottom:1px solid #e8e4de;font-size:14px">${i.item_name}</td>
+      <td style="padding:10px 0;border-bottom:1px solid #e8e4de;text-align:center;font-size:14px">${i.quantity}</td>
+      <td style="padding:10px 0;border-bottom:1px solid #e8e4de;text-align:center;font-size:13px;color:#6b6860">${i.unit}</td>
+      <td style="padding:10px 0;border-bottom:1px solid #e8e4de;text-align:right;font-size:14px">${i.price?'$'+Number(i.price).toFixed(2):'&mdash;'}</td>
+      <td style="padding:10px 0;border-bottom:1px solid #e8e4de;text-align:right;font-size:14px;font-weight:500">${subtotal>0?'$'+subtotal.toFixed(2):'&mdash;'}</td>
+    </tr>`
+  }).join('')
+
+  return `<!DOCTYPE html><html><head><meta charset="UTF-8">
+  <title>Invoice &mdash; ${order.id.slice(0,8).toUpperCase()}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'DM Sans',sans-serif;background:white;color:#1a1916;padding:56px;max-width:760px;margin:0 auto;-webkit-font-smoothing:antialiased;}
+    @media print{body{padding:32px;}.no-print{display:none!important;}}
+    .no-print{text-align:center;margin-bottom:32px;padding-bottom:32px;border-bottom:1px solid #e8e4de;}
+    .print-btn{background:#1a1916;color:white;border:none;padding:10px 24px;font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;}
+    .wordmark{font-family:'Cormorant Garamond',serif;font-size:13px;font-weight:600;letter-spacing:.25em;text-transform:uppercase;}
+    .invoice-label{font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:600;letter-spacing:.05em;}
+  </style></head><body>
+  <div class="no-print"><button class="print-btn" onclick="window.print()">Download / Print PDF</button></div>
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:48px">
+    <div>
+      <div class="wordmark">Village Bakery + Provisions</div>
+      <div style="font-size:12px;color:#6b6860;margin-top:8px;line-height:2">
+        212 Thompson Lane, Nashville, TN 37211<br>
+        orders@villagebakeryandprovisions.com<br>
+        (615) 498-5385
+      </div>
+    </div>
+    <div style="text-align:right">
+      <div class="invoice-label">Invoice</div>
+      <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#6b6860;margin-top:6px">#${order.id.slice(0,8).toUpperCase()}</div>
+      <div style="font-size:12px;color:#6b6860;margin-top:4px">Issued ${issued}</div>
+    </div>
+  </div>
+  <div style="display:flex;justify-content:space-between;margin-bottom:40px;padding-bottom:24px;border-bottom:2px solid #1a1916">
+    <div>
+      <div style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#6b6860;margin-bottom:8px">Bill To</div>
+      <div style="font-size:16px;font-weight:500">${order.vendor_name}</div>
+    </div>
+    <div style="text-align:right">
+      <div style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#6b6860;margin-bottom:8px">Delivery</div>
+      <div style="font-size:14px;font-weight:500">${deliveryStr}</div>
+      <div style="font-size:13px;color:#6b6860;margin-top:3px">at ${(order.delivery_time||'').slice(0,5)}</div>
+    </div>
+  </div>
+  ${order.notes?`<div style="font-size:13px;color:#6b6860;margin-bottom:24px;font-style:italic">${order.notes}</div>`:''}
+  <table style="width:100%;border-collapse:collapse;margin-bottom:0">
+    <thead>
+      <tr style="border-bottom:2px solid #1a1916">
+        <th style="padding:8px 0;text-align:left;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#6b6860;font-weight:500">Item</th>
+        <th style="padding:8px 0;text-align:center;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#6b6860;font-weight:500">Qty</th>
+        <th style="padding:8px 0;text-align:center;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#6b6860;font-weight:500">Unit</th>
+        <th style="padding:8px 0;text-align:right;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#6b6860;font-weight:500">Price</th>
+        <th style="padding:8px 0;text-align:right;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#6b6860;font-weight:500">Subtotal</th>
+      </tr>
+    </thead>
+    <tbody>${rows}</tbody>
+    <tfoot>
+      <tr>
+        <td colspan="3" style="padding:14px 0;font-size:11px;letter-spacing:.15em;text-transform:uppercase;font-weight:500">Total</td>
+        <td style="padding:14px 0;text-align:right;font-size:13px;color:#6b6860">${totalUnits} units</td>
+        <td style="padding:14px 0;text-align:right;font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600">${totalPrice>0?'$'+totalPrice.toFixed(2):'&mdash;'}</td>
+      </tr>
+    </tfoot>
+  </table>
+  <div style="margin-top:48px;padding-top:20px;border-top:1px solid #e8e4de;font-size:12px;color:#6b6860;text-align:center;line-height:2">
+    Thank you for your business.<br>
+    Village Bakery + Provisions &nbsp;&middot;&nbsp; orders@villagebakeryandprovisions.com &nbsp;&middot;&nbsp; (615) 498-5385
+  </div>
+</body></html>`
+}
+
+sb.auth.onAuthStateChange((event)=>{ if(event==='SIGNED_OUT') show('v-auth') })
+
+// ================================================================
+//  DATE FILTER HELPERS
+// ================================================================
+
+function getDateRange(mode) {
+  const now = new Date()
+  const todayStr = now.toISOString().split('T')[0]
+
+  // Monday of current week
+  const dayOfWeek = now.getDay() // 0=Sun, 1=Mon...
+  const diffToMon = (dayOfWeek + 6) % 7
+  const thisMonday = new Date(now); thisMonday.setDate(now.getDate() - diffToMon)
+  const thisSunday = new Date(thisMonday); thisSunday.setDate(thisMonday.getDate() + 6)
+
+  const nextMonday = new Date(thisMonday); nextMonday.setDate(thisMonday.getDate() + 7)
+  const nextSunday = new Date(nextMonday); nextSunday.setDate(nextMonday.getDate() + 6)
+
+  const tmr = new Date(now); tmr.setDate(now.getDate() + 1)
+
+  const fmt = d => d.toISOString().split('T')[0]
+
+  switch(mode) {
+    case 'today':    return { from: todayStr,      to: todayStr }
+    case 'tomorrow': return { from: fmt(tmr),       to: fmt(tmr) }
+    case 'thisweek': return { from: fmt(thisMonday), to: fmt(thisSunday) }
+    case 'nextweek': return { from: fmt(nextMonday), to: fmt(nextSunday) }
+    default:         return null // custom — use filterState values
+  }
+}
+
+function filterOrders(tab) {
+  const fs = filterState[tab]
+  const range = fs.mode === 'custom' ? { from: fs.from, to: fs.to } : getDateRange(fs.mode)
+  if (!range) return allOrders
+  return allOrders.filter(o => o.delivery_date >= range.from && o.delivery_date <= range.to)
+}
+
+function fmtDate(d) {
+  return new Date(d + 'T12:00:00').toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', year:'numeric' })
+}
+
+function filterBarHtml(tab) {
+  const fs = filterState[tab]
+  const modes = [
+    { key:'today',    label:'Today'     },
+    { key:'tomorrow', label:'Tomorrow'  },
+    { key:'thisweek', label:'This Week' },
+    { key:'nextweek', label:'Next Week' },
+    { key:'custom',   label:'Custom'    },
+  ]
+  return `
+    <div class="filter-bar" id="filter-bar-${tab}">
+      ${modes.map(m => `<button class="filter-btn${fs.mode===m.key?' active':''}"
+        onclick="setFilter('${tab}','${m.key}',this)">${m.label}</button>`).join('')}
+      <div class="filter-sep"></div>
+      <span class="filter-label" id="custom-label-${tab}" style="display:${fs.mode==='custom'?'flex':'none'};align-items:center;gap:8px">
+        <input class="filter-date-input" type="date" id="filter-from-${tab}" value="${fs.from}"
+               onchange="setCustomRange('${tab}')">
+        <span style="font-size:11px;color:var(--text3)">to</span>
+        <input class="filter-date-input" type="date" id="filter-to-${tab}" value="${fs.to}"
+               onchange="setCustomRange('${tab}')">
+      </span>
+    </div>
+    <div style="display:flex;justify-content:flex-end;margin-top:-16px;margin-bottom:24px">
+      <button class="print-btn" onclick="printTab('${tab}')">Print</button>
+    </div>`
+}
+
+function setFilter(tab, mode, btn) {
+  filterState[tab].mode = mode
+  if (mode !== 'custom') {
+    const range = getDateRange(mode)
+    filterState[tab].from = range.from
+    filterState[tab].to   = range.to
+  }
+  document.querySelectorAll(`#filter-bar-${tab} .filter-btn`).forEach(b => b.classList.remove('active'))
+  btn.classList.add('active')
+  const customLabel = document.getElementById('custom-label-'+tab)
+  if (customLabel) customLabel.style.display = mode === 'custom' ? 'flex' : 'none'
+  if (tab === 'production') renderProductionContent()
+  if (tab === 'packing')    renderPackingContent()
+}
+
+function setCustomRange(tab) {
+  const from = document.getElementById('filter-from-'+tab)?.value
+  const to   = document.getElementById('filter-to-'+tab)?.value
+  if (from) filterState[tab].from = from
+  if (to)   filterState[tab].to   = to
+  if (tab === 'production') renderProductionContent()
+  if (tab === 'packing')    renderPackingContent()
+}
+
+// ================================================================
+//  PRODUCTION TAB
+// ================================================================
+
+function renderProduction() {
+  const el = document.getElementById('production-content')
+  el.innerHTML = filterBarHtml('production')
+  el.innerHTML += '<div id="prod-body"></div>'
+  renderProductionContent()
+}
+
+function renderProductionContent() {
+  const orders  = filterOrders('production')
+  const el      = document.getElementById('prod-body')
+  if (!el) return
+
+  if (!orders.length) {
+    el.innerHTML = '<div class="empty-state">No orders for this period.</div>'
+    return
+  }
+
+  // Group by delivery date
+  const byDate = {}
+  orders.forEach(o => {
+    if (!byDate[o.delivery_date]) byDate[o.delivery_date] = []
+    byDate[o.delivery_date].push(o)
+  })
+
+  // Totals across all dates (for summary)
+  const totalItems = new Set(orders.flatMap(o => o.order_items.map(i => i.item_name))).size
+  const totalUnits = orders.reduce((s,o) => s + o.order_items.reduce((ss,i) => ss+i.quantity, 0), 0)
+  const totalOrders = orders.length
+
+  let html = `
+    <div class="prod-summary">
+      <div class="prod-stat"><div class="prod-stat-val">${Object.keys(byDate).length}</div><div class="prod-stat-lbl">Days</div></div>
+      <div class="prod-stat"><div class="prod-stat-val">${totalOrders}</div><div class="prod-stat-lbl">Orders</div></div>
+      <div class="prod-stat"><div class="prod-stat-val">${totalItems}</div><div class="prod-stat-lbl">Products</div></div>
+      <div class="prod-stat"><div class="prod-stat-val">${totalUnits}</div><div class="prod-stat-lbl">Total Units</div></div>
+    </div>`
+
+  Object.keys(byDate).sort().forEach(date => {
+    const dayOrders = byDate[date]
+    const dayUnits  = dayOrders.reduce((s,o) => s + o.order_items.reduce((ss,i) => ss+i.quantity, 0), 0)
+
+    // Aggregate items across all vendors for this day
+    const itemMap = {}
+    dayOrders.forEach(o => {
+      o.order_items.forEach(i => {
+        if (!itemMap[i.item_name]) itemMap[i.item_name] = { qty: 0, unit: i.unit, vendors: [] }
+        itemMap[i.item_name].qty += i.quantity
+        if (!itemMap[i.item_name].vendors.includes(o.vendor_name))
+          itemMap[i.item_name].vendors.push(o.vendor_name)
+      })
+    })
+
+    const sortedItems = Object.entries(itemMap).sort((a,b) => b[1].qty - a[1].qty)
+
+    html += `
+      <div class="prod-date-block">
+        <div class="prod-date-heading">
+          <span>${date === TODAY ? 'Today &mdash; ' : ''}${fmtDate(date)}</span>
+          <span class="prod-date-sub">${dayOrders.length} order${dayOrders.length!==1?'s':''} &middot; ${dayUnits} units</span>
+        </div>
+        ${sortedItems.map(([name, data]) => `
+          <div class="prod-item-row">
+            <div>
+              <div class="prod-item-name">${name}</div>
+              <div class="prod-item-vendors">${data.vendors.join(', ')}</div>
+            </div>
+            <div style="text-align:right;flex-shrink:0">
+              <span class="prod-item-qty">${data.qty}</span>
+              <span class="prod-item-unit">${data.unit === 'each' ? 'each' : (data.qty !== 1 ? data.unit + 's' : data.unit)}</span>
+            </div>
+          </div>`).join('')}
+      </div>`
+  })
+
+  el.innerHTML = html
+}
+
+// ================================================================
+//  PACKING + DELIVERY TAB
+// ================================================================
+
+function renderPacking() {
+  const el = document.getElementById('packing-content')
+  el.innerHTML = filterBarHtml('packing')
+  el.innerHTML += '<div id="pack-body"></div>'
+  renderPackingContent()
+}
+
+function renderPackingContent() {
+  const orders = filterOrders('packing')
+  const el     = document.getElementById('pack-body')
+  if (!el) return
+
+  if (!orders.length) {
+    el.innerHTML = '<div class="empty-state">No orders for this period.</div>'
+    return
+  }
+
+  // Group by delivery date
+  const byDate = {}
+  orders.forEach(o => {
+    if (!byDate[o.delivery_date]) byDate[o.delivery_date] = []
+    byDate[o.delivery_date].push(o)
+  })
+
+  let html = ''
+  Object.keys(byDate).sort().forEach(date => {
+    const dayOrders = byDate[date]
+    // Sort vendors by delivery time
+    const sorted = [...dayOrders].sort((a,b) => (a.delivery_time||'').localeCompare(b.delivery_time||''))
+    const dayUnits = sorted.reduce((s,o) => s + o.order_items.reduce((ss,i) => ss+i.quantity, 0), 0)
+
+    // Merge orders for the same vendor on the same day
+    const byVendor = {}
+    sorted.forEach(o => {
+      if (!byVendor[o.vendor_name]) byVendor[o.vendor_name] = { items: [], time: o.delivery_time, notes: o.notes, total: 0 }
+      o.order_items.forEach(i => {
+        const existing = byVendor[o.vendor_name].items.find(x => x.item_name === i.item_name)
+        if (existing) existing.quantity += i.quantity
+        else byVendor[o.vendor_name].items.push({ ...i })
+        byVendor[o.vendor_name].total += i.quantity
+      })
+    })
+
+    html += `
+      <div class="pack-date-block">
+        <div class="pack-date-heading">
+          <span>${date === TODAY ? 'Today &mdash; ' : ''}${fmtDate(date)}</span>
+          <span class="prod-date-sub">${Object.keys(byVendor).length} vendor${Object.keys(byVendor).length!==1?'s':''} &middot; ${dayUnits} units</span>
+        </div>
+        ${Object.entries(byVendor).sort((a,b)=>(a[1].time||'').localeCompare(b[1].time||'')).map(([vendor, data]) => `
+          <div class="pack-vendor-card">
+            <div class="pack-vendor-header">
+              <span class="pack-vendor-name">${vendor}</span>
+              <div style="display:flex;align-items:center;gap:14px">
+                ${data.time ? `<span class="pack-vendor-time">Delivery: ${data.time.slice(0,5)}</span>` : ''}
+                <span class="pack-vendor-total">${data.total} unit${data.total!==1?'s':''}</span>
+              </div>
+            </div>
+            ${data.items.map(i => `
+              <div class="pack-item-row">
+                <span class="pack-item-name">${i.item_name}</span>
+                <span class="pack-item-qty">${i.quantity} ${i.unit === 'each' ? 'each' : (i.quantity !== 1 ? i.unit + 's' : i.unit)}</span>
+              </div>`).join('')}
+            ${data.notes ? `<div class="pack-notes">Note: ${data.notes}</div>` : ''}
+          </div>`).join('')}
+      </div>`
+  })
+
+  el.innerHTML = html
+}
+
+// ================================================================
+//  PRINT — opens a clean new window for production or packing
+// ================================================================
+
+function printTab(tab) {
+  const orders  = filterOrders(tab)
+  const fs      = filterState[tab]
+  const range   = fs.mode === 'custom' ? { from: fs.from, to: fs.to } : getDateRange(fs.mode)
+  const title   = tab === 'production' ? 'Production List' : 'Packing + Delivery'
+  const rangeLabel = range.from === range.to
+    ? fmtDate(range.from)
+    : fmtDate(range.from) + ' \u2013 ' + fmtDate(range.to)
+
+  const byDate = {}
+  orders.forEach(o => {
+    if (!byDate[o.delivery_date]) byDate[o.delivery_date] = []
+    byDate[o.delivery_date].push(o)
+  })
+
+  let body = ''
+
+  if (!orders.length) {
+    body = '<p style="color:#6b6860;font-size:14px">No orders for this period.</p>'
+  } else if (tab === 'production') {
+    Object.keys(byDate).sort().forEach(date => {
+      const dayOrders = byDate[date]
+      const dayUnits  = dayOrders.reduce((s,o) => s + o.order_items.reduce((ss,i) => ss+i.quantity, 0), 0)
+      const itemMap   = {}
+      dayOrders.forEach(o => {
+        o.order_items.forEach(i => {
+          if (!itemMap[i.item_name]) itemMap[i.item_name] = { qty: 0, unit: i.unit, vendors: [] }
+          itemMap[i.item_name].qty += i.quantity
+          if (!itemMap[i.item_name].vendors.includes(o.vendor_name))
+            itemMap[i.item_name].vendors.push(o.vendor_name)
+        })
+      })
+      const sorted = Object.entries(itemMap).sort((a,b) => b[1].qty - a[1].qty)
+      body += `
+        <div style="margin-bottom:32px;page-break-inside:avoid">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;border-bottom:2px solid #1a1916;margin-bottom:0">
+            <span style="font-family:Arial,sans-serif;font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase">${fmtDate(date)}</span>
+            <span style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#6b6860">${dayOrders.length} order${dayOrders.length!==1?'s':''} &middot; ${dayUnits} units</span>
+          </div>
+          <table style="width:100%;border-collapse:collapse">
+            <thead><tr>
+              <th style="padding:8px 0;text-align:left;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:#6b6860;font-weight:500;border-bottom:1px solid #dedad4">Item</th>
+              <th style="padding:8px 0;text-align:left;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:#6b6860;font-weight:500;border-bottom:1px solid #dedad4">Vendors</th>
+              <th style="padding:8px 0;text-align:right;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:#6b6860;font-weight:500;border-bottom:1px solid #dedad4">Qty</th>
+            </tr></thead>
+            <tbody>
+              ${sorted.map(([name, data]) => `
+                <tr style="border-bottom:1px solid #f0ece6">
+                  <td style="padding:10px 0;font-size:14px">${name}</td>
+                  <td style="padding:10px 0;font-size:12px;color:#6b6860">${data.vendors.join(', ')}</td>
+                  <td style="padding:10px 0;text-align:right;font-family:Arial,sans-serif;font-size:22px;font-weight:700">${data.qty}&thinsp;<span style="font-size:10px;font-weight:400;color:#6b6860;font-family:Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase">${data.unit === 'each' ? 'each' : (data.qty !== 1 ? data.unit + 's' : data.unit)}</span></td>
+                </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>`
+    })
+  } else {
+    Object.keys(byDate).sort().forEach(date => {
+      const dayOrders = byDate[date]
+      const byVendor  = {}
+      dayOrders.forEach(o => {
+        if (!byVendor[o.vendor_name]) byVendor[o.vendor_name] = { items: [], time: o.delivery_time, notes: o.notes, total: 0 }
+        o.order_items.forEach(i => {
+          const ex = byVendor[o.vendor_name].items.find(x => x.item_name === i.item_name)
+          if (ex) ex.quantity += i.quantity
+          else byVendor[o.vendor_name].items.push({ ...i })
+          byVendor[o.vendor_name].total += i.quantity
+        })
+      })
+      const sortedVendors = Object.entries(byVendor).sort((a,b) => (a[1].time||'').localeCompare(b[1].time||''))
+      body += `
+        <div style="margin-bottom:32px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;border-bottom:2px solid #1a1916;margin-bottom:16px">
+            <span style="font-family:Arial,sans-serif;font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase">${fmtDate(date)}</span>
+            <span style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#6b6860">${sortedVendors.length} vendor${sortedVendors.length!==1?'s':''}</span>
+          </div>
+          ${sortedVendors.map(([vendor, data]) => `
+            <div style="border:1px solid #dedad4;margin-bottom:10px;page-break-inside:avoid">
+              <div style="background:#f8f6f2;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #dedad4">
+                <span style="font-size:14px;font-weight:600">${vendor}</span>
+                <div>
+                  ${data.time ? `<span style="font-size:11px;color:#6b6860;letter-spacing:.05em">Delivery ${data.time.slice(0,5)}</span>&ensp;` : ''}
+                  <span style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#6b6860">${data.total} unit${data.total!==1?'s':''}</span>
+                </div>
+              </div>
+              <table style="width:100%;border-collapse:collapse">
+                ${data.items.map(i => `
+                  <tr style="border-bottom:1px solid #f0ece6">
+                    <td style="padding:8px 14px;font-size:13px">${i.item_name}</td>
+                    <td style="padding:8px 14px;font-size:13px;font-weight:600;text-align:right">${i.quantity} ${i.unit === 'each' ? (i.quantity !== 1 ? 'each' : 'each') : (i.quantity !== 1 ? i.unit + 's' : i.unit)}</td>
+                  </tr>`).join('')}
+              </table>
+              ${data.notes ? `<div style="padding:7px 14px;font-size:11px;color:#6b6860;font-style:italic;border-top:1px dashed #dedad4">Note: ${data.notes}</div>` : ''}
+            </div>`).join('')}
+        </div>`
+    })
+  }
+
+  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
+  <title>${title}</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Helvetica Neue',Arial,sans-serif;color:#1a1916;padding:44px;max-width:800px;margin:0 auto;-webkit-font-smoothing:antialiased;}
+    @media print{body{padding:20px;}.no-print{display:none!important;}}
+    .no-print{text-align:center;margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid #dedad4;}
+    .print-btn{background:#1a1916;color:white;border:none;padding:9px 22px;font-family:'Helvetica Neue',Arial,sans-serif;font-size:11px;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;}
+  </style></head><body>
+  <div class="no-print"><button class="print-btn" onclick="window.print()">Print / Save PDF</button></div>
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:28px;padding-bottom:14px;border-bottom:1px solid #dedad4">
+    <div>
+      <div style="font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:#6b6860;margin-bottom:5px">Village Bakery + Provisions</div>
+      <div style="font-family:Arial,sans-serif;font-size:22px;font-weight:700;letter-spacing:.04em;text-transform:uppercase">${title}</div>
+    </div>
+    <div style="text-align:right;font-size:12px;color:#6b6860;line-height:1.8">
+      <div>${rangeLabel}</div>
+      <div>Printed ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}</div>
+    </div>
+  </div>
+  ${body}
+  </body></html>`
+
+  const w = window.open('', '_blank')
+  w.document.write(html)
+  w.document.close()
+  setTimeout(() => w.print(), 500)
+}
+
+// ── Vendor pricing ──
+let vendorPricingCache = {}
+
+async function togglePricing(vendorId) {
+  const panel = document.getElementById('pricing-panel-'+vendorId)
+  const btn   = document.getElementById('pricing-btn-'+vendorId)
+  if (!panel) return
+
+  const isOpen = panel.style.display === 'block'
+
+  // Close all other open panels
+  document.querySelectorAll('.pricing-panel').forEach(p => p.style.display = 'none')
+  document.querySelectorAll('.btn-pricing').forEach(b => b.classList.remove('active'))
+
+  if (!isOpen) {
+    panel.style.display = 'block'
+    btn.classList.add('active')
+    if (!vendorPricingCache[vendorId]) {
+      await loadVendorPricingForAdmin(vendorId)
+    }
+    renderPricingRows(vendorId)
+  }
+}
+
+async function loadVendorPricingForAdmin(vendorId) {
+  const { data } = await sb.from('vendor_pricing')
+    .select('menu_item_id, price')
+    .eq('vendor_id', vendorId)
+  vendorPricingCache[vendorId] = {}
+  if (data) data.forEach(row => vendorPricingCache[vendorId][row.menu_item_id] = Number(row.price))
+}
+
+function renderPricingRows(vendorId) {
+  const el     = document.getElementById('pricing-rows-'+vendorId)
+  const prices = vendorPricingCache[vendorId] || {}
+  const active = allMenu.filter(m => m.active)
+
+  el.innerHTML = active.map(item => {
+    const custom = prices[item.id]
+    const defaultP = item.price || 0
+    return `<div class="pricing-row">
+      <div class="pricing-item-name">${item.name}</div>
+      <div class="pricing-default">Default: $${defaultP.toFixed(2)}</div>
+      <div class="pricing-override">
+        <span>$</span>
+        <input class="price-override-input" type="number" step="0.01" min="0"
+               id="vp-${vendorId}-${item.id}"
+               value="${custom !== undefined ? custom.toFixed(2) : ''}"
+               placeholder="${defaultP.toFixed(2)}">
+      </div>
+    </div>`
+  }).join('')
+}
+
+async function savePricing(vendorId) {
+  const active  = allMenu.filter(m => m.active)
+  const upserts = []
+  const removes = []
+
+  active.forEach(item => {
+    const input = document.getElementById(`vp-${vendorId}-${item.id}`)
+    if (!input) return
+    const val = input.value.trim()
+    if (val !== '' && !isNaN(parseFloat(val))) {
+      upserts.push({ vendor_id: vendorId, menu_item_id: item.id, price: parseFloat(val) })
+    } else {
+      removes.push(item.id)
+    }
+  })
+
+  if (upserts.length) {
+    await sb.from('vendor_pricing').upsert(upserts, { onConflict: 'vendor_id,menu_item_id' })
+  }
+  if (removes.length) {
+    await sb.from('vendor_pricing').delete().eq('vendor_id', vendorId).in('menu_item_id', removes)
+  }
+
+  // Update local cache
+  vendorPricingCache[vendorId] = {}
+  upserts.forEach(u => vendorPricingCache[vendorId][u.menu_item_id] = u.price)
+
+  const btn = document.querySelector(`#pricing-panel-${vendorId} .btn-save-prices`)
+  if (btn) { btn.textContent = 'Saved'; setTimeout(() => btn.textContent = 'Save Prices', 1800) }
+}
+
+async function clearPricing(vendorId) {
+  if (!confirm('Remove all custom prices for this vendor? They will see default menu prices.')) return
+  await sb.from('vendor_pricing').delete().eq('vendor_id', vendorId)
+  vendorPricingCache[vendorId] = {}
+  renderPricingRows(vendorId)
+}
+init()
+</script>
+</body>
+</html>
