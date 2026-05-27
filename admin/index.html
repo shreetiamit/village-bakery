@@ -36,7 +36,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .btn-primary{width:100%;padding:13px;background:var(--dark);color:white;border:none;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:background .15s,transform .12s;}
 .btn-primary:hover{background:var(--accent);transform:translateY(-1px);}
 .error-msg{font-size:12px;color:var(--err);margin-top:10px;display:none;}
-/* Header */
 .header{background:linear-gradient(135deg,#2C1A0E 0%,#3D2410 100%);color:white;display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:52px;position:sticky;top:0;z-index:100;}
 .header-brand{display:flex;align-items:center;gap:16px;}
 .header-wordmark{font-family:'Cormorant Garamond',serif;font-size:12px;font-weight:600;letter-spacing:.25em;text-transform:uppercase;color:white;}
@@ -44,7 +43,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .header-label{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.5);}
 .btn-signout{background:none;border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.7);padding:6px 14px;font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;transition:all .15s;}
 .btn-signout:hover{border-color:rgba(255,255,255,.5);color:white;}
-/* Tabs */
 .tabs{background:var(--surface);border-bottom:1.5px solid var(--border);display:flex;padding:0 32px;}
 .tab{padding:14px 0;margin-right:28px;font-size:10px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--text2);cursor:pointer;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;background:none;display:flex;align-items:center;gap:8px;transition:all .15s;}
 .tab:hover{color:var(--text);}
@@ -53,10 +51,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .tab.active .tab-badge{background:var(--accent);border-color:var(--accent);color:white;}
 .tab-badge.alert{background:#FFF3DC;border-color:var(--accent);color:var(--accent);}
 .tab.active .tab-badge.alert{background:var(--accent);border-color:var(--accent);color:white;}
-/* Content */
 .content{max-width:900px;margin:0 auto;padding:32px 24px 80px;}
 .panel{display:none;}.panel.active{display:block;}
-/* Stats */
 .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin-bottom:28px;}
 .stat-card{background:var(--surface);padding:20px 24px;}
 .stat-val{font-family:'DM Sans',sans-serif;font-size:28px;font-weight:700;line-height:1;}
@@ -64,7 +60,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .stat-val.gold{color:var(--gold);}
 .stat-val.green-c{color:var(--green);}
 .stat-lbl{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--text2);margin-top:6px;}
-/* Orders */
 .date-group{margin-bottom:28px;}
 .date-header{display:flex;justify-content:space-between;align-items:baseline;padding:10px 0;border-bottom:2px solid var(--accent);margin-bottom:0;}
 .date-header-label{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;}
@@ -83,15 +78,22 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .status-select.done{background:#ECFAF2;color:var(--green);border-color:#80C4A0;}
 .btn-invoice{background:none;border:1px solid var(--border);color:var(--text2);padding:4px 10px;font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .15s;white-space:nowrap;}
 .btn-invoice:hover{border-color:var(--border2);color:var(--text);}
-/* ── Create Order Form ── */
+/* ── Admin forms ── */
 .admin-form-box{background:var(--surface);border:1px solid var(--border);padding:24px;margin-bottom:28px;display:none;}
 .admin-form-box.open{display:block;}
-.admin-form-title{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);font-weight:500;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--border);}
-.admin-form-select{width:100%;padding:10px;border:1px solid var(--border);background:var(--surface);font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);outline:none;border-radius:0;cursor:pointer;}
+.admin-form-title{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);font-weight:500;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+/* Order type toggle */
+.order-type-tabs{display:flex;border:1px solid var(--border);margin-bottom:20px;overflow:hidden;}
+.order-type-tab{flex:1;padding:10px;text-align:center;font-size:10px;font-weight:500;letter-spacing:.15em;text-transform:uppercase;color:var(--text2);cursor:pointer;background:transparent;border:none;transition:all .15s;}
+.order-type-tab.active{background:var(--accent);color:white;}
+.order-type-tab:not(.active):hover{background:var(--bg);}
+/* Vendor selection */
+.admin-form-select{width:100%;padding:10px;border:1px solid var(--border);background:var(--surface);font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);outline:none;border-radius:0;cursor:pointer;margin-bottom:16px;}
 .admin-form-select:focus{border-color:var(--accent);}
 .admin-form-input{width:100%;padding:10px 0;border:none;border-bottom:1px solid var(--border);background:transparent;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);outline:none;border-radius:0;}
 .admin-form-input:focus{border-bottom-color:var(--accent);}
 .admin-form-input::placeholder{color:var(--text3);}
+/* Items grid (single) */
 .co-item-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);gap:12px;}
 .co-item-name{font-size:13px;flex:1;}
 .co-item-unit{font-size:11px;color:var(--text3);width:48px;}
@@ -99,7 +101,30 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .co-qty-btn{width:26px;height:26px;border:1px solid var(--border);background:none;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;transition:all .1s;}
 .co-qty-btn:hover{border-color:var(--accent);color:var(--accent);}
 .co-qty-input{width:40px;text-align:center;border:1px solid var(--border);border-left:none;border-right:none;padding:4px 2px;font-family:'DM Sans',sans-serif;font-size:13px;background:transparent;color:var(--text);outline:none;}
-.co-date-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:4px;}
+/* Week nav */
+.week-nav{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border);margin-bottom:20px;}
+.week-arrow{background:none;border:1px solid var(--border);color:var(--text2);width:34px;height:34px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;line-height:1;}
+.week-arrow:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
+.week-arrow:disabled{opacity:.2;cursor:not-allowed;}
+.week-nav-center{text-align:center;}
+.week-nav-label{font-size:9px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--text2);margin-bottom:3px;}
+.week-nav-dates{font-size:13px;font-weight:500;color:var(--text);}
+/* Weekly table */
+.weekly-table-wrap{overflow-x:auto;margin-bottom:8px;}
+.weekly-table{width:100%;border-collapse:collapse;min-width:400px;}
+.weekly-table th{padding:8px 5px;text-align:center;font-size:9px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--text2);border-bottom:2px solid var(--accent);white-space:nowrap;}
+.weekly-table th.item-col{text-align:left;min-width:120px;}
+.weekly-table td{padding:8px 5px;border-bottom:1px solid var(--border);vertical-align:middle;}
+.weekly-table td.item-col{padding-right:12px;}
+.weekly-item-name{font-size:13px;font-weight:300;}
+.weekly-item-unit{font-size:10px;color:var(--text3);margin-top:2px;}
+.weekly-qty{width:48px;padding:4px 3px;text-align:center;border:1px solid var(--border);background:transparent;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none;border-radius:0;display:block;margin:0 auto;}
+.weekly-qty:focus{border-color:var(--accent);}
+.weekly-qty.has-val{border-color:var(--accent);background:#FEF8EE;}
+.weekly-preview{margin-top:12px;padding:12px 0;border-top:1px solid var(--border);}
+.weekly-preview-row{display:flex;justify-content:space-between;font-size:12px;color:var(--text);padding:3px 0;}
+/* Form layout */
+.co-date-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
 @media(max-width:520px){.co-date-row{grid-template-columns:1fr;}}
 .form-actions{display:flex;gap:10px;margin-top:20px;padding-top:16px;border-top:1px solid var(--border);}
 .btn-action{background:var(--accent);color:white;border:none;padding:10px 22px;font-family:'DM Sans',sans-serif;font-size:10px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;transition:opacity .15s;}
@@ -113,8 +138,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .vendor-row.inactive{opacity:.5;}
 .vendor-name{font-size:14px;font-weight:400;margin-bottom:3px;}
 .vendor-email{font-size:11px;color:var(--text2);letter-spacing:.02em;}
-.vendor-phone{font-size:11px;color:var(--text3);letter-spacing:.02em;margin-top:1px;}
-.vendor-date{font-size:10px;color:var(--text3);margin-top:2px;letter-spacing:.05em;}
+.vendor-phone{font-size:11px;color:var(--text3);margin-top:1px;}
+.vendor-date{font-size:10px;color:var(--text3);margin-top:2px;}
 .vendor-actions{display:flex;gap:8px;flex-shrink:0;}
 .btn-approve{background:var(--accent);color:white;border:none;padding:7px 16px;font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;transition:opacity .15s;}
 .btn-approve:hover{opacity:.85;}
@@ -124,7 +149,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .btn-pricing{background:none;border:1px solid var(--border);color:var(--text2);padding:6px 12px;font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:all .15s;}
 .btn-pricing:hover{border-color:var(--accent);color:var(--accent);}
 .btn-pricing.active{background:var(--accent);border-color:var(--accent);color:white;}
-/* Pricing panel */
 .pricing-panel{border:1px solid var(--border);border-top:none;background:#fbf9f6;padding:20px 20px 16px;display:none;}
 .pricing-panel-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px;}
 .pricing-panel-title{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--text2);font-weight:500;}
@@ -170,7 +194,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .unauth-card{background:var(--surface);border:1px solid var(--border);padding:40px;max-width:340px;text-align:center;}
 .unauth-card h2{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;margin-bottom:10px;}
 .unauth-card p{font-size:13px;color:var(--text2);margin-bottom:24px;line-height:1.7;}
-/* Filters */
 .filter-bar{display:flex;align-items:center;gap:10px;margin-bottom:28px;flex-wrap:wrap;}
 .filter-btn{padding:7px 14px;font-family:'DM Sans',sans-serif;font-size:10px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;transition:all .15s;}
 .filter-btn:hover{border-color:var(--border2);color:var(--text);}
@@ -178,10 +201,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .filter-sep{width:1px;height:20px;background:var(--border);flex-shrink:0;}
 .filter-date-input{padding:7px 10px;border:1px solid var(--border);background:transparent;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--text);outline:none;cursor:pointer;}
 .filter-date-input:focus{border-color:var(--border2);}
-.filter-label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text2);}
 .print-btn{margin-left:auto;padding:7px 16px;font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:.14em;text-transform:uppercase;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;transition:all .15s;}
 .print-btn:hover{border-color:var(--border2);color:var(--text);}
-/* Production */
 .prod-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);margin-bottom:28px;}
 .prod-stat{background:var(--surface);padding:16px 20px;}
 .prod-stat-val{font-family:'DM Sans',sans-serif;font-size:26px;font-weight:600;line-height:1;}
@@ -194,7 +215,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .prod-item-vendors{font-size:11px;color:var(--text3);margin-top:2px;}
 .prod-item-qty{font-family:'DM Sans',sans-serif;font-size:22px;font-weight:600;}
 .prod-item-unit{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text2);margin-left:4px;}
-/* Packing */
 .pack-date-block{margin-bottom:36px;}
 .pack-date-heading{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;padding:10px 0;border-bottom:2px solid var(--accent);margin-bottom:16px;display:flex;justify-content:space-between;align-items:baseline;}
 .pack-vendor-card{border:1px solid var(--border);margin-bottom:12px;}
@@ -263,35 +283,77 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
         <div class="stat-card"><div class="stat-val green-c" id="stat-units">0</div><div class="stat-lbl">Total units</div></div>
       </div>
 
-      <!-- Create Order form -->
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
         <button class="btn-add" onclick="toggleCreateOrder()">+ Create Order</button>
         <button onclick="exportCSV()" class="print-btn">Export CSV</button>
       </div>
+
+      <!-- Create Order form -->
       <div class="admin-form-box" id="create-order-form">
         <div class="admin-form-title">Create Order for Client</div>
-        <div class="field">
-          <label>Client</label>
+
+        <!-- Single / Weekly toggle -->
+        <div class="order-type-tabs">
+          <button class="order-type-tab active" id="ot-single" onclick="switchOrderType('single')">Single Order</button>
+          <button class="order-type-tab" id="ot-weekly" onclick="switchOrderType('weekly')">Weekly Order</button>
+        </div>
+
+        <!-- Shared: vendor select -->
+        <div style="margin-bottom:4px">
+          <div style="font-size:10px;font-weight:500;letter-spacing:.15em;text-transform:uppercase;color:var(--text2);margin-bottom:8px">Client</div>
           <select class="admin-form-select" id="co-vendor-select" onchange="onCoVendorChange()">
             <option value="">Select client...</option>
             <option value="__manual__">─ Other / Type name ─</option>
           </select>
+          <div id="co-manual-field" style="display:none;margin-top:8px">
+            <input class="admin-form-input" type="text" id="co-manual-name" placeholder="Business name">
+          </div>
         </div>
-        <div class="field" id="co-manual-field" style="display:none">
-          <label>Client Name</label>
-          <input class="admin-form-input" type="text" id="co-manual-name" placeholder="Business name">
+
+        <!-- SINGLE ORDER section -->
+        <div id="co-single-section">
+          <div style="font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--text2);margin:16px 0 8px;padding-top:12px;border-top:1px solid var(--border)">Items</div>
+          <div id="co-items-grid"></div>
+          <div class="co-date-row" style="margin-top:16px">
+            <div class="field"><label>Delivery Date</label><input class="admin-form-input" type="date" id="co-date"></div>
+            <div class="field"><label>Delivery Time</label><input class="admin-form-input" type="time" id="co-time" value="08:00"></div>
+          </div>
+          <div class="field"><label>Notes (optional)</label><input class="admin-form-input" type="text" id="co-notes" placeholder="Special requests..."></div>
+          <p class="error-msg" id="co-error" style="margin-bottom:0"></p>
+          <div class="form-actions">
+            <button class="btn-action" onclick="submitCreateOrder()">Place Order</button>
+            <button class="btn-action-cancel" onclick="toggleCreateOrder()">Cancel</button>
+          </div>
         </div>
-        <div style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--text2);margin:16px 0 8px;padding-top:4px;border-top:1px solid var(--border)">Items</div>
-        <div id="co-items-grid"></div>
-        <div class="co-date-row" style="margin-top:16px">
-          <div class="field"><label>Delivery Date</label><input class="admin-form-input" type="date" id="co-date"></div>
-          <div class="field"><label>Delivery Time</label><input class="admin-form-input" type="time" id="co-time" value="08:00"></div>
-        </div>
-        <div class="field"><label>Notes (optional)</label><input class="admin-form-input" type="text" id="co-notes" placeholder="Special requests..."></div>
-        <p class="error-msg" id="co-error" style="margin-bottom:0"></p>
-        <div class="form-actions">
-          <button class="btn-action" onclick="submitCreateOrder()">Place Order</button>
-          <button class="btn-action-cancel" onclick="toggleCreateOrder()">Cancel</button>
+
+        <!-- WEEKLY ORDER section -->
+        <div id="co-weekly-section" style="display:none">
+          <div style="padding-top:12px;margin-top:4px;border-top:1px solid var(--border)">
+            <!-- Week navigator -->
+            <div class="week-nav">
+              <button class="week-arrow" id="co-week-prev" onclick="coChangeWeek(-1)">&#8592;</button>
+              <div class="week-nav-center">
+                <div class="week-nav-label">Week</div>
+                <div class="week-nav-dates" id="co-week-label">Loading...</div>
+              </div>
+              <button class="week-arrow" id="co-week-next" onclick="coChangeWeek(1)">&#8594;</button>
+            </div>
+            <!-- Weekly grid -->
+            <div class="weekly-table-wrap">
+              <div id="co-weekly-grid"></div>
+            </div>
+            <div id="co-weekly-preview"></div>
+            <!-- Time + notes -->
+            <div class="co-date-row" style="margin-top:16px">
+              <div class="field"><label>Delivery Time (all days)</label><input class="admin-form-input" type="time" id="co-weekly-time" value="08:00"></div>
+              <div class="field"><label>Notes (optional)</label><input class="admin-form-input" type="text" id="co-weekly-notes" placeholder="Special requests..."></div>
+            </div>
+            <p class="error-msg" id="co-weekly-error" style="margin-bottom:0"></p>
+            <div class="form-actions">
+              <button class="btn-action" onclick="submitCreateWeeklyOrders()">Place Weekly Orders</button>
+              <button class="btn-action-cancel" onclick="toggleCreateOrder()">Cancel</button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -300,13 +362,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 
     <!-- VENDORS -->
     <div class="panel" id="panel-vendors">
-      <!-- Add Client form -->
       <div style="margin-bottom:20px">
         <button class="btn-add" onclick="toggleAddClient()">+ Add Client</button>
       </div>
       <div class="admin-form-box" id="add-client-form">
         <div class="admin-form-title">Add New Client</div>
-        <p style="font-size:12px;color:var(--text2);margin-bottom:20px;line-height:1.6">Creates an approved account immediately. Use this for clients who call in orders and don't need portal access.</p>
+        <p style="font-size:12px;color:var(--text2);margin-bottom:20px;line-height:1.6">Creates an approved account immediately — for clients who call in orders and don't need portal access.</p>
         <div class="field"><label>Business Name <span style="color:var(--accent)">*</span></label><input class="admin-form-input" type="text" id="ac-name" placeholder="Business name"></div>
         <div class="field"><label>Email (optional)</label><input class="admin-form-input" type="email" id="ac-email" placeholder="their@email.com"></div>
         <div class="field"><label>Phone (optional)</label><input class="admin-form-input" type="tel" id="ac-phone" placeholder="(615) 555-0000"></div>
@@ -319,17 +380,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       <div id="vendors-list"><div class="empty-state">Loading...</div></div>
     </div>
 
-    <!-- MENU -->
     <div class="panel" id="panel-menu"><div id="menu-card"><div class="empty-state">Loading...</div></div></div>
-
-    <!-- PRODUCTION -->
     <div class="panel" id="panel-production"><div id="production-content"></div></div>
-
-    <!-- PACKING -->
     <div class="panel" id="panel-packing"><div id="packing-content"></div></div>
-
   </div>
 </div>
+
 <script>
 const firebaseConfig={apiKey:"AIzaSyDpzmw5NGHagj1fv4L2v74Wfj1E2_KmmdY",authDomain:"village-bakery-6885a.firebaseapp.com",projectId:"village-bakery-6885a",storageBucket:"village-bakery-6885a.firebasestorage.app",messagingSenderId:"735648711607",appId:"1:735648711607:web:423ff3ca56572d9e7d9e32"}
 firebase.initializeApp(firebaseConfig)
@@ -339,6 +395,8 @@ let currentUser=null,profile=null,allOrders=[],allVendors=[],allMenu=[]
 const now0=new Date()
 const TODAY=`${now0.getFullYear()}-${String(now0.getMonth()+1).padStart(2,'0')}-${String(now0.getDate()).padStart(2,'0')}`
 const filterState={production:{mode:'today',from:TODAY,to:TODAY},packing:{mode:'today',from:TODAY,to:TODAY}}
+const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+const DAY_NAMES=['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
 
 function localDateStr(d){return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
 
@@ -396,10 +454,10 @@ async function loadMenu(){
   document.getElementById('badge-menu').textContent=allMenu.filter(m=>m.active).length
 }
 
-// ─────────────────────────────────────────────
-// CREATE ORDER (Admin)
-// ─────────────────────────────────────────────
-let coQtys={}
+// ══════════════════════════════════════════════
+// CREATE ORDER
+// ══════════════════════════════════════════════
+let coQtys={}, coWeeklyQtys={}, coWeekOffset=0, coOrderType='single'
 
 function toggleCreateOrder(){
   const form=document.getElementById('create-order-form')
@@ -408,28 +466,38 @@ function toggleCreateOrder(){
   if(opening)buildCreateOrderForm()
 }
 
+function switchOrderType(type){
+  coOrderType=type
+  document.getElementById('ot-single').classList.toggle('active',type==='single')
+  document.getElementById('ot-weekly').classList.toggle('active',type==='weekly')
+  document.getElementById('co-single-section').style.display=type==='single'?'block':'none'
+  document.getElementById('co-weekly-section').style.display=type==='weekly'?'block':'none'
+  if(type==='weekly')coRenderWeeklyGrid()
+}
+
 function buildCreateOrderForm(){
-  coQtys={}
+  coQtys={};coWeeklyQtys={};coWeekOffset=0;coOrderType='single'
+  // Reset to single tab
+  switchOrderType('single')
   // Populate vendor dropdown
   const sel=document.getElementById('co-vendor-select')
   sel.innerHTML='<option value="">Select client...</option>'
   allVendors.filter(v=>v.approved&&v.active!==false).forEach(v=>{
     const opt=document.createElement('option')
-    opt.value=v.id;opt.textContent=v.business_name||(v.email||'Unnamed client')
+    opt.value=v.id;opt.textContent=v.business_name||(v.email||'Unnamed')
     sel.appendChild(opt)
   })
-  const manualOpt=document.createElement('option')
-  manualOpt.value='__manual__';manualOpt.textContent='─ Other / Type name ─'
-  sel.appendChild(manualOpt)
+  const mo=document.createElement('option');mo.value='__manual__';mo.textContent='─ Other / Type name ─'
+  sel.appendChild(mo)
   document.getElementById('co-manual-field').style.display='none'
   document.getElementById('co-manual-name').value=''
   document.getElementById('co-date').value=TODAY
   document.getElementById('co-time').value='08:00'
   document.getElementById('co-notes').value=''
   document.getElementById('co-error').style.display='none'
-  // Build items grid
-  const grid=document.getElementById('co-items-grid')
-  grid.innerHTML=allMenu.filter(m=>m.active).map(item=>`
+  document.getElementById('co-weekly-error').style.display='none'
+  // Single items grid
+  document.getElementById('co-items-grid').innerHTML=allMenu.filter(m=>m.active).map(item=>`
     <div class="co-item-row">
       <div class="co-item-name">${item.name}</div>
       <div class="co-item-unit">${item.unit}</div>
@@ -445,54 +513,117 @@ function onCoVendorChange(){
   const val=document.getElementById('co-vendor-select').value
   document.getElementById('co-manual-field').style.display=val==='__manual__'?'block':'none'
 }
-function coChangeQty(id,delta){
-  const el=document.getElementById('co-qty-'+id)
-  el.value=Math.max(0,(parseInt(el.value)||0)+delta)
-  coSetQty(id,el.value)
+function coChangeQty(id,delta){const el=document.getElementById('co-qty-'+id);el.value=Math.max(0,(parseInt(el.value)||0)+delta);coSetQty(id,el.value)}
+function coSetQty(id,val){const qty=Math.max(0,parseInt(val)||0);if(qty>0)coQtys[id]=qty;else delete coQtys[id]}
+
+// ── Weekly helpers (same logic as vendor portal) ──
+function coGetWeekDates(offset){
+  const now=new Date(),dow=now.getDay(),diffToMon=dow===0?-6:1-dow
+  const mon=new Date(now);mon.setDate(now.getDate()+diffToMon+(offset*7));mon.setHours(12,0,0,0)
+  const dates=[]
+  for(let i=0;i<7;i++){
+    const d=new Date(mon);d.setDate(mon.getDate()+i)
+    dates.push({dateStr:localDateStr(d),dayName:DAY_NAMES[d.getDay()],label:`${d.getMonth()+1}/${d.getDate()}`})
+  }
+  return dates
 }
-function coSetQty(id,val){
+function coGetWeekLabel(offset){
+  const dates=coGetWeekDates(offset)
+  const [,fm,fd]=dates[0].dateStr.split('-'),[,lm,ld]=dates[6].dateStr.split('-')
+  return fm===lm?`${MONTHS[parseInt(fm)-1]} ${parseInt(fd)} – ${parseInt(ld)}`:`${MONTHS[parseInt(fm)-1]} ${parseInt(fd)} – ${MONTHS[parseInt(lm)-1]} ${parseInt(ld)}`
+}
+function coChangeWeek(delta){
+  const next=coWeekOffset+delta;if(next<0)return
+  coWeekOffset=next;coRenderWeeklyGrid()
+}
+function coRenderWeeklyGrid(){
+  const dates=coGetWeekDates(coWeekOffset)
+  document.getElementById('co-week-label').textContent=coGetWeekLabel(coWeekOffset)
+  document.getElementById('co-week-prev').disabled=coWeekOffset<=0
+  const headers=dates.map(d=>`<th>${d.dayName}<br><span style="font-weight:300;font-size:9px;opacity:.7">${d.label}</span></th>`).join('')
+  const rows=allMenu.filter(m=>m.active).map(item=>{
+    const cells=dates.map(d=>{
+      const qty=coWeeklyQtys[d.dateStr]?.[item.id]||''
+      return`<td><input class="weekly-qty${qty>0?' has-val':''}" type="number" min="0" max="999" value="${qty||''}" placeholder="—" oninput="coSetWeeklyQty('${d.dateStr}','${item.id}',this.value)"></td>`
+    }).join('')
+    return`<tr><td class="item-col"><div class="weekly-item-name">${item.name}</div><div class="weekly-item-unit">per ${item.unit}</div></td>${cells}</tr>`
+  }).join('')
+  document.getElementById('co-weekly-grid').innerHTML=`<table class="weekly-table"><thead><tr><th class="item-col">Item</th>${headers}</tr></thead><tbody>${rows}</tbody></table>`
+  coUpdateWeeklyPreview()
+}
+function coSetWeeklyQty(dateStr,itemId,val){
   const qty=Math.max(0,parseInt(val)||0)
-  if(qty>0)coQtys[id]=qty;else delete coQtys[id]
+  if(!coWeeklyQtys[dateStr])coWeeklyQtys[dateStr]={}
+  if(qty>0)coWeeklyQtys[dateStr][itemId]=qty;else delete coWeeklyQtys[dateStr][itemId]
+  const input=document.querySelector(`#co-weekly-grid input[oninput*="'${dateStr}','${itemId}'"]`)
+  if(input)input.classList.toggle('has-val',qty>0)
+  coUpdateWeeklyPreview()
+}
+function coUpdateWeeklyPreview(){
+  const el=document.getElementById('co-weekly-preview');if(!el)return
+  const allDates=Object.keys(coWeeklyQtys).filter(d=>Object.keys(coWeeklyQtys[d]||{}).length>0).sort()
+  if(!allDates.length){el.innerHTML='';return}
+  const totalUnits=allDates.reduce((s,d)=>s+Object.values(coWeeklyQtys[d]).reduce((ss,q)=>ss+q,0),0)
+  const rows=allDates.map(d=>{
+    const date=new Date(d+'T12:00:00'),units=Object.values(coWeeklyQtys[d]).reduce((s,q)=>s+q,0),ic=Object.keys(coWeeklyQtys[d]).length
+    return`<div class="weekly-preview-row"><span>${DAY_NAMES[date.getDay()]} ${date.getMonth()+1}/${date.getDate()}</span><span>${ic} item${ic!==1?'s':''} · ${units} unit${units!==1?'s':''}</span></div>`
+  }).join('')
+  el.innerHTML=`<div class="weekly-preview"><div style="font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--text2);margin-bottom:8px">${allDates.length} Order${allDates.length!==1?'s':''} · ${totalUnits} Total Units</div>${rows}</div>`
+}
+
+// ── Shared vendor resolution ──
+function resolveVendor(){
+  const vendorId=document.getElementById('co-vendor-select').value
+  const manualName=document.getElementById('co-manual-name').value.trim()
+  if(!vendorId)return null
+  if(vendorId==='__manual__'){
+    if(!manualName)return null
+    return{vendorId:'phone-order',vendorName:manualName}
+  }
+  const v=allVendors.find(v=>v.id===vendorId)
+  return{vendorId,vendorName:v?.business_name||(v?.email||'Unknown')}
 }
 
 async function submitCreateOrder(){
-  const vendorId=document.getElementById('co-vendor-select').value
-  const manualName=document.getElementById('co-manual-name').value.trim()
-  const date=document.getElementById('co-date').value
-  const time=document.getElementById('co-time').value
-  const notes=document.getElementById('co-notes').value.trim()
   const errEl=document.getElementById('co-error');errEl.style.display='none'
-
-  if(!vendorId){errEl.textContent='Please select a client.';errEl.style.display='block';return}
-  if(vendorId==='__manual__'&&!manualName){errEl.textContent='Please enter the client name.';errEl.style.display='block';return}
+  const vendor=resolveVendor()
+  if(!vendor){errEl.textContent=document.getElementById('co-vendor-select').value==='__manual__'?'Please enter the client name.':'Please select a client.';errEl.style.display='block';return}
+  const date=document.getElementById('co-date').value,time=document.getElementById('co-time').value,notes=document.getElementById('co-notes').value.trim()
   if(!date){errEl.textContent='Please set a delivery date.';errEl.style.display='block';return}
   if(!time){errEl.textContent='Please set a delivery time.';errEl.style.display='block';return}
   if(!Object.keys(coQtys).length){errEl.textContent='Please add at least one item.';errEl.style.display='block';return}
-
-  let vendorName='',finalVendorId=vendorId
-  if(vendorId==='__manual__'){
-    vendorName=manualName;finalVendorId='phone-order'
-  }else{
-    const v=allVendors.find(v=>v.id===vendorId)
-    vendorName=v?.business_name||(v?.email||'Unknown')
-  }
-
-  const items=Object.entries(coQtys).map(([id,qty])=>{
-    const m=allMenu.find(m=>m.id===id)
-    return{item_name:m.name,quantity:qty,unit:m.unit,price:m.price||0}
-  })
-
+  const items=Object.entries(coQtys).map(([id,qty])=>{const m=allMenu.find(m=>m.id===id);return{item_name:m.name,quantity:qty,unit:m.unit,price:m.price||0}})
   try{
-    await db.collection('orders').add({vendor_id:finalVendorId,vendor_name:vendorName,delivery_date:date,delivery_time:time,notes,status:'New',created_at:firebase.firestore.FieldValue.serverTimestamp(),items,created_by_admin:true})
+    await db.collection('orders').add({vendor_id:vendor.vendorId,vendor_name:vendor.vendorName,delivery_date:date,delivery_time:time,notes,status:'New',created_at:firebase.firestore.FieldValue.serverTimestamp(),items,created_by_admin:true})
     await loadOrders();renderOrders()
-    document.getElementById('create-order-form').classList.remove('open')
-    coQtys={}
+    document.getElementById('create-order-form').classList.remove('open');coQtys={}
   }catch(e){errEl.textContent=e.message;errEl.style.display='block'}
 }
 
-// ─────────────────────────────────────────────
-// ADD CLIENT (Admin)
-// ─────────────────────────────────────────────
+async function submitCreateWeeklyOrders(){
+  const errEl=document.getElementById('co-weekly-error');errEl.style.display='none'
+  const vendor=resolveVendor()
+  if(!vendor){errEl.textContent=document.getElementById('co-vendor-select').value==='__manual__'?'Please enter the client name.':'Please select a client.';errEl.style.display='block';return}
+  const time=document.getElementById('co-weekly-time').value,notes=document.getElementById('co-weekly-notes').value.trim()
+  if(!time){errEl.textContent='Please set a delivery time.';errEl.style.display='block';return}
+  const daysWithItems=Object.keys(coWeeklyQtys).filter(d=>Object.keys(coWeeklyQtys[d]||{}).length>0).sort()
+  if(!daysWithItems.length){errEl.textContent='Please enter quantities for at least one day.';errEl.style.display='block';return}
+  try{
+    let placed=0
+    for(const date of daysWithItems){
+      const items=Object.entries(coWeeklyQtys[date]).filter(([,qty])=>qty>0).map(([id,qty])=>{const m=allMenu.find(m=>m.id===id);return{item_name:m.name,quantity:qty,unit:m.unit,price:m.price||0}})
+      if(!items.length)continue
+      await db.collection('orders').add({vendor_id:vendor.vendorId,vendor_name:vendor.vendorName,delivery_date:date,delivery_time:time,notes,status:'New',created_at:firebase.firestore.FieldValue.serverTimestamp(),items,created_by_admin:true})
+      placed++
+    }
+    await loadOrders();renderOrders()
+    document.getElementById('create-order-form').classList.remove('open');coWeeklyQtys={}
+  }catch(e){errEl.textContent=e.message;errEl.style.display='block'}
+}
+
+// ══════════════════════════════════════════════
+// ADD CLIENT
+// ══════════════════════════════════════════════
 function toggleAddClient(){
   const form=document.getElementById('add-client-form')
   form.classList.toggle('open')
@@ -503,20 +634,12 @@ function toggleAddClient(){
     document.getElementById('ac-error').style.display='none'
   }
 }
-
 async function submitAddClient(){
-  const name=document.getElementById('ac-name').value.trim()
-  const email=document.getElementById('ac-email').value.trim()
-  const phone=document.getElementById('ac-phone').value.trim()
+  const name=document.getElementById('ac-name').value.trim(),email=document.getElementById('ac-email').value.trim(),phone=document.getElementById('ac-phone').value.trim()
   const errEl=document.getElementById('ac-error');errEl.style.display='none'
   if(!name){errEl.textContent='Business name is required.';errEl.style.display='block';return}
   try{
-    const docRef=await db.collection('profiles').add({
-      business_name:name,email:email||'',phone:phone||'',
-      approved:true,active:true,is_admin:false,
-      created_at:firebase.firestore.FieldValue.serverTimestamp(),
-      created_by_admin:true
-    })
+    const docRef=await db.collection('profiles').add({business_name:name,email:email||'',phone:phone||'',approved:true,active:true,is_admin:false,created_at:firebase.firestore.FieldValue.serverTimestamp(),created_by_admin:true})
     allVendors.unshift({id:docRef.id,business_name:name,email:email||'',phone:phone||'',approved:true,active:true,created_by_admin:true})
     renderVendors()
     document.getElementById('add-client-form').classList.remove('open')
@@ -526,9 +649,9 @@ async function submitAddClient(){
   }catch(e){errEl.textContent=e.message;errEl.style.display='block'}
 }
 
-// ─────────────────────────────────────────────
+// ══════════════════════════════════════════════
 // RENDER ORDERS
-// ─────────────────────────────────────────────
+// ══════════════════════════════════════════════
 function renderOrders(){
   const el=document.getElementById('orders-list')
   if(!allOrders.length){el.innerHTML='<div class="empty-state">No orders yet.</div>';return}
@@ -543,12 +666,10 @@ function renderOrders(){
         <div class="date-header-stats">${orders.length} order${orders.length!==1?'s':''}&ensp;&middot;&ensp;${units} units</div>
       </div>
       ${orders.map(order=>{
-        const oI=order.items||[],total=oI.reduce((s,i)=>s+i.quantity,0)
-        const items=oI.map(i=>`${i.item_name} &times; ${i.quantity}`).join(', ')
-        const st=(order.status||'new').toLowerCase()
+        const oI=order.items||[],total=oI.reduce((s,i)=>s+i.quantity,0),items=oI.map(i=>`${i.item_name} &times; ${i.quantity}`).join(', '),st=(order.status||'new').toLowerCase()
         return`<div class="order-row">
           <div style="flex:1">
-            <div class="order-vendor">${order.vendor_name}${order.created_by_admin?'<span style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-left:8px">Phone</span>':''}</div>
+            <div class="order-vendor">${order.vendor_name}${order.created_by_admin?'<span style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-left:8px;border:1px solid var(--border);padding:1px 5px">Phone</span>':''}</div>
             <div class="order-items-text">${items}</div>
             ${order.notes?`<div class="order-notes-text">${order.notes}</div>`:''}
           </div>
@@ -576,24 +697,17 @@ async function updateStatus(orderId,sel){
   document.getElementById('stat-new').textContent=allOrders.filter(o=>o.status==='New').length
 }
 
-// ─────────────────────────────────────────────
+// ══════════════════════════════════════════════
 // RENDER VENDORS
-// ─────────────────────────────────────────────
+// ══════════════════════════════════════════════
 function renderVendors(){
   const el=document.getElementById('vendors-list')
-  const pending=allVendors.filter(v=>!v.approved)
-  const active=allVendors.filter(v=>v.approved&&v.active!==false)
-  const inactive=allVendors.filter(v=>v.approved&&v.active===false)
-
+  const pending=allVendors.filter(v=>!v.approved),active=allVendors.filter(v=>v.approved&&v.active!==false),inactive=allVendors.filter(v=>v.approved&&v.active===false)
   const pendingHtml=pending.length?`<div class="vendors-section"><div class="section-heading" style="color:#7a6000">Pending Approval &mdash; ${pending.length}</div>${pending.map(v=>`<div class="vendor-row"><div><div class="vendor-name">${v.business_name||'No name'}</div><div class="vendor-email">${v.email}</div><div class="vendor-date">Signed up ${v.created_at?new Date(v.created_at.seconds*1000).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}):''}</div></div><div class="vendor-actions"><button class="btn-approve" onclick="approveVendor('${v.id}')">Approve</button></div></div>`).join('')}</div>`:''
-
-  const activeHtml=`<div class="vendors-section"><div class="section-heading">Active Clients &mdash; ${active.length}</div>${active.length?active.map(v=>`<div class="vendor-row"><div style="flex:1"><div style="display:flex;align-items:center;gap:8px"><div class="vendor-name">${v.business_name||'No name'}</div>${v.created_by_admin?'<span style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);border:1px solid var(--border);padding:1px 6px">Phone</span>':''}<button onclick="editVendorName('${v.id}')" style="background:none;border:none;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);cursor:pointer;padding:0;text-decoration:underline;text-underline-offset:2px">Edit</button></div>${v.email?`<div class="vendor-email">${v.email}</div>`:''}${v.phone?`<div class="vendor-phone">${v.phone}</div>`:''}</div><div class="vendor-actions"><button class="btn-pricing" id="pricing-btn-${v.id}" onclick="togglePricing('${v.id}')">Pricing</button><button class="btn-deactivate" onclick="toggleActive('${v.id}',false)">Deactivate</button></div></div><div class="pricing-panel" id="pricing-panel-${v.id}"><div class="pricing-panel-header"><span class="pricing-panel-title">Custom Prices for ${v.business_name||v.email||'Client'}</span><span class="pricing-panel-note">Leave blank to use default menu price</span></div><div id="pricing-rows-${v.id}"><div style="font-size:13px;color:var(--text3);padding:8px 0">Loading...</div></div><div class="pricing-actions"><button class="btn-save-prices" onclick="savePricing('${v.id}')">Save Prices</button><button class="btn-clear-prices" onclick="clearPricing('${v.id}')">Clear All Custom</button></div></div>`).join(''):'<div class="empty-state" style="padding:20px 0;text-align:left">No active clients yet.</div>'}</div>`
-
+  const activeHtml=`<div class="vendors-section"><div class="section-heading">Active Clients &mdash; ${active.length}</div>${active.length?active.map(v=>`<div class="vendor-row"><div style="flex:1"><div style="display:flex;align-items:center;gap:8px"><div class="vendor-name">${v.business_name||'No name'}</div>${v.created_by_admin?'<span style="font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);border:1px solid var(--border);padding:1px 5px">Phone</span>':''}<button onclick="editVendorName('${v.id}')" style="background:none;border:none;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);cursor:pointer;padding:0;text-decoration:underline;text-underline-offset:2px">Edit</button></div>${v.email?`<div class="vendor-email">${v.email}</div>`:''}${v.phone?`<div class="vendor-phone">${v.phone}</div>`:''}</div><div class="vendor-actions"><button class="btn-pricing" id="pricing-btn-${v.id}" onclick="togglePricing('${v.id}')">Pricing</button><button class="btn-deactivate" onclick="toggleActive('${v.id}',false)">Deactivate</button></div></div><div class="pricing-panel" id="pricing-panel-${v.id}"><div class="pricing-panel-header"><span class="pricing-panel-title">Custom Prices for ${v.business_name||v.email||'Client'}</span><span class="pricing-panel-note">Leave blank to use default</span></div><div id="pricing-rows-${v.id}"><div style="font-size:13px;color:var(--text3);padding:8px 0">Loading...</div></div><div class="pricing-actions"><button class="btn-save-prices" onclick="savePricing('${v.id}')">Save Prices</button><button class="btn-clear-prices" onclick="clearPricing('${v.id}')">Clear All Custom</button></div></div>`).join(''):'<div class="empty-state" style="padding:20px 0;text-align:left">No active clients yet.</div>'}</div>`
   const inactiveHtml=inactive.length?`<div class="vendors-section"><div class="section-heading">Inactive &mdash; ${inactive.length}</div>${inactive.map(v=>`<div class="vendor-row inactive"><div><div class="vendor-name">${v.business_name||'No name'}</div>${v.email?`<div class="vendor-email">${v.email}</div>`:''}</div><button class="btn-activate" onclick="toggleActive('${v.id}',true)">Reactivate</button></div>`).join('')}</div>`:''
-
   el.innerHTML=pendingHtml+activeHtml+inactiveHtml
 }
-
 async function approveVendor(id){
   await db.collection('profiles').doc(id).update({approved:true})
   const v=allVendors.find(v=>v.id===id);if(v)v.approved=true
@@ -608,9 +722,9 @@ async function editVendorName(id){
   await db.collection('profiles').doc(id).update({business_name:name.trim()});v.business_name=name.trim();renderVendors()
 }
 
-// ─────────────────────────────────────────────
+// ══════════════════════════════════════════════
 // MENU
-// ─────────────────────────────────────────────
+// ══════════════════════════════════════════════
 function renderMenu(){
   const active=allMenu.filter(m=>m.active),inactive=allMenu.filter(m=>!m.active)
   document.getElementById('badge-menu').textContent=active.length
@@ -631,9 +745,9 @@ async function addItem(){
   allMenu.push({id:docRef.id,name,unit,price,sort_order:sortOrder,active:true});renderMenu()
 }
 
-// ─────────────────────────────────────────────
+// ══════════════════════════════════════════════
 // INVOICE
-// ─────────────────────────────────────────────
+// ══════════════════════════════════════════════
 function openInvoice(orderId){const order=allOrders.find(o=>o.id===orderId);if(!order)return;const w=window.open('','_blank');w.document.write(generateInvoiceHtml(order));w.document.close();setTimeout(()=>w.print(),600)}
 function generateInvoiceHtml(order){
   const items=order.items||[],totalUnits=items.reduce((s,i)=>s+i.quantity,0),totalPrice=items.reduce((s,i)=>s+(i.price||0)*i.quantity,0)
@@ -643,9 +757,9 @@ function generateInvoiceHtml(order){
   return`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Invoice &mdash; ${order.id.slice(0,8).toUpperCase()}</title><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"><style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:'DM Sans',sans-serif;background:white;color:#1a1916;padding:56px;max-width:760px;margin:0 auto;}@media print{body{padding:32px;}.no-print{display:none!important;}}.no-print{text-align:center;margin-bottom:32px;padding-bottom:32px;border-bottom:1px solid #e8e4de;}.print-btn{background:#1a1916;color:white;border:none;padding:10px 24px;font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;}.wordmark{font-family:'Cormorant Garamond',serif;font-size:13px;font-weight:600;letter-spacing:.25em;text-transform:uppercase;}.invoice-label{font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:600;}</style></head><body><div class="no-print"><button class="print-btn" onclick="window.print()">Download / Print PDF</button></div><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:48px"><div><div class="wordmark">Village Bakery + Provisions</div><div style="font-size:12px;color:#6b6860;margin-top:8px;line-height:2">212 Thompson Lane, Nashville, TN 37211<br>orders@villagebakeryandprovisions.com<br>(615) 498-5385</div></div><div style="text-align:right"><div class="invoice-label">Invoice</div><div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#6b6860;margin-top:6px">#${order.id.slice(0,8).toUpperCase()}</div><div style="font-size:12px;color:#6b6860;margin-top:4px">Issued ${issued}</div></div></div><div style="display:flex;justify-content:space-between;margin-bottom:40px;padding-bottom:24px;border-bottom:2px solid #1a1916"><div><div style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#6b6860;margin-bottom:8px">Bill To</div><div style="font-size:16px;font-weight:500">${order.vendor_name}</div></div><div style="text-align:right"><div style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#6b6860;margin-bottom:8px">Delivery</div><div style="font-size:14px;font-weight:500">${deliveryStr}</div><div style="font-size:13px;color:#6b6860;margin-top:3px">at ${(order.delivery_time||'').slice(0,5)}</div></div></div>${order.notes?`<div style="font-size:13px;color:#6b6860;margin-bottom:24px;font-style:italic">${order.notes}</div>`:''}<table style="width:100%;border-collapse:collapse"><thead><tr style="border-bottom:2px solid #1a1916"><th style="padding:8px 0;text-align:left;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#6b6860;font-weight:500">Item</th><th style="padding:8px 0;text-align:center;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#6b6860;font-weight:500">Qty</th><th style="padding:8px 0;text-align:center;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#6b6860;font-weight:500">Unit</th><th style="padding:8px 0;text-align:right;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#6b6860;font-weight:500">Price</th><th style="padding:8px 0;text-align:right;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#6b6860;font-weight:500">Subtotal</th></tr></thead><tbody>${rows}</tbody><tfoot><tr><td colspan="3" style="padding:14px 0;font-size:11px;letter-spacing:.15em;text-transform:uppercase;font-weight:500">Total</td><td style="padding:14px 0;text-align:right;font-size:13px;color:#6b6860">${totalUnits} units</td><td style="padding:14px 0;text-align:right;font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600">${totalPrice>0?'$'+totalPrice.toFixed(2):'&mdash;'}</td></tr></tfoot></table><div style="margin-top:48px;padding-top:20px;border-top:1px solid #e8e4de;font-size:12px;color:#6b6860;text-align:center;line-height:2">Thank you for your business.<br>Village Bakery + Provisions &nbsp;&middot;&nbsp; orders@villagebakeryandprovisions.com &nbsp;&middot;&nbsp; (615) 498-5385</div></body></html>`
 }
 
-// ─────────────────────────────────────────────
+// ══════════════════════════════════════════════
 // DATE FILTERS
-// ─────────────────────────────────────────────
+// ══════════════════════════════════════════════
 function getDateRange(mode){
   const now=new Date(),fmt=d=>localDateStr(d),todayStr=localDateStr(now)
   const dow=now.getDay(),diff=(dow+6)%7
@@ -675,9 +789,9 @@ function setCustomRange(tab){
   if(tab==='production')renderProductionContent();if(tab==='packing')renderPackingContent()
 }
 
-// ─────────────────────────────────────────────
+// ══════════════════════════════════════════════
 // PRODUCTION
-// ─────────────────────────────────────────────
+// ══════════════════════════════════════════════
 function renderProduction(){const el=document.getElementById('production-content');el.innerHTML=filterBarHtml('production')+'<div id="prod-body"></div>';renderProductionContent()}
 function renderProductionContent(){
   const orders=filterOrders('production'),el=document.getElementById('prod-body');if(!el)return
@@ -694,9 +808,9 @@ function renderProductionContent(){
   el.innerHTML=html
 }
 
-// ─────────────────────────────────────────────
+// ══════════════════════════════════════════════
 // PACKING
-// ─────────────────────────────────────────────
+// ══════════════════════════════════════════════
 function renderPacking(){const el=document.getElementById('packing-content');el.innerHTML=filterBarHtml('packing')+'<div id="pack-body"></div>';renderPackingContent()}
 function renderPackingContent(){
   const orders=filterOrders('packing'),el=document.getElementById('pack-body');if(!el)return
@@ -712,9 +826,9 @@ function renderPackingContent(){
   el.innerHTML=html
 }
 
-// ─────────────────────────────────────────────
+// ══════════════════════════════════════════════
 // PRINT
-// ─────────────────────────────────────────────
+// ══════════════════════════════════════════════
 function printTab(tab){
   const orders=filterOrders(tab),fs=filterState[tab],range=fs.mode==='custom'?{from:fs.from,to:fs.to}:getDateRange(fs.mode)
   const title=tab==='production'?'Production List':'Packing + Delivery'
@@ -741,9 +855,9 @@ function printTab(tab){
   const w=window.open('','_blank');w.document.write(html);w.document.close();setTimeout(()=>w.print(),500)
 }
 
-// ─────────────────────────────────────────────
+// ══════════════════════════════════════════════
 // VENDOR PRICING
-// ─────────────────────────────────────────────
+// ══════════════════════════════════════════════
 let vendorPricingCache={}
 async function togglePricing(vendorId){
   const panel=document.getElementById('pricing-panel-'+vendorId),btn=document.getElementById('pricing-btn-'+vendorId);if(!panel)return
@@ -770,9 +884,9 @@ async function clearPricing(vendorId){
   snap.docs.forEach(d=>batch.delete(d.ref));await batch.commit();vendorPricingCache[vendorId]={};renderPricingRows(vendorId)
 }
 
-// ─────────────────────────────────────────────
-// DELETE ORDER / EXPORT CSV
-// ─────────────────────────────────────────────
+// ══════════════════════════════════════════════
+// DELETE / EXPORT
+// ══════════════════════════════════════════════
 async function deleteOrderAdmin(orderId){
   if(!confirm('Delete this order? This cannot be undone.'))return
   try{
@@ -788,8 +902,7 @@ function exportCSV(){
   if(!allOrders.length){alert('No orders to export.');return}
   const rows=[['Order ID','Vendor','Delivery Date','Delivery Time','Status','Item','Quantity','Unit','Price','Notes','Order Placed','Source']]
   allOrders.forEach(order=>{
-    const items=order.items||[],created=order.created_at?new Date(order.created_at.seconds*1000).toLocaleDateString('en-US'):''
-    const source=order.created_by_admin?'Phone/Admin':'Portal'
+    const items=order.items||[],created=order.created_at?new Date(order.created_at.seconds*1000).toLocaleDateString('en-US'):'',source=order.created_by_admin?'Phone/Admin':'Portal'
     if(!items.length){rows.push([order.id.slice(0,8).toUpperCase(),order.vendor_name,order.delivery_date,(order.delivery_time||'').slice(0,5),order.status||'New','','','','',order.notes||'',created,source])}
     else{items.forEach((item,idx)=>{rows.push([idx===0?order.id.slice(0,8).toUpperCase():'',idx===0?order.vendor_name:'',idx===0?order.delivery_date:'',idx===0?(order.delivery_time||'').slice(0,5):'',idx===0?(order.status||'New'):'',item.item_name,item.quantity,item.unit,item.price?'$'+Number(item.price).toFixed(2):'',idx===0?(order.notes||''):'',idx===0?created:'',idx===0?source:''])})}
   })
