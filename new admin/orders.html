@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Village Bakery — Orders</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin-shared.css">
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+<div id="v-loading"><img class="spinner-logo" src="../assets/logo.png" alt=""></div>
+<div id="v-auth" class="hidden">
+  <div class="auth-wrap">
+    <div class="auth-brand">
+      <img src="../assets/logo.png" class="auth-logo" alt="Village Bakery">
+      <div class="wordmark" style="text-align:center">Village Bakery + Provisions</div>
+      <div class="auth-divider"></div>
+      <div class="auth-sub" style="text-align:center">Admin Panel</div>
+    </div>
+    <div class="auth-card" style="margin-top:32px">
+      <div class="field"><label>Email</label><input type="email" id="admin-email" placeholder="orders@..."></div>
+      <div class="field"><label>Password</label><input type="password" id="admin-pass"></div>
+      <p class="error-msg" id="auth-error"></p>
+      <button class="btn-primary" style="margin-top:8px" onclick="handleLogin()">Sign In</button>
+    </div>
+  </div>
+</div>
+<div id="v-unauthorized" class="hidden">
+  <div class="unauth-card">
+    <h2>Not Authorized</h2>
+    <p>This account does not have admin access.</p>
+    <button class="btn-primary" onclick="handleLogout()">Sign Out</button>
+  </div>
+</div>
+<div id="v-app" class="hidden">
+  <div class="header">
+    <div class="header-brand">
+      <span class="header-wordmark">Village Bakery + Provisions</span>
+      <div class="header-sep"></div>
+      <span class="header-label">Admin</span>
+    </div>
+    <button class="btn-signout" onclick="handleLogout()">Sign Out</button>
+  </div>
+  <div class="tabs">
+    <a href="orders.html" class="tab" data-tab="orders">Orders <span class="tab-badge" id="badge-orders">0</span></a>
+    <a href="clients.html" class="tab" data-tab="vendors">Clients <span class="tab-badge alert" id="badge-vendors">0</span></a>
+    <a href="menu.html" class="tab" data-tab="menu">Menu <span class="tab-badge" id="badge-menu">0</span></a>
+    <a href="production.html" class="tab" data-tab="production">Production</a>
+    <a href="packing.html" class="tab" data-tab="packing">Packing + Delivery</a>
+    <a href="invoicing.html" class="tab" data-tab="invoicing">Invoicing</a>
+  </div>
+  <div class="content">
+    <!-- Orders panel content – copied from original panel-orders -->
+    <div id="panel-orders">
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-val rust" id="stat-new">0</div><div class="stat-lbl">New orders</div></div>
+        <div class="stat-card"><div class="stat-val gold" id="stat-today">0</div><div class="stat-lbl">Due today</div></div>
+        <div class="stat-card"><div class="stat-val green-c" id="stat-units">0</div><div class="stat-lbl">Total units</div></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+        <button class="btn-add" onclick="toggleCreateOrder()">+ Create Order</button>
+        <button onclick="exportCSV()" class="print-btn">Export CSV</button>
+      </div>
+      <div class="admin-form-box" id="create-order-form">
+        <div class="admin-form-title">Create Order for Client</div>
+        <div class="order-type-tabs">
+          <button class="order-type-tab active" id="ot-single" onclick="switchOrderType('single')">Single Order</button>
+          <button class="order-type-tab" id="ot-weekly" onclick="switchOrderType('weekly')">Weekly Order</button>
+        </div>
+        <div style="margin-bottom:4px">
+          <div style="font-size:var(--fs-xs);font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--text2);margin-bottom:10px">Client</div>
+          <select class="admin-form-select" id="co-vendor-select" onchange="onCoVendorChange()">
+            <option value="">Select client...</option>
+            <option value="__manual__">─ Other / Type name ─</option>
+          </select>
+          <div id="co-manual-field" style="display:none;margin-top:10px">
+            <input class="admin-form-input" type="text" id="co-manual-name" placeholder="Business name">
+          </div>
+        </div>
+        <div id="co-single-section">
+          <div style="font-size:var(--fs-xs);font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--text2);margin:20px 0 10px;padding-top:14px;border-top:1px solid var(--border)">Items</div>
+          <div id="co-items-grid"></div>
+          <div class="co-date-row" style="margin-top:20px">
+            <div class="field"><label>Delivery Date</label><input class="admin-form-input" type="date" id="co-date"></div>
+            <div class="field"><label>Delivery Time</label><input class="admin-form-input" type="time" id="co-time" value="08:00"></div>
+          </div>
+          <div class="field"><label>Notes (optional)</label><input class="admin-form-input" type="text" id="co-notes" placeholder="Special requests..."></div>
+          <p class="error-msg" id="co-error" style="margin-bottom:0"></p>
+          <div class="form-actions">
+            <button class="btn-action" onclick="submitCreateOrder()">Place Order</button>
+            <button class="btn-action-cancel" onclick="toggleCreateOrder()">Cancel</button>
+          </div>
+        </div>
+        <div id="co-weekly-section" style="display:none">
+          <div style="padding-top:14px;margin-top:4px;border-top:1px solid var(--border)">
+            <div class="week-nav">
+              <button class="week-arrow" id="co-week-prev" onclick="coChangeWeek(-1)">&#8592;</button>
+              <div class="week-nav-center">
+                <div class="week-nav-label">Week</div>
+                <div class="week-nav-dates" id="co-week-label">Loading...</div>
+              </div>
+              <button class="week-arrow" id="co-week-next" onclick="coChangeWeek(1)">&#8594;</button>
+            </div>
+            <div class="weekly-table-wrap"><div id="co-weekly-grid"></div></div>
+            <div id="co-weekly-preview"></div>
+            <div class="co-date-row" style="margin-top:20px">
+              <div class="field"><label>Delivery Time (all days)</label><input class="admin-form-input" type="time" id="co-weekly-time" value="08:00"></div>
+              <div class="field"><label>Notes (optional)</label><input class="admin-form-input" type="text" id="co-weekly-notes" placeholder="Special requests..."></div>
+            </div>
+            <p class="error-msg" id="co-weekly-error" style="margin-bottom:0"></p>
+            <div class="form-actions">
+              <button class="btn-action" onclick="submitCreateWeeklyOrders()">Place Weekly Orders</button>
+              <button class="btn-action-cancel" onclick="toggleCreateOrder()">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="orders-list"><div class="empty-state">No orders yet.</div></div>
+    </div>
+  </div>
+</div>
+
+<script src="admin-common.js"></script>
+</body>
+</html>
