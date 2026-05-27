@@ -816,11 +816,19 @@ const auth=firebase.auth(),db=firebase.firestore()
 let currentUser=null,profile=null,allOrders=[],allVendors=[],allMenu=[]
 const now0=new Date()
 const TODAY=`${now0.getFullYear()}-${String(now0.getMonth()+1).padStart(2,'0')}-${String(now0.getDate()).padStart(2,'0')}`
+const filterState = {invoicing: {mode:'thisweek',from: getMondayStr(new Date()), to: getSundayStr(new Date())}};
 const filterState={production:{mode:'today',from:TODAY,to:TODAY},packing:{mode:'today',from:TODAY,to:TODAY}}
 const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
 const DAY_NAMES=['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
 function localDateStr(d){return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
 function show(id){['v-loading','v-auth','v-unauthorized','v-app'].forEach(v=>document.getElementById(v).classList.toggle('hidden',v!==id))}
+function switchTab(name,el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));el.classList.add('active')
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.getElementById('panel-'+name).classList.add('active')
+  if(name==='production'){ if(typeof renderProduction === 'function') renderProduction();}
+  else if(name==='packing') { if(typeof renderPacking === 'function') renderPacking();}
+  else if(name==='invoicing') renderInvoicing();
+}
 function switchTab(name,el){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));el.classList.add('active')
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.getElementById('panel-'+name).classList.add('active')
@@ -835,6 +843,8 @@ function init(){
       if(!profile?.is_admin){show('v-unauthorized');return}
       await Promise.all([loadOrders(),loadVendors(),loadMenu()])
       renderOrders();renderVendors();renderMenu();show('v-app')
+      await Promise.all([loadOrders(),loadVendors(),loadMenu()])
+  renderInvoicing(); // Add this line
     }catch(e){console.error(e);show('v-auth')}
   })
 }
