@@ -356,6 +356,12 @@ body{font-weight:500;color:var(--text);}
       <div id="order-form-area">
         <div class="form-section">
           <div class="section-title">Select Items</div>
+          <div class="form-section" style="margin-bottom:16px;">
+          <div class="section-title">Reorder from past order</div>
+            <select id="reorder-select" style="width:100%; padding:12px; border:1px solid var(--border); background:var(--surface); font-family:inherit;" onchange="loadPastOrder(this.value)">
+             <option value="">-- Select a past order --</option>
+            </select>
+          </div>
           <div id="products-grid"></div>
           <div class="order-summary" id="order-summary">No items selected.</div>
         </div>
@@ -387,6 +393,8 @@ body{font-weight:500;color:var(--text);}
       <div id="weekly-form-area">
         <div class="form-section">
           <div class="week-nav">
+            <button class="btn-text" style="margin-left:12px;" onclick="loadPastWeekOrders()">📋 Load this week's orders</button>
+            <button class="btn-text" onclick="clearWeeklyGrid()">Clear week</button>
             <button class="week-arrow" id="week-prev" onclick="changeWeek(-1)">&#8592;</button>
             <div class="week-nav-center">
               <div class="week-nav-label">Weekly Order</div>
@@ -439,11 +447,74 @@ function show(id){['v-loading','v-auth','v-business-name','v-pending','v-app'].f
 function showTab(id,btn){
   ['tab-order','tab-weekly','tab-history'].forEach(t=>document.getElementById(t).classList.toggle('hidden',t!==id))
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===id))
+  if (id === 'tab-order') {
+  loadPastOrdersDropdown();
+}
 }
 function switchTab(tab){
   document.getElementById('login-form').classList.toggle('hidden',tab!=='login')
   document.getElementById('signup-form').classList.toggle('hidden',tab!=='signup')
   document.querySelectorAll('.auth-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab))
+}
+async function loadPastOrdersDropdown() {
+  const snap = await db.collection('orders')
+    .where('vendor_id', '==', currentUser.uid)
+    .orderBy('created_at', 'desc')
+    .limit(15)
+    .get();
+async function loadPastOrder(orderId) {
+  if (!orderId) return;
+  try {
+    const doc = await db.collection('orders').doc(orderId).get();
+    if (!doc.exists) return;
+    const order = doc.data();
+    
+    // Reset current quantities
+    quantities = {};
+    // Reset all input fields to 0 first
+    menuItems.forEach(item => {
+      const input = document.getElementById(`qty-${item.id}`);
+      if (input) input.value = 0;
+      const row = document.getElementById(`row-${item.id}`);
+      if (row) row.classList.remove('has-qty');
+    });
+    
+    // Fill quantities from the order
+    (order.items || []).forEach(item => {
+      const menuItem = menuItems.find(mi => mi.name === item.item_name);
+      if (menuItem) {
+        quantities[menuItem.id] = item.quantity;
+        const input = document.getElementById(`qty-${menuItem.id}`);
+        if (input) {
+          input.value = item.quantity;
+          document.getElementById(`row-${menuItem.id}`).classList.add('has-qty');
+        }
+      }
+    });
+    
+    // Set delivery date & time (default to today if past date, but keep as is)
+    const deliveryDate = order.delivery_date;
+    const today = localDateStr(new Date());
+    document.getElementById('delivery-date').value = deliveryDate < today ? today : deliveryDate;
+    document.getElementById('delivery-time').value = order.delivery_time || '08:00';
+    document.getElementById('order-notes').value = order.notes || '';
+    
+    updateSummary();
+  } catch (e) {
+    console.error(e);
+    alert('Could not load order');
+  }
+}
+  const select = document.getElementById('reorder-select');
+  select.innerHTML = '<option value="">-- Select a past order --</option>';
+  snap.forEach(doc => {
+    const order = doc.data();
+    const date = new Date(order.delivery_date + 'T12:00:00').toLocaleDateString();
+    const option = document.createElement('option');
+    option.value = doc.id;
+    option.textContent = `${date} – ${order.delivery_time} (${(order.items || []).length} items)`;
+    select.appendChild(option);
+  });
 }
 async function sendOrderEmail(params){
   if(EMAILJS_PUBLIC_KEY==='YOUR_EMAILJS_PUBLIC_KEY')return
@@ -596,8 +667,49 @@ function initWeekly(){
   document.getElementById('weekly-success').style.display='none'
   const btn=document.getElementById('weekly-submit-btn');btn.disabled=false;btn.textContent='Place Weekly Orders'
   renderWeeklyGrid()
+  async function loadPastWeekOrders() {
+  const dates = getWeekDates(weekOffset);
+  const startDate = dates[0].dateStr;
+  const endDate = dates[6].dateStr;
+  
+  const q = await db.collection('orders')
+    .where('vendor_id', '==', currentUser.uid)
+    .where('delivery_date', '>=', startDate)
+    .where('delivery_date', '<=', endDate)
+    .get();
+  
+  // Reset weeklyQuantities
+  weeklyQuantities = {};
+  q.docs.forEach(doc => {
+    const order = doc.data();
+    const date = order.delivery_date;
+    if (!weeklyQuantities[date]) weeklyQuantities[date] = {};
+    (order.items || []).forEach(item => {
+      const itemId = menuItems.find(mi => mi.name === item.item_name)?.id;
+      if (itemId) {
+        weeklyQuantities[date][itemId] = (weeklyQuantities[date][itemId] || 0) + item.quantity;
+      }
+    });
+  });
+  
+  // Re-render the grid to show loaded quantities
+  renderWeeklyGrid();
+  // Also optionally update delivery time/notes from the first order
+  if (q.docs.length > 0) {
+    const sampleOrder = q.docs[0].data();
+    document.getElementById('weekly-time').value = sampleOrder.delivery_time || '08:00';
+    document.getElementById('weekly-notes').value = sampleOrder.notes || '';
+  }
 }
-function changeWeek(delta){const newOffset=weekOffset+delta;if(newOffset<0)return;weekOffset=newOffset;renderWeeklyGrid()}
+}
+
+function clearWeeklyGrid() {
+  weeklyQuantities = {};
+  renderWeeklyGrid();
+  document.getElementById('weekly-time').value = '08:00';
+  document.getElementById('weekly-notes').value = '';
+}
+function changeWeek(delta){const newOffset=weekOffset+delta;weekOffset=newOffset;renderWeeklyGrid()}
 function renderWeeklyGrid(){
   const dates=getWeekDates(weekOffset)
   document.getElementById('week-label').textContent=getWeekLabel(weekOffset)
