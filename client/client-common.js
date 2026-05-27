@@ -361,6 +361,87 @@ function initWeekly() {
   if (btn) { btn.disabled = false; btn.textContent = 'Place Weekly Orders'; }
   renderWeeklyGrid();
 }
+// Clear all weekly quantities
+function clearWeeklyQuantities() {
+  weeklyQuantities = {};
+  renderWeeklyGrid();
+  updateWeeklySummary();
+}
+
+// Repopulate from the previous week (7 days before the current week's Monday)
+async function repopulateFromPreviousWeek() {
+  // Get current week's Monday date
+  const currentDates = getWeekDates(weekOffset);
+  if (!currentDates.length) return;
+  const currentMonday = new Date(currentDates[0].dateStr + 'T12:00:00');
+  // Previous week's Monday is 7 days earlier
+  const prevMonday = new Date(currentMonday);
+  prevMonday.setDate(prevMonday.getDate() - 7);
+  const prevSunday = new Date(prevMonday);
+  prevSunday.setDate(prevSunday.getDate() + 6);
+  
+  const from = localDateStr(prevMonday);
+  const to = localDateStr(prevSunday);
+  
+  try {
+    // Fetch orders from previous week for this vendor
+    const snap = await db.collection('orders')
+      .where('vendor_id', '==', currentUser.uid)
+      .where('delivery_date', '>=', from)
+      .where('delivery_date', '<=', to)
+      .get();
+    
+    const orders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    if (!orders.length) {
+      alert('No orders found for the previous week.');
+      return;
+    }
+    
+    // Aggregate quantities per date and per item
+    const newWeeklyQtys = {};
+    orders.forEach(order => {
+      const date = order.delivery_date;
+      if (!newWeeklyQtys[date]) newWeeklyQtys[date] = {};
+      (order.items || []).forEach(item => {
+        const itemId = menuItems.find(m => m.name === item.item_name)?.id;
+        if (itemId) {
+          newWeeklyQtys[date][itemId] = (newWeeklyQtys[date][itemId] || 0) + item.quantity;
+        }
+      });
+    });
+    
+    // Now map these to the current week's dates (same weekday alignment)
+    // We need to match the previous week's day-of-week to the same day-of-week in current week
+    const currentDatesMap = {};
+    currentDates.forEach(d => {
+      const dateObj = new Date(d.dateStr + 'T12:00:00');
+      const weekday = dateObj.getDay(); // 0-6
+      currentDatesMap[weekday] = d.dateStr;
+    });
+    
+    weeklyQuantities = {};
+    for (const [prevDateStr, items] of Object.entries(newWeeklyQtys)) {
+      const prevDateObj = new Date(prevDateStr + 'T12:00:00');
+      const prevWeekday = prevDateObj.getDay();
+      const targetDate = currentDatesMap[prevWeekday];
+      if (targetDate) {
+        if (!weeklyQuantities[targetDate]) weeklyQuantities[targetDate] = {};
+        Object.assign(weeklyQuantities[targetDate], items);
+      }
+    }
+    
+    renderWeeklyGrid();
+    updateWeeklySummary();
+    alert('Previous week quantities loaded. Adjust as needed.');
+  } catch (e) {
+    console.error(e);
+    alert('Failed to load previous week orders: ' + e.message);
+  }
+}
+
+// Expose functions globally
+window.clearWeeklyQuantities = clearWeeklyQuantities;
+window.repopulateFromPreviousWeek = repopulateFromPreviousWeek;
 window.initWeekly = initWeekly;
 
 function changeWeek(delta) {

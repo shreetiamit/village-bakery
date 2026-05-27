@@ -16,7 +16,7 @@
 
 <div id="v-loading"><img class="spinner-logo" src="../assets/logo.png" alt=""></div>
 
-<!-- AUTH SCREENS (same as single-orders.html) -->
+<!-- AUTH SCREENS (same as before) -->
 <div id="v-auth" class="hidden">
   <div class="auth-wrap">
     <div class="auth-brand">
@@ -116,6 +116,11 @@
               <div class="week-nav-dates" id="week-label">Loading...</div>
             </div>
             <button class="week-arrow" id="week-next" onclick="changeWeek(1)">&#8594;</button>
+          </div>
+          <!-- NEW BUTTON ROW -->
+          <div style="display: flex; gap: 16px; justify-content: flex-end; margin-bottom: 20px;">
+            <button class="btn-text" onclick="repopulateFromPreviousWeek()" style="padding: 8px 16px; border: 1px solid var(--border); background: var(--surface);">↻ Repopulate from Previous Week</button>
+            <button class="btn-text" onclick="clearWeeklyQuantities()" style="padding: 8px 16px; border: 1px solid var(--border); background: var(--surface); color: var(--err);">✕ Clear Week</button>
           </div>
           <div class="weekly-table-wrap"><div id="weekly-grid"></div></div>
           <div class="weekly-summary" id="weekly-summary"></div>
