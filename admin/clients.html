@@ -78,5 +78,12 @@
 </div>
 
 <script src="admin-common.js"></script>
+<script>
+  // Save current page filename to localStorage for return redirect
+  const page = window.location.pathname.split('/').pop();
+  if (page && page !== 'index.html') {
+    localStorage.setItem('lastAdminPage', page);
+  }
+</script>
 </body>
 </html>

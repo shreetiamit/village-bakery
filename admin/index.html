@@ -2,8 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="refresh" content="0; url=orders.html">
   <title>Village Bakery Admin</title>
+  <script>
+    // Get last visited page from localStorage, default to 'orders.html'
+    const lastPage = localStorage.getItem('lastAdminPage') || 'orders.html';
+    // Redirect to that page
+    window.location.href = lastPage;
+  </script>
 </head>
 <body>
   <p>Redirecting to <a href="orders.html">Admin Panel</a>...</p>
