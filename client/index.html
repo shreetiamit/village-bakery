@@ -400,11 +400,11 @@ body{font-weight:500;color:var(--text);}
             </div>
             <button class="week-arrow" id="week-next" onclick="changeWeek(1)">&#8594;</button>
           </div>
+           <button class="btn-text" style="margin-left:12px;" onclick="loadPastWeekOrders()">Load last week's orders</button>
+            <button class="btn-text" onclick="clearWeeklyGrid()">Clear week</button>
           <div class="weekly-table-wrap"><div id="weekly-grid"></div></div>
           <div class="weekly-summary" id="weekly-summary"></div>
         </div>
-        <button class="btn-text" style="margin-left:12px;" onclick="loadPastWeekOrders()">Load last week's orders</button>
-            <button class="btn-text" onclick="clearWeeklyGrid()">Clear week</button>
         <div class="form-section">
           <div class="section-title">Delivery Details</div>
           <div class="field"><label>Delivery Time (same for all days)</label><input type="time" id="weekly-time" value="08:00"></div>
