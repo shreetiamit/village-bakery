@@ -809,7 +809,7 @@ const auth=firebase.auth(),db=firebase.firestore()
 let currentUser=null,profile=null,allOrders=[],allVendors=[],allMenu=[]
 const now0=new Date()
 const TODAY=`${now0.getFullYear()}-${String(now0.getMonth()+1).padStart(2,'0')}-${String(now0.getDate()).padStart(2,'0')}`
-const filterState={production:{mode:'today',from:TODAY,to:TODAY},packing:{mode:'today',from:TODAY,to:TODAY}invoicing:{ mode:'thisweek',from:'', to:''}}
+const filterState={production:{mode:'today',from:TODAY,to:TODAY},packing:{mode:'today',from:TODAY,to:TODAY},invoicing:{ mode:'thisweek',from:'', to:''}}
 const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
 const DAY_NAMES=['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
 function localDateStr(d){return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
