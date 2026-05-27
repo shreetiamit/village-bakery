@@ -126,26 +126,103 @@ body{font-family:'DM Sans',sans-serif;font-size:var(--fs-base);background:var(--
 .week-nav-dates{font-size:var(--fs-md);font-weight:600;color:var(--text);}
 
 /* ── Weekly table ── */
-.weekly-table-wrap{overflow-x:auto;margin-bottom:8px;}
-.weekly-table{width:100%;border-collapse:collapse;min-width:500px;}
-.weekly-table th{padding:12px 8px;text-align:center;font-size:var(--fs-xs);font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text2);border-bottom:3px solid var(--accent);white-space:nowrap;}
-.weekly-table th.item-col{text-align:left;min-width:140px;}
-.weekly-table td{padding:12px 8px;border-bottom:1px solid var(--border);vertical-align:middle;}
-.weekly-table td.item-col{padding-right:16px;}
-.weekly-item-name{font-size:var(--fs-base);font-weight:400;}
-.weekly-item-unit{font-size:var(--fs-sm);color:var(--text3);margin-top:3px;}
-.weekly-qty{width:60px;padding:7px 4px;text-align:center;border:1px solid var(--border);background:transparent;font-family:'DM Sans',sans-serif;font-size:var(--fs-base);color:var(--text);outline:none;border-radius:0;display:block;margin:0 auto;}
-.weekly-qty:focus{border-color:var(--accent);}
-.weekly-qty.has-val{border-color:var(--accent);background:#FEF8EE;}
-.weekly-preview{margin-top:14px;padding:14px 0;border-top:1px solid var(--border);}
-.weekly-preview-row{display:flex;justify-content:space-between;font-size:var(--fs-base);color:var(--text);padding:5px 0;}
-.co-date-row{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
-@media(max-width:560px){.co-date-row{grid-template-columns:1fr;}}
-.form-actions{display:flex;gap:14px;margin-top:24px;padding-top:20px;border-top:1px solid var(--border);}
-.btn-action{background:var(--accent);color:white;border:none;padding:14px 28px;font-family:'DM Sans',sans-serif;font-size:var(--fs-sm);font-weight:600;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;transition:opacity .15s;}
-.btn-action:hover{opacity:.85;}
-.btn-action-cancel{background:none;border:1px solid var(--border);color:var(--text2);padding:13px 22px;font-family:'DM Sans',sans-serif;font-size:var(--fs-sm);font-weight:500;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:all .15s;}
-.btn-action-cancel:hover{border-color:var(--border2);color:var(--text);}
+.weekly-table-wrap{
+  overflow-x:auto;
+  margin-bottom:8px;
+}
+
+.weekly-table{
+  width:100%;
+  border-collapse:collapse;
+  table-layout:fixed;
+  min-width:980px;
+}
+
+/* HEADER */
+.weekly-table th{
+  padding:10px 4px;
+  text-align:center;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--text);
+  border-bottom:3px solid var(--accent);
+  line-height:1.2;
+}
+
+/* ITEM COLUMN */
+.weekly-table th.item-col,
+.weekly-table td.item-col{
+  width:260px;
+  min-width:260px;
+  text-align:left;
+  padding-right:18px;
+}
+
+/* DAY CELLS */
+.weekly-table td{
+  padding:8px 4px;
+  border-bottom:1px solid #C9A96E;
+  vertical-align:middle;
+  text-align:center;
+}
+
+/* ITEM NAME */
+.weekly-item-name{
+  font-size:14px;
+  font-weight:700;
+  line-height:1.2;
+  color:var(--text);
+}
+
+/* UNIT TEXT */
+.weekly-item-unit{
+  font-size:11px;
+  color:#5A3B1C;
+  margin-top:2px;
+}
+
+/* INPUT BOXES */
+.weekly-qty{
+  width:52px;
+  height:38px;
+  padding:4px;
+  text-align:center;
+  border:1px solid #C9A96E;
+  background:transparent;
+  font-family:'DM Sans',sans-serif;
+  font-size:14px;
+  font-weight:600;
+  color:var(--text);
+  outline:none;
+  border-radius:0;
+  margin:0 auto;
+}
+
+.weekly-qty:focus{
+  border-color:var(--accent);
+}
+
+.weekly-qty.has-val{
+  border-color:var(--accent);
+  background:#FEF8EE;
+}
+
+/* WEEK NAV */
+.week-nav{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:10px 0 14px;
+  border-bottom:1px solid var(--border);
+  margin-bottom:16px;
+}
+
+.week-nav-dates{
+  font-size:18px;
+  font-weight:700;
+}
 
 /* ── Vendors ── */
 .vendors-section{margin-bottom:36px;}
