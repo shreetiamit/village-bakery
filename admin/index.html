@@ -11,28 +11,15 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
-  --bg:#F5EDD8;
-  --surface:#FFFDF5;
-  --text:#2C1A0E;
-  --text2:#7A5530;
-  --text3:#B8906A;
-  --border:#E2C99A;
-  --border2:#C9A96E;
-  --accent:#C4852A;
-  --dark:#2C1A0E;
-  --err:#A03A26;
-  --green:#3A6B37;
-  --gold:#8A6200;
-  --blue:#1A4A7A;
-  --header:#2C1A0E;
+  --bg:#F5EDD8;--surface:#FFFDF5;--text:#2C1A0E;--text2:#7A5530;--text3:#B8906A;
+  --border:#E2C99A;--border2:#C9A96E;--accent:#C4852A;--dark:#2C1A0E;--err:#A03A26;
+  --green:#3A6B37;--gold:#8A6200;--blue:#1A4A7A;--header:#2C1A0E;
 }
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;}
 .hidden{display:none!important;}
-/* ── Loading ── */
 #v-loading{display:flex;align-items:center;justify-content:center;min-height:100vh;}
 .spinner-logo{width:72px;height:72px;object-fit:contain;animation:logoPulse 1.6s ease-in-out infinite;}
 @keyframes logoPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.9)}}
-/* ── Auth ── */
 #v-auth{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px 24px;background:linear-gradient(150deg,#F9F2E2 0%,#EFE3C8 55%,#E6D1A0 100%);}
 .auth-wrap{width:100%;max-width:340px;}
 .auth-brand{text-align:center;margin-bottom:40px;}
@@ -48,7 +35,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .btn-primary{width:100%;padding:13px;background:var(--dark);color:white;border:none;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:background .15s,transform .12s,box-shadow .12s;}
 .btn-primary:hover{background:var(--accent);transform:translateY(-1px);box-shadow:0 4px 14px rgba(196,133,42,.3);}
 .error-msg{font-size:12px;color:var(--err);margin-top:10px;display:none;}
-/* ── Header ── */
 .header{background:linear-gradient(135deg,#2C1A0E 0%,#3D2410 100%);color:white;display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:52px;position:sticky;top:0;z-index:100;}
 .header-brand{display:flex;align-items:center;gap:16px;}
 .header-wordmark{font-family:'Cormorant Garamond',serif;font-size:12px;font-weight:600;letter-spacing:.25em;text-transform:uppercase;color:white;}
@@ -56,7 +42,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .header-label{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.5);}
 .btn-signout{background:none;border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.7);padding:6px 14px;font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;transition:all .15s;}
 .btn-signout:hover{border-color:rgba(255,255,255,.5);color:white;}
-/* ── Tabs ── */
 .tabs{background:var(--surface);border-bottom:1.5px solid var(--border);display:flex;padding:0 32px;}
 .tab{padding:14px 0;margin-right:28px;font-size:10px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--text2);cursor:pointer;border:none;border-bottom:2px solid transparent;margin-bottom:-1px;background:none;display:flex;align-items:center;gap:8px;transition:all .15s;}
 .tab:hover{color:var(--text);}
@@ -65,10 +50,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .tab.active .tab-badge{background:var(--accent);border-color:var(--accent);color:white;}
 .tab-badge.alert{background:#FFF3DC;border-color:var(--accent);color:var(--accent);}
 .tab.active .tab-badge.alert{background:var(--accent);border-color:var(--accent);color:white;}
-/* ── Content ── */
 .content{max-width:900px;margin:0 auto;padding:32px 24px 80px;}
 .panel{display:none;}.panel.active{display:block;}
-/* ── Stats ── */
 .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin-bottom:32px;}
 .stat-card{background:var(--surface);padding:20px 24px;}
 .stat-val{font-family:'DM Sans',sans-serif;font-size:28px;font-weight:700;line-height:1;color:var(--text);}
@@ -76,7 +59,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .stat-val.gold{color:var(--gold);}
 .stat-val.green-c{color:var(--green);}
 .stat-lbl{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--text2);margin-top:6px;}
-/* ── Date groups ── */
 .date-group{margin-bottom:28px;}
 .date-header{display:flex;justify-content:space-between;align-items:baseline;padding:10px 0;border-bottom:2px solid var(--accent);margin-bottom:0;}
 .date-header-label{font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;}
@@ -95,7 +77,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .status-select.done{background:#ECFAF2;color:var(--green);border-color:#80C4A0;}
 .btn-invoice{background:none;border:1px solid var(--border);color:var(--text2);padding:4px 10px;font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:all .15s;white-space:nowrap;}
 .btn-invoice:hover{border-color:var(--border2);color:var(--text);}
-/* ── Vendors ── */
 .vendors-section{margin-bottom:28px;}
 .section-heading{font-size:10px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--text2);padding:10px 0;border-bottom:1px solid var(--border);margin-bottom:0;}
 .vendor-row{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid var(--border);gap:16px;}
@@ -113,7 +94,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .btn-pricing{background:none;border:1px solid var(--border);color:var(--text2);padding:6px 12px;font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:all .15s;}
 .btn-pricing:hover{border-color:var(--accent);color:var(--accent);}
 .btn-pricing.active{background:var(--accent);border-color:var(--accent);color:white;}
-/* ── Pricing panel ── */
 .pricing-panel{border:1px solid var(--border);border-top:none;background:#fbf9f6;padding:20px 20px 16px;display:none;}
 .pricing-panel-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px;}
 .pricing-panel-title{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--text2);font-weight:500;}
@@ -131,7 +111,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .btn-save-prices:hover{opacity:.85;}
 .btn-clear-prices{background:none;border:1px solid var(--border);color:var(--text2);padding:7px 14px;font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;transition:all .15s;}
 .btn-clear-prices:hover{border-color:#c08080;color:var(--err);}
-/* ── Menu ── */
 .menu-row{display:flex;align-items:center;padding:12px 0;border-bottom:1px solid var(--border);gap:12px;}
 .menu-row.inactive{opacity:.4;}
 .menu-item-name{font-size:14px;font-weight:300;flex:1;}
@@ -155,12 +134,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .btn-add:hover{opacity:.85;}
 .section-label{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--text2);padding:14px 0 8px;border-bottom:1px solid var(--border);}
 .empty-state{text-align:center;padding:40px;font-size:13px;color:var(--text2);letter-spacing:.05em;}
-/* ── Unauthorized ── */
 #v-unauthorized{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px;}
 .unauth-card{background:var(--surface);border:1px solid var(--border);padding:40px;max-width:340px;text-align:center;}
 .unauth-card h2{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;margin-bottom:10px;}
 .unauth-card p{font-size:13px;color:var(--text2);margin-bottom:24px;line-height:1.7;}
-/* ── Date filter controls ── */
 .filter-bar{display:flex;align-items:center;gap:10px;margin-bottom:28px;flex-wrap:wrap;}
 .filter-btn{padding:7px 14px;font-family:'DM Sans',sans-serif;font-size:10px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;transition:all .15s;}
 .filter-btn:hover{border-color:var(--border2);color:var(--text);}
@@ -171,7 +148,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .filter-label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text2);}
 .print-btn{margin-left:auto;padding:7px 16px;font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:.14em;text-transform:uppercase;border:1px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;transition:all .15s;}
 .print-btn:hover{border-color:var(--border2);color:var(--text);}
-/* ── Production list ── */
 .prod-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);margin-bottom:28px;}
 .prod-stat{background:var(--surface);padding:16px 20px;}
 .prod-stat-val{font-family:'DM Sans',sans-serif;font-size:26px;font-weight:600;line-height:1;}
@@ -184,7 +160,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .prod-item-vendors{font-size:11px;color:var(--text3);margin-top:2px;}
 .prod-item-qty{font-family:'DM Sans',sans-serif;font-size:22px;font-weight:600;color:var(--text);}
 .prod-item-unit{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text2);margin-left:4px;}
-/* ── Packing + delivery ── */
 .pack-date-block{margin-bottom:36px;}
 .pack-date-heading{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;padding:10px 0;border-bottom:2px solid var(--accent);margin-bottom:16px;display:flex;justify-content:space-between;align-items:baseline;}
 .pack-vendor-card{border:1px solid var(--border);margin-bottom:12px;}
@@ -197,18 +172,14 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .pack-item-qty{font-size:13px;font-weight:500;color:var(--text);}
 .pack-notes{padding:8px 16px;font-size:11px;color:var(--text2);font-style:italic;background:#fbf9f6;border-top:1px dashed var(--border);}
 .pack-vendor-total{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text2);}
-/* ── Animations ── */
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 #v-auth{animation:fadeUp .4s ease forwards;}
 @keyframes cardSlide{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 .order-card{animation:cardSlide .3s ease forwards;}
-.order-card:nth-child(2){animation-delay:.05s}
-.order-card:nth-child(3){animation-delay:.1s}
-.order-card:nth-child(4){animation-delay:.15s}
-.order-card:nth-child(5){animation-delay:.2s}
+.order-card:nth-child(2){animation-delay:.05s}.order-card:nth-child(3){animation-delay:.1s}
+.order-card:nth-child(4){animation-delay:.15s}.order-card:nth-child(5){animation-delay:.2s}
 .order-card:nth-child(6){animation-delay:.25s}
-/* ── Print styles ── */
-@media print {
+@media print{
   .header,.tabs,.filter-bar,.print-btn,.stats-row,.pricing-panel{display:none!important;}
   .content{padding:0!important;max-width:100%!important;}
   .panel{display:block!important;}
@@ -269,18 +240,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       </div>
       <div id="orders-list"><div class="empty-state">No orders yet.</div></div>
     </div>
-    <div class="panel" id="panel-vendors">
-      <div id="vendors-list"><div class="empty-state">Loading...</div></div>
-    </div>
-    <div class="panel" id="panel-menu">
-      <div id="menu-card"><div class="empty-state">Loading...</div></div>
-    </div>
-    <div class="panel" id="panel-production">
-      <div id="production-content"></div>
-    </div>
-    <div class="panel" id="panel-packing">
-      <div id="packing-content"></div>
-    </div>
+    <div class="panel" id="panel-vendors"><div id="vendors-list"><div class="empty-state">Loading...</div></div></div>
+    <div class="panel" id="panel-menu"><div id="menu-card"><div class="empty-state">Loading...</div></div></div>
+    <div class="panel" id="panel-production"><div id="production-content"></div></div>
+    <div class="panel" id="panel-packing"><div id="packing-content"></div></div>
   </div>
 </div>
 <script>
@@ -295,117 +258,82 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig)
 const auth = firebase.auth()
 const db   = firebase.firestore()
+let currentUser=null,profile=null,allOrders=[],allVendors=[],allMenu=[]
+const TODAY=new Date().toISOString().split('T')[0]
+const filterState={production:{mode:'today',from:TODAY,to:TODAY},packing:{mode:'today',from:TODAY,to:TODAY}}
 
-let currentUser = null, profile = null
-let allOrders = [], allVendors = [], allMenu = []
-const TODAY = new Date().toISOString().split('T')[0]
-const filterState = {
-  production: { mode: 'today', from: TODAY, to: TODAY },
-  packing:    { mode: 'today', from: TODAY, to: TODAY },
+function show(id){['v-loading','v-auth','v-unauthorized','v-app'].forEach(v=>document.getElementById(v).classList.toggle('hidden',v!==id))}
+function switchTab(name,el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));el.classList.add('active')
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.getElementById('panel-'+name).classList.add('active')
+  if(name==='production')renderProduction();if(name==='packing')renderPacking()
 }
-
-function show(id) {
-  ['v-loading','v-auth','v-unauthorized','v-app'].forEach(v =>
-    document.getElementById(v).classList.toggle('hidden', v !== id))
-}
-function switchTab(name, el) {
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'))
-  el.classList.add('active')
-  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'))
-  document.getElementById('panel-'+name).classList.add('active')
-  if (name === 'production') renderProduction()
-  if (name === 'packing')    renderPacking()
-}
-
-function init() {
-  auth.onAuthStateChanged(async (user) => {
-    if (!user) { show('v-auth'); return }
-    currentUser = user
-    try {
-      const snap = await db.collection('profiles').doc(user.uid).get()
-      profile = snap.exists ? { id: snap.id, ...snap.data() } : null
-      if (!profile?.is_admin) { show('v-unauthorized'); return }
-      await Promise.all([loadOrders(), loadVendors(), loadMenu()])
-      renderOrders(); renderVendors(); renderMenu()
-      show('v-app')
-    } catch(e) { console.error(e); show('v-auth') }
+function init(){
+  auth.onAuthStateChanged(async(user)=>{
+    if(!user){show('v-auth');return};currentUser=user
+    try{
+      const snap=await db.collection('profiles').doc(user.uid).get()
+      profile=snap.exists?{id:snap.id,...snap.data()}:null
+      if(!profile?.is_admin){show('v-unauthorized');return}
+      await Promise.all([loadOrders(),loadVendors(),loadMenu()])
+      renderOrders();renderVendors();renderMenu();show('v-app')
+    }catch(e){console.error(e);show('v-auth')}
   })
 }
+async function handleLogin(){
+  const email=document.getElementById('admin-email').value.trim(),pass=document.getElementById('admin-pass').value
+  const errEl=document.getElementById('auth-error');errEl.style.display='none'
+  try{
+    const{user}=await auth.signInWithEmailAndPassword(email,pass);currentUser=user
+    const snap=await db.collection('profiles').doc(user.uid).get()
+    profile=snap.exists?{id:snap.id,...snap.data()}:null
+    if(!profile?.is_admin){show('v-unauthorized');return}
+    await Promise.all([loadOrders(),loadVendors(),loadMenu()])
+    renderOrders();renderVendors();renderMenu();show('v-app')
+  }catch(e){errEl.textContent=e.message;errEl.style.display='block'}
+}
+async function handleLogout(){await auth.signOut();show('v-auth')}
 
-async function handleLogin() {
-  const email = document.getElementById('admin-email').value.trim()
-  const pass  = document.getElementById('admin-pass').value
-  const errEl = document.getElementById('auth-error')
-  errEl.style.display='none'
-  try {
-    const { user } = await auth.signInWithEmailAndPassword(email, pass)
-    currentUser = user
-    const snap = await db.collection('profiles').doc(user.uid).get()
-    profile = snap.exists ? { id: snap.id, ...snap.data() } : null
-    if (!profile?.is_admin) { show('v-unauthorized'); return }
-    await Promise.all([loadOrders(), loadVendors(), loadMenu()])
-    renderOrders(); renderVendors(); renderMenu()
-    show('v-app')
-  } catch(e) { errEl.textContent=e.message; errEl.style.display='block' }
+async function loadOrders(){
+  const snap=await db.collection('orders').orderBy('delivery_date').get()
+  allOrders=snap.docs.map(d=>({id:d.id,...d.data()}))
+  allOrders.sort((a,b)=>a.delivery_date!==b.delivery_date?a.delivery_date.localeCompare(b.delivery_date):(a.delivery_time||'').localeCompare(b.delivery_time||''))
+  document.getElementById('badge-orders').textContent=allOrders.length
+  document.getElementById('stat-new').textContent=allOrders.filter(o=>o.status==='New').length
+  document.getElementById('stat-today').textContent=allOrders.filter(o=>o.delivery_date===TODAY).length
+  document.getElementById('stat-units').textContent=allOrders.reduce((s,o)=>s+(o.items||[]).reduce((ss,i)=>ss+i.quantity,0),0)
+}
+async function loadVendors(){
+  const snap=await db.collection('profiles').get()
+  allVendors=snap.docs.map(d=>({id:d.id,...d.data()})).filter(v=>!v.is_admin).sort((a,b)=>(b.created_at?.seconds||0)-(a.created_at?.seconds||0))
+  const pending=allVendors.filter(v=>!v.approved).length
+  const badgeEl=document.getElementById('badge-vendors');badgeEl.textContent=pending||allVendors.length
+  if(pending>0)badgeEl.classList.add('alert');else badgeEl.classList.remove('alert')
+}
+async function loadMenu(){
+  const snap=await db.collection('menu_items').orderBy('sort_order').get()
+  allMenu=snap.docs.map(d=>({id:d.id,...d.data()}))
+  document.getElementById('badge-menu').textContent=allMenu.filter(m=>m.active).length
 }
 
-async function handleLogout() {
-  await auth.signOut()
-  show('v-auth')
-}
-
-async function loadOrders() {
-  const snap = await db.collection('orders').orderBy('delivery_date').get()
-  allOrders = snap.docs.map(d => ({ id: d.id, ...d.data() }))
-  allOrders.sort((a, b) => {
-    if (a.delivery_date !== b.delivery_date) return a.delivery_date.localeCompare(b.delivery_date)
-    return (a.delivery_time||'').localeCompare(b.delivery_time||'')
-  })
-  const newCount = allOrders.filter(o=>o.status==='New').length
-  document.getElementById('badge-orders').textContent = allOrders.length
-  document.getElementById('stat-new').textContent = newCount
-  document.getElementById('stat-today').textContent = allOrders.filter(o=>o.delivery_date===TODAY).length
-  document.getElementById('stat-units').textContent = allOrders.reduce((s,o)=>s+(o.items||[]).reduce((ss,i)=>ss+i.quantity,0),0)
-}
-
-async function loadVendors() {
-  const snap = await db.collection('profiles').get()
-  allVendors = snap.docs
-    .map(d => ({ id: d.id, ...d.data() }))
-    .filter(v => !v.is_admin)
-    .sort((a, b) => (b.created_at?.seconds||0) - (a.created_at?.seconds||0))
-  const pending = allVendors.filter(v=>!v.approved).length
-  const badgeEl = document.getElementById('badge-vendors')
-  badgeEl.textContent = pending || allVendors.length
-  if (pending > 0) badgeEl.classList.add('alert'); else badgeEl.classList.remove('alert')
-}
-
-async function loadMenu() {
-  const snap = await db.collection('menu_items').orderBy('sort_order').get()
-  allMenu = snap.docs.map(d => ({ id: d.id, ...d.data() }))
-  document.getElementById('badge-menu').textContent = allMenu.filter(m=>m.active).length
-}
-
-function renderOrders() {
-  const el = document.getElementById('orders-list')
-  if (!allOrders.length) { el.innerHTML='<div class="empty-state">No orders yet.</div>'; return }
-  const byDate = {}
-  allOrders.forEach(o => { if (!byDate[o.delivery_date]) byDate[o.delivery_date]=[]; byDate[o.delivery_date].push(o) })
-  el.innerHTML = Object.entries(byDate).sort(([a],[b])=>a.localeCompare(b)).map(([date,orders]) => {
-    const d = new Date(date+'T12:00:00')
-    const label = d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})
-    const units = orders.reduce((s,o)=>s+(o.items||[]).reduce((ss,i)=>ss+i.quantity,0),0)
-    return `<div class="date-group">
+function renderOrders(){
+  const el=document.getElementById('orders-list')
+  if(!allOrders.length){el.innerHTML='<div class="empty-state">No orders yet.</div>';return}
+  const byDate={}
+  allOrders.forEach(o=>{if(!byDate[o.delivery_date])byDate[o.delivery_date]=[];byDate[o.delivery_date].push(o)})
+  el.innerHTML=Object.entries(byDate).sort(([a],[b])=>a.localeCompare(b)).map(([date,orders])=>{
+    const d=new Date(date+'T12:00:00'),label=d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})
+    const units=orders.reduce((s,o)=>s+(o.items||[]).reduce((ss,i)=>ss+i.quantity,0),0)
+    return`<div class="date-group">
       <div class="date-header">
         <div class="date-header-label">${date===TODAY?'Today — ':''}${label}</div>
         <div class="date-header-stats">${orders.length} order${orders.length!==1?'s':''}&ensp;&middot;&ensp;${units} units</div>
       </div>
-      ${orders.map(order => {
-        const orderItems = order.items || []
-        const total = orderItems.reduce((s,i)=>s+i.quantity,0)
-        const items = orderItems.map(i=>`${i.item_name} &times; ${i.quantity}`).join(', ')
-        const st = (order.status||'new').toLowerCase()
-        return `<div class="order-row">
+      ${orders.map(order=>{
+        const orderItems=order.items||[],total=orderItems.reduce((s,i)=>s+i.quantity,0)
+        const items=orderItems.map(i=>`${i.item_name} &times; ${i.quantity}`).join(', ')
+        const st=(order.status||'new').toLowerCase()
+        return`<div class="order-row">
           <div style="flex:1">
             <div class="order-vendor">${order.vendor_name}</div>
             <div class="order-items-text">${items}</div>
@@ -428,640 +356,202 @@ function renderOrders() {
   }).join('')
 }
 
-async function updateStatus(orderId, sel) {
-  const status = sel.value
-  sel.className = 'status-select '+status.toLowerCase()
-  await db.collection('orders').doc(orderId).update({ status })
-  const o = allOrders.find(o=>o.id===orderId); if (o) o.status = status
-  document.getElementById('stat-new').textContent = allOrders.filter(o=>o.status==='New').length
+async function updateStatus(orderId,sel){
+  const status=sel.value;sel.className='status-select '+status.toLowerCase()
+  await db.collection('orders').doc(orderId).update({status})
+  const o=allOrders.find(o=>o.id===orderId);if(o)o.status=status
+  document.getElementById('stat-new').textContent=allOrders.filter(o=>o.status==='New').length
 }
 
-function renderVendors() {
-  const el = document.getElementById('vendors-list')
-  const pending  = allVendors.filter(v=>!v.approved)
-  const active   = allVendors.filter(v=>v.approved&&v.active!==false)
-  const inactive = allVendors.filter(v=>v.approved&&v.active===false)
-  const pendingHtml = pending.length ? `
-    <div class="vendors-section">
-      <div class="section-heading" style="color:#7a6000">Pending Approval &mdash; ${pending.length}</div>
-      ${pending.map(v=>`
-        <div class="vendor-row pending">
-          <div>
-            <div class="vendor-name">${v.business_name||'No name'}</div>
-            <div class="vendor-email">${v.email}</div>
-            <div class="vendor-date">Signed up ${v.created_at ? new Date(v.created_at.seconds*1000).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}) : ''}</div>
-          </div>
-          <div class="vendor-actions">
-            <button class="btn-approve" onclick="approveVendor('${v.id}')">Approve</button>
-          </div>
-        </div>`).join('')}
-    </div>` : ''
-  const activeHtml = `
-    <div class="vendors-section">
-      <div class="section-heading">Active Vendors &mdash; ${active.length}</div>
-      ${active.length ? active.map(v=>`
-        <div class="vendor-row">
-          <div style="flex:1">
-            <div style="display:flex;align-items:center;gap:8px">
-              <div class="vendor-name" id="vname-${v.id}">${v.business_name||'No name'}</div>
-              <button onclick="editVendorName('${v.id}')" style="background:none;border:none;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);cursor:pointer;padding:0;text-decoration:underline;text-underline-offset:2px">Edit</button>
-            </div>
-            <div class="vendor-email">${v.email}</div>
-          </div>
-          <div class="vendor-actions">
-            <button class="btn-pricing" id="pricing-btn-${v.id}" onclick="togglePricing('${v.id}')">Pricing</button>
-            <button class="btn-deactivate" onclick="toggleActive('${v.id}',false)">Deactivate</button>
-          </div>
-        </div>
-        <div class="pricing-panel" id="pricing-panel-${v.id}">
-          <div class="pricing-panel-header">
-            <span class="pricing-panel-title">Custom Prices for ${v.business_name||v.email}</span>
-            <span class="pricing-panel-note">Leave blank to use the default menu price</span>
-          </div>
-          <div id="pricing-rows-${v.id}"><div style="font-size:13px;color:var(--text3);padding:8px 0">Loading...</div></div>
-          <div class="pricing-actions">
-            <button class="btn-save-prices" onclick="savePricing('${v.id}')">Save Prices</button>
-            <button class="btn-clear-prices" onclick="clearPricing('${v.id}')">Clear All Custom</button>
-          </div>
-        </div>`).join('') : '<div class="empty-state" style="padding:20px 0;text-align:left">No active vendors yet.</div>'}
-    </div>`
-  const inactiveHtml = inactive.length ? `
-    <div class="vendors-section">
-      <div class="section-heading">Inactive &mdash; ${inactive.length}</div>
-      ${inactive.map(v=>`
-        <div class="vendor-row inactive">
-          <div>
-            <div class="vendor-name">${v.business_name||'No name'}</div>
-            <div class="vendor-email">${v.email}</div>
-          </div>
-          <button class="btn-activate" onclick="toggleActive('${v.id}',true)">Reactivate</button>
-        </div>`).join('')}
-    </div>` : ''
-  el.innerHTML = pendingHtml + activeHtml + inactiveHtml
+function renderVendors(){
+  const el=document.getElementById('vendors-list')
+  const pending=allVendors.filter(v=>!v.approved),active=allVendors.filter(v=>v.approved&&v.active!==false),inactive=allVendors.filter(v=>v.approved&&v.active===false)
+  const pendingHtml=pending.length?`<div class="vendors-section"><div class="section-heading" style="color:#7a6000">Pending Approval &mdash; ${pending.length}</div>${pending.map(v=>`<div class="vendor-row pending"><div><div class="vendor-name">${v.business_name||'No name'}</div><div class="vendor-email">${v.email}</div><div class="vendor-date">Signed up ${v.created_at?new Date(v.created_at.seconds*1000).toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}):''}</div></div><div class="vendor-actions"><button class="btn-approve" onclick="approveVendor('${v.id}')">Approve</button></div></div>`).join('')}</div>`:''
+  const activeHtml=`<div class="vendors-section"><div class="section-heading">Active Vendors &mdash; ${active.length}</div>${active.length?active.map(v=>`<div class="vendor-row"><div style="flex:1"><div style="display:flex;align-items:center;gap:8px"><div class="vendor-name" id="vname-${v.id}">${v.business_name||'No name'}</div><button onclick="editVendorName('${v.id}')" style="background:none;border:none;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);cursor:pointer;padding:0;text-decoration:underline;text-underline-offset:2px">Edit</button></div><div class="vendor-email">${v.email}</div></div><div class="vendor-actions"><button class="btn-pricing" id="pricing-btn-${v.id}" onclick="togglePricing('${v.id}')">Pricing</button><button class="btn-deactivate" onclick="toggleActive('${v.id}',false)">Deactivate</button></div></div><div class="pricing-panel" id="pricing-panel-${v.id}"><div class="pricing-panel-header"><span class="pricing-panel-title">Custom Prices for ${v.business_name||v.email}</span><span class="pricing-panel-note">Leave blank to use the default menu price</span></div><div id="pricing-rows-${v.id}"><div style="font-size:13px;color:var(--text3);padding:8px 0">Loading...</div></div><div class="pricing-actions"><button class="btn-save-prices" onclick="savePricing('${v.id}')">Save Prices</button><button class="btn-clear-prices" onclick="clearPricing('${v.id}')">Clear All Custom</button></div></div>`).join(''):'<div class="empty-state" style="padding:20px 0;text-align:left">No active vendors yet.</div>'}</div>`
+  const inactiveHtml=inactive.length?`<div class="vendors-section"><div class="section-heading">Inactive &mdash; ${inactive.length}</div>${inactive.map(v=>`<div class="vendor-row inactive"><div><div class="vendor-name">${v.business_name||'No name'}</div><div class="vendor-email">${v.email}</div></div><button class="btn-activate" onclick="toggleActive('${v.id}',true)">Reactivate</button></div>`).join('')}</div>`:''
+  el.innerHTML=pendingHtml+activeHtml+inactiveHtml
 }
 
-async function approveVendor(id) {
-  await db.collection('profiles').doc(id).update({ approved: true })
-  const v = allVendors.find(v=>v.id===id); if (v) v.approved=true
-  const pending = allVendors.filter(v=>!v.approved).length
-  const badgeEl = document.getElementById('badge-vendors')
-  badgeEl.textContent = pending || allVendors.length
-  if (pending > 0) badgeEl.classList.add('alert'); else badgeEl.classList.remove('alert')
+async function approveVendor(id){
+  await db.collection('profiles').doc(id).update({approved:true})
+  const v=allVendors.find(v=>v.id===id);if(v)v.approved=true
+  const pending=allVendors.filter(v=>!v.approved).length,badgeEl=document.getElementById('badge-vendors')
+  badgeEl.textContent=pending||allVendors.length;if(pending>0)badgeEl.classList.add('alert');else badgeEl.classList.remove('alert')
   renderVendors()
 }
-
-async function toggleActive(id, active) {
-  await db.collection('profiles').doc(id).update({ active })
-  const v = allVendors.find(v=>v.id===id); if (v) v.active=active
-  renderVendors()
+async function toggleActive(id,active){await db.collection('profiles').doc(id).update({active});const v=allVendors.find(v=>v.id===id);if(v)v.active=active;renderVendors()}
+async function editVendorName(id){
+  const v=allVendors.find(v=>v.id===id);if(!v)return
+  const name=prompt('Business name for '+(v.email)+':',v.business_name||'');if(name===null)return
+  await db.collection('profiles').doc(id).update({business_name:name.trim()});v.business_name=name.trim();renderVendors()
 }
 
-async function editVendorName(id) {
-  const v = allVendors.find(v=>v.id===id)
-  if (!v) return
-  const name = prompt('Business name for ' + (v.email) + ':', v.business_name || '')
-  if (name === null) return
-  await db.collection('profiles').doc(id).update({ business_name: name.trim() })
-  v.business_name = name.trim()
-  renderVendors()
-}
-
-function renderMenu() {
-  const active   = allMenu.filter(m=>m.active)
-  const inactive = allMenu.filter(m=>!m.active)
-  document.getElementById('badge-menu').textContent = active.length
-  document.getElementById('menu-card').innerHTML = `
+function renderMenu(){
+  const active=allMenu.filter(m=>m.active),inactive=allMenu.filter(m=>!m.active)
+  document.getElementById('badge-menu').textContent=active.length
+  document.getElementById('menu-card').innerHTML=`
     <div class="section-label">Active Items &mdash; ${active.length}</div>
-    ${active.map(item=>`
-      <div class="menu-row">
-        <div class="menu-item-name">${item.name}</div>
-        <div class="menu-item-unit">${item.unit}</div>
-        <div class="price-field">
-          <span class="price-symbol">$</span>
-          <input class="price-input" type="number" step="0.01" min="0" value="${Number(item.price||0).toFixed(2)}"
-                 onblur="updatePrice('${item.id}',this.value)" onkeydown="if(event.key==='Enter')this.blur()" title="Price per unit">
-        </div>
-        <div class="menu-actions">
-          <button class="btn-hide" onclick="toggleItem('${item.id}',false)">Hide</button>
-          <button class="btn-delete" onclick="deleteItem('${item.id}')">Delete</button>
-        </div>
-      </div>`).join('')}
-    ${inactive.length ? `
-      <div class="section-label" style="margin-top:8px">Hidden &mdash; ${inactive.length}</div>
-      ${inactive.map(item=>`
-        <div class="menu-row inactive">
-          <div class="menu-item-name">${item.name}</div>
-          <div class="menu-item-unit">${item.unit}</div>
-          <div class="price-field">
-            <span class="price-symbol">$</span>
-            <input class="price-input" type="number" step="0.01" min="0" value="${Number(item.price||0).toFixed(2)}"
-                   onblur="updatePrice('${item.id}',this.value)" onkeydown="if(event.key==='Enter')this.blur()">
-          </div>
-          <div class="menu-actions">
-            <button class="btn-show" onclick="toggleItem('${item.id}',true)">Show</button>
-            <button class="btn-delete" onclick="deleteItem('${item.id}')">Delete</button>
-          </div>
-        </div>`).join('')}` : ''}
-    <div class="add-form">
-      <div class="add-form-title">Add New Item</div>
-      <div class="add-form-row">
-        <input class="add-input" id="new-name" type="text" placeholder="Item name">
-        <select class="add-select" id="new-unit">
-          <option value="each">each</option>
-          <option value="loaf">loaf</option>
-          <option value="tray">tray</option>
-          <option value="8-pack">8-pack</option>
-          <option value="dozen">dozen</option>
-          <option value="box">box</option>
-        </select>
-        <input class="add-input" id="new-price" type="number" step="0.01" min="0" placeholder="Price $" style="max-width:90px">
-        <button class="btn-add" onclick="addItem()">Add</button>
-      </div>
-    </div>`
+    ${active.map(item=>`<div class="menu-row"><div class="menu-item-name">${item.name}</div><div class="menu-item-unit">${item.unit}</div><div class="price-field"><span class="price-symbol">$</span><input class="price-input" type="number" step="0.01" min="0" value="${Number(item.price||0).toFixed(2)}" onblur="updatePrice('${item.id}',this.value)" onkeydown="if(event.key==='Enter')this.blur()"></div><div class="menu-actions"><button class="btn-hide" onclick="toggleItem('${item.id}',false)">Hide</button><button class="btn-delete" onclick="deleteItem('${item.id}')">Delete</button></div></div>`).join('')}
+    ${inactive.length?`<div class="section-label" style="margin-top:8px">Hidden &mdash; ${inactive.length}</div>${inactive.map(item=>`<div class="menu-row inactive"><div class="menu-item-name">${item.name}</div><div class="menu-item-unit">${item.unit}</div><div class="price-field"><span class="price-symbol">$</span><input class="price-input" type="number" step="0.01" min="0" value="${Number(item.price||0).toFixed(2)}" onblur="updatePrice('${item.id}',this.value)" onkeydown="if(event.key==='Enter')this.blur()"></div><div class="menu-actions"><button class="btn-show" onclick="toggleItem('${item.id}',true)">Show</button><button class="btn-delete" onclick="deleteItem('${item.id}')">Delete</button></div></div>`).join('')}`:''}
+    <div class="add-form"><div class="add-form-title">Add New Item</div><div class="add-form-row"><input class="add-input" id="new-name" type="text" placeholder="Item name"><select class="add-select" id="new-unit"><option value="each">each</option><option value="loaf">loaf</option><option value="tray">tray</option><option value="8-pack">8-pack</option><option value="dozen">dozen</option><option value="box">box</option></select><input class="add-input" id="new-price" type="number" step="0.01" min="0" placeholder="Price $" style="max-width:90px"><button class="btn-add" onclick="addItem()">Add</button></div></div>`
 }
 
-async function updatePrice(id, price) {
-  const p = parseFloat(price) || 0
-  await db.collection('menu_items').doc(id).update({ price: p })
-  const m = allMenu.find(m=>m.id===id); if(m) m.price = p
+async function updatePrice(id,price){const p=parseFloat(price)||0;await db.collection('menu_items').doc(id).update({price:p});const m=allMenu.find(m=>m.id===id);if(m)m.price=p}
+async function toggleItem(id,active){await db.collection('menu_items').doc(id).update({active});const m=allMenu.find(m=>m.id===id);if(m)m.active=active;renderMenu()}
+async function deleteItem(id){if(!confirm('Delete this item from the menu?'))return;await db.collection('menu_items').doc(id).delete();allMenu=allMenu.filter(m=>m.id!==id);renderMenu()}
+async function addItem(){
+  const name=document.getElementById('new-name').value.trim(),unit=document.getElementById('new-unit').value,price=parseFloat(document.getElementById('new-price').value)||0
+  if(!name)return
+  const sortOrder=Math.max(0,...allMenu.map(m=>m.sort_order||0))+1
+  const docRef=await db.collection('menu_items').add({name,unit,price,sort_order:sortOrder,active:true})
+  allMenu.push({id:docRef.id,name,unit,price,sort_order:sortOrder,active:true});renderMenu()
 }
 
-async function toggleItem(id, active) {
-  await db.collection('menu_items').doc(id).update({ active })
-  const m = allMenu.find(m=>m.id===id); if (m) m.active=active
-  renderMenu()
+function openInvoice(orderId){const order=allOrders.find(o=>o.id===orderId);if(!order)return;const w=window.open('','_blank');w.document.write(generateInvoiceHtml(order));w.document.close();setTimeout(()=>w.print(),600)}
+function generateInvoiceHtml(order){
+  const items=order.items||[],totalUnits=items.reduce((s,i)=>s+i.quantity,0),totalPrice=items.reduce((s,i)=>s+(i.price||0)*i.quantity,0)
+  const issued=new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})
+  const d=new Date((order.delivery_date||'')+'T12:00:00'),deliveryStr=d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'})
+  const rows=items.map(i=>{const sub=(i.price||0)*i.quantity;return`<tr><td style="padding:10px 0;border-bottom:1px solid #e8e4de;font-size:14px">${i.item_name}</td><td style="padding:10px 0;border-bottom:1px solid #e8e4de;text-align:center;font-size:14px">${i.quantity}</td><td style="padding:10px 0;border-bottom:1px solid #e8e4de;text-align:center;font-size:13px;color:#6b6860">${i.unit}</td><td style="padding:10px 0;border-bottom:1px solid #e8e4de;text-align:right;font-size:14px">${i.price?'$'+Number(i.price).toFixed(2):'&mdash;'}</td><td style="padding:10px 0;border-bottom:1px solid #e8e4de;text-align:right;font-size:14px;font-weight:500">${sub>0?'$'+sub.toFixed(2):'&mdash;'}</td></tr>`}).join('')
+  return`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Invoice &mdash; ${order.id.slice(0,8).toUpperCase()}</title><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"><style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:'DM Sans',sans-serif;background:white;color:#1a1916;padding:56px;max-width:760px;margin:0 auto;-webkit-font-smoothing:antialiased;}@media print{body{padding:32px;}.no-print{display:none!important;}}.no-print{text-align:center;margin-bottom:32px;padding-bottom:32px;border-bottom:1px solid #e8e4de;}.print-btn{background:#1a1916;color:white;border:none;padding:10px 24px;font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;}.wordmark{font-family:'Cormorant Garamond',serif;font-size:13px;font-weight:600;letter-spacing:.25em;text-transform:uppercase;}.invoice-label{font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:600;letter-spacing:.05em;}</style></head><body><div class="no-print"><button class="print-btn" onclick="window.print()">Download / Print PDF</button></div><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:48px"><div><div class="wordmark">Village Bakery + Provisions</div><div style="font-size:12px;color:#6b6860;margin-top:8px;line-height:2">212 Thompson Lane, Nashville, TN 37211<br>orders@villagebakeryandprovisions.com<br>(615) 498-5385</div></div><div style="text-align:right"><div class="invoice-label">Invoice</div><div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#6b6860;margin-top:6px">#${order.id.slice(0,8).toUpperCase()}</div><div style="font-size:12px;color:#6b6860;margin-top:4px">Issued ${issued}</div></div></div><div style="display:flex;justify-content:space-between;margin-bottom:40px;padding-bottom:24px;border-bottom:2px solid #1a1916"><div><div style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#6b6860;margin-bottom:8px">Bill To</div><div style="font-size:16px;font-weight:500">${order.vendor_name}</div></div><div style="text-align:right"><div style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#6b6860;margin-bottom:8px">Delivery</div><div style="font-size:14px;font-weight:500">${deliveryStr}</div><div style="font-size:13px;color:#6b6860;margin-top:3px">at ${(order.delivery_time||'').slice(0,5)}</div></div></div>${order.notes?`<div style="font-size:13px;color:#6b6860;margin-bottom:24px;font-style:italic">${order.notes}</div>`:''}<table style="width:100%;border-collapse:collapse;margin-bottom:0"><thead><tr style="border-bottom:2px solid #1a1916"><th style="padding:8px 0;text-align:left;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#6b6860;font-weight:500">Item</th><th style="padding:8px 0;text-align:center;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#6b6860;font-weight:500">Qty</th><th style="padding:8px 0;text-align:center;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#6b6860;font-weight:500">Unit</th><th style="padding:8px 0;text-align:right;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#6b6860;font-weight:500">Price</th><th style="padding:8px 0;text-align:right;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#6b6860;font-weight:500">Subtotal</th></tr></thead><tbody>${rows}</tbody><tfoot><tr><td colspan="3" style="padding:14px 0;font-size:11px;letter-spacing:.15em;text-transform:uppercase;font-weight:500">Total</td><td style="padding:14px 0;text-align:right;font-size:13px;color:#6b6860">${totalUnits} units</td><td style="padding:14px 0;text-align:right;font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600">${totalPrice>0?'$'+totalPrice.toFixed(2):'&mdash;'}</td></tr></tfoot></table><div style="margin-top:48px;padding-top:20px;border-top:1px solid #e8e4de;font-size:12px;color:#6b6860;text-align:center;line-height:2">Thank you for your business.<br>Village Bakery + Provisions &nbsp;&middot;&nbsp; orders@villagebakeryandprovisions.com &nbsp;&middot;&nbsp; (615) 498-5385</div></body></html>`
 }
 
-async function deleteItem(id) {
-  if (!confirm('Delete this item from the menu?')) return
-  await db.collection('menu_items').doc(id).delete()
-  allMenu = allMenu.filter(m=>m.id!==id)
-  renderMenu()
+function getDateRange(mode){
+  const now=new Date(),todayStr=now.toISOString().split('T')[0],dow=now.getDay(),diff=(dow+6)%7
+  const mon=new Date(now);mon.setDate(now.getDate()-diff)
+  const sun=new Date(mon);sun.setDate(mon.getDate()+6)
+  const nmon=new Date(mon);nmon.setDate(mon.getDate()+7)
+  const nsun=new Date(nmon);nsun.setDate(nmon.getDate()+6)
+  const tmr=new Date(now);tmr.setDate(now.getDate()+1)
+  const fmt=d=>d.toISOString().split('T')[0]
+  switch(mode){case'today':return{from:todayStr,to:todayStr};case'tomorrow':return{from:fmt(tmr),to:fmt(tmr)};case'thisweek':return{from:fmt(mon),to:fmt(sun)};case'nextweek':return{from:fmt(nmon),to:fmt(nsun)};default:return null}
+}
+function filterOrders(tab){const fs=filterState[tab],range=fs.mode==='custom'?{from:fs.from,to:fs.to}:getDateRange(fs.mode);if(!range)return allOrders;return allOrders.filter(o=>o.delivery_date>=range.from&&o.delivery_date<=range.to)}
+function fmtDate(d){return new Date(d+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'})}
+function filterBarHtml(tab){
+  const fs=filterState[tab]
+  const modes=[{key:'today',label:'Today'},{key:'tomorrow',label:'Tomorrow'},{key:'thisweek',label:'This Week'},{key:'nextweek',label:'Next Week'},{key:'custom',label:'Custom'}]
+  return`<div class="filter-bar" id="filter-bar-${tab}">${modes.map(m=>`<button class="filter-btn${fs.mode===m.key?' active':''}" onclick="setFilter('${tab}','${m.key}',this)">${m.label}</button>`).join('')}<div class="filter-sep"></div><span class="filter-label" id="custom-label-${tab}" style="display:${fs.mode==='custom'?'flex':'none'};align-items:center;gap:8px"><input class="filter-date-input" type="date" id="filter-from-${tab}" value="${fs.from}" onchange="setCustomRange('${tab}')"><span style="font-size:11px;color:var(--text3)">to</span><input class="filter-date-input" type="date" id="filter-to-${tab}" value="${fs.to}" onchange="setCustomRange('${tab}')"></span></div><div style="display:flex;justify-content:flex-end;margin-top:-16px;margin-bottom:24px"><button class="print-btn" onclick="printTab('${tab}')">Print</button></div>`
+}
+function setFilter(tab,mode,btn){
+  filterState[tab].mode=mode
+  if(mode!=='custom'){const range=getDateRange(mode);filterState[tab].from=range.from;filterState[tab].to=range.to}
+  document.querySelectorAll(`#filter-bar-${tab} .filter-btn`).forEach(b=>b.classList.remove('active'));btn.classList.add('active')
+  const cl=document.getElementById('custom-label-'+tab);if(cl)cl.style.display=mode==='custom'?'flex':'none'
+  if(tab==='production')renderProductionContent();if(tab==='packing')renderPackingContent()
+}
+function setCustomRange(tab){
+  const from=document.getElementById('filter-from-'+tab)?.value,to=document.getElementById('filter-to-'+tab)?.value
+  if(from)filterState[tab].from=from;if(to)filterState[tab].to=to
+  if(tab==='production')renderProductionContent();if(tab==='packing')renderPackingContent()
 }
 
-async function addItem() {
-  const name  = document.getElementById('new-name').value.trim()
-  const unit  = document.getElementById('new-unit').value
-  const price = parseFloat(document.getElementById('new-price').value) || 0
-  if (!name) return
-  const sortOrder = Math.max(0,...allMenu.map(m=>m.sort_order||0)) + 1
-  const docRef = await db.collection('menu_items').add({ name, unit, price, sort_order: sortOrder, active: true })
-  allMenu.push({ id: docRef.id, name, unit, price, sort_order: sortOrder, active: true })
-  renderMenu()
-}
-
-function openInvoice(orderId) {
-  const order = allOrders.find(o=>o.id===orderId)
-  if (!order) return
-  const w = window.open('','_blank')
-  w.document.write(generateInvoiceHtml(order))
-  w.document.close()
-  setTimeout(()=>w.print(), 600)
-}
-
-function generateInvoiceHtml(order) {
-  const items = order.items || []
-  const totalUnits = items.reduce((s,i)=>s+i.quantity,0)
-  const totalPrice = items.reduce((s,i)=>s+(i.price||0)*i.quantity,0)
-  const issued = new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})
-  const d = new Date((order.delivery_date||'')+'T12:00:00')
-  const deliveryStr = d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'})
-  const rows = items.map(i => {
-    const subtotal = (i.price||0)*i.quantity
-    return `<tr>
-      <td style="padding:10px 0;border-bottom:1px solid #e8e4de;font-size:14px">${i.item_name}</td>
-      <td style="padding:10px 0;border-bottom:1px solid #e8e4de;text-align:center;font-size:14px">${i.quantity}</td>
-      <td style="padding:10px 0;border-bottom:1px solid #e8e4de;text-align:center;font-size:13px;color:#6b6860">${i.unit}</td>
-      <td style="padding:10px 0;border-bottom:1px solid #e8e4de;text-align:right;font-size:14px">${i.price?'$'+Number(i.price).toFixed(2):'&mdash;'}</td>
-      <td style="padding:10px 0;border-bottom:1px solid #e8e4de;text-align:right;font-size:14px;font-weight:500">${subtotal>0?'$'+subtotal.toFixed(2):'&mdash;'}</td>
-    </tr>`
-  }).join('')
-  return `<!DOCTYPE html><html><head><meta charset="UTF-8">
-  <title>Invoice &mdash; ${order.id.slice(0,8).toUpperCase()}</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-  <style>
-    *{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:'DM Sans',sans-serif;background:white;color:#1a1916;padding:56px;max-width:760px;margin:0 auto;-webkit-font-smoothing:antialiased;}
-    @media print{body{padding:32px;}.no-print{display:none!important;}}
-    .no-print{text-align:center;margin-bottom:32px;padding-bottom:32px;border-bottom:1px solid #e8e4de;}
-    .print-btn{background:#1a1916;color:white;border:none;padding:10px 24px;font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;}
-    .wordmark{font-family:'Cormorant Garamond',serif;font-size:13px;font-weight:600;letter-spacing:.25em;text-transform:uppercase;}
-    .invoice-label{font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:600;letter-spacing:.05em;}
-  </style></head><body>
-  <div class="no-print"><button class="print-btn" onclick="window.print()">Download / Print PDF</button></div>
-  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:48px">
-    <div>
-      <div class="wordmark">Village Bakery + Provisions</div>
-      <div style="font-size:12px;color:#6b6860;margin-top:8px;line-height:2">
-        212 Thompson Lane, Nashville, TN 37211<br>
-        orders@villagebakeryandprovisions.com<br>
-        (615) 498-5385
-      </div>
-    </div>
-    <div style="text-align:right">
-      <div class="invoice-label">Invoice</div>
-      <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#6b6860;margin-top:6px">#${order.id.slice(0,8).toUpperCase()}</div>
-      <div style="font-size:12px;color:#6b6860;margin-top:4px">Issued ${issued}</div>
-    </div>
-  </div>
-  <div style="display:flex;justify-content:space-between;margin-bottom:40px;padding-bottom:24px;border-bottom:2px solid #1a1916">
-    <div>
-      <div style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#6b6860;margin-bottom:8px">Bill To</div>
-      <div style="font-size:16px;font-weight:500">${order.vendor_name}</div>
-    </div>
-    <div style="text-align:right">
-      <div style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#6b6860;margin-bottom:8px">Delivery</div>
-      <div style="font-size:14px;font-weight:500">${deliveryStr}</div>
-      <div style="font-size:13px;color:#6b6860;margin-top:3px">at ${(order.delivery_time||'').slice(0,5)}</div>
-    </div>
-  </div>
-  ${order.notes?`<div style="font-size:13px;color:#6b6860;margin-bottom:24px;font-style:italic">${order.notes}</div>`:''}
-  <table style="width:100%;border-collapse:collapse;margin-bottom:0">
-    <thead>
-      <tr style="border-bottom:2px solid #1a1916">
-        <th style="padding:8px 0;text-align:left;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#6b6860;font-weight:500">Item</th>
-        <th style="padding:8px 0;text-align:center;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#6b6860;font-weight:500">Qty</th>
-        <th style="padding:8px 0;text-align:center;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#6b6860;font-weight:500">Unit</th>
-        <th style="padding:8px 0;text-align:right;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#6b6860;font-weight:500">Price</th>
-        <th style="padding:8px 0;text-align:right;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#6b6860;font-weight:500">Subtotal</th>
-      </tr>
-    </thead>
-    <tbody>${rows}</tbody>
-    <tfoot>
-      <tr>
-        <td colspan="3" style="padding:14px 0;font-size:11px;letter-spacing:.15em;text-transform:uppercase;font-weight:500">Total</td>
-        <td style="padding:14px 0;text-align:right;font-size:13px;color:#6b6860">${totalUnits} units</td>
-        <td style="padding:14px 0;text-align:right;font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600">${totalPrice>0?'$'+totalPrice.toFixed(2):'&mdash;'}</td>
-      </tr>
-    </tfoot>
-  </table>
-  <div style="margin-top:48px;padding-top:20px;border-top:1px solid #e8e4de;font-size:12px;color:#6b6860;text-align:center;line-height:2">
-    Thank you for your business.<br>
-    Village Bakery + Provisions &nbsp;&middot;&nbsp; orders@villagebakeryandprovisions.com &nbsp;&middot;&nbsp; (615) 498-5385
-  </div>
-</body></html>`
-}
-
-function getDateRange(mode) {
-  const now = new Date()
-  const todayStr = now.toISOString().split('T')[0]
-  const dayOfWeek = now.getDay()
-  const diffToMon = (dayOfWeek + 6) % 7
-  const thisMonday = new Date(now); thisMonday.setDate(now.getDate() - diffToMon)
-  const thisSunday = new Date(thisMonday); thisSunday.setDate(thisMonday.getDate() + 6)
-  const nextMonday = new Date(thisMonday); nextMonday.setDate(thisMonday.getDate() + 7)
-  const nextSunday = new Date(nextMonday); nextSunday.setDate(nextMonday.getDate() + 6)
-  const tmr = new Date(now); tmr.setDate(now.getDate() + 1)
-  const fmt = d => d.toISOString().split('T')[0]
-  switch(mode) {
-    case 'today':    return { from: todayStr,       to: todayStr }
-    case 'tomorrow': return { from: fmt(tmr),        to: fmt(tmr) }
-    case 'thisweek': return { from: fmt(thisMonday), to: fmt(thisSunday) }
-    case 'nextweek': return { from: fmt(nextMonday), to: fmt(nextSunday) }
-    default:         return null
-  }
-}
-function filterOrders(tab) {
-  const fs = filterState[tab]
-  const range = fs.mode === 'custom' ? { from: fs.from, to: fs.to } : getDateRange(fs.mode)
-  if (!range) return allOrders
-  return allOrders.filter(o => o.delivery_date >= range.from && o.delivery_date <= range.to)
-}
-function fmtDate(d) {
-  return new Date(d + 'T12:00:00').toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', year:'numeric' })
-}
-function filterBarHtml(tab) {
-  const fs = filterState[tab]
-  const modes = [
-    { key:'today',    label:'Today'     },
-    { key:'tomorrow', label:'Tomorrow'  },
-    { key:'thisweek', label:'This Week' },
-    { key:'nextweek', label:'Next Week' },
-    { key:'custom',   label:'Custom'    },
-  ]
-  return `
-    <div class="filter-bar" id="filter-bar-${tab}">
-      ${modes.map(m => `<button class="filter-btn${fs.mode===m.key?' active':''}"
-        onclick="setFilter('${tab}','${m.key}',this)">${m.label}</button>`).join('')}
-      <div class="filter-sep"></div>
-      <span class="filter-label" id="custom-label-${tab}" style="display:${fs.mode==='custom'?'flex':'none'};align-items:center;gap:8px">
-        <input class="filter-date-input" type="date" id="filter-from-${tab}" value="${fs.from}" onchange="setCustomRange('${tab}')">
-        <span style="font-size:11px;color:var(--text3)">to</span>
-        <input class="filter-date-input" type="date" id="filter-to-${tab}" value="${fs.to}" onchange="setCustomRange('${tab}')">
-      </span>
-    </div>
-    <div style="display:flex;justify-content:flex-end;margin-top:-16px;margin-bottom:24px">
-      <button class="print-btn" onclick="printTab('${tab}')">Print</button>
-    </div>`
-}
-function setFilter(tab, mode, btn) {
-  filterState[tab].mode = mode
-  if (mode !== 'custom') {
-    const range = getDateRange(mode)
-    filterState[tab].from = range.from
-    filterState[tab].to   = range.to
-  }
-  document.querySelectorAll(`#filter-bar-${tab} .filter-btn`).forEach(b => b.classList.remove('active'))
-  btn.classList.add('active')
-  const customLabel = document.getElementById('custom-label-'+tab)
-  if (customLabel) customLabel.style.display = mode === 'custom' ? 'flex' : 'none'
-  if (tab === 'production') renderProductionContent()
-  if (tab === 'packing')    renderPackingContent()
-}
-function setCustomRange(tab) {
-  const from = document.getElementById('filter-from-'+tab)?.value
-  const to   = document.getElementById('filter-to-'+tab)?.value
-  if (from) filterState[tab].from = from
-  if (to)   filterState[tab].to   = to
-  if (tab === 'production') renderProductionContent()
-  if (tab === 'packing')    renderPackingContent()
-}
-
-function renderProduction() {
-  const el = document.getElementById('production-content')
-  el.innerHTML = filterBarHtml('production')
-  el.innerHTML += '<div id="prod-body"></div>'
-  renderProductionContent()
-}
-function renderProductionContent() {
-  const orders = filterOrders('production')
-  const el     = document.getElementById('prod-body')
-  if (!el) return
-  if (!orders.length) { el.innerHTML = '<div class="empty-state">No orders for this period.</div>'; return }
-  const byDate = {}
-  orders.forEach(o => { if (!byDate[o.delivery_date]) byDate[o.delivery_date]=[]; byDate[o.delivery_date].push(o) })
-  const totalItems = new Set(orders.flatMap(o => (o.items||[]).map(i => i.item_name))).size
-  const totalUnits = orders.reduce((s,o) => s + (o.items||[]).reduce((ss,i) => ss+i.quantity, 0), 0)
-  let html = `<div class="prod-summary">
-    <div class="prod-stat"><div class="prod-stat-val">${Object.keys(byDate).length}</div><div class="prod-stat-lbl">Days</div></div>
-    <div class="prod-stat"><div class="prod-stat-val">${orders.length}</div><div class="prod-stat-lbl">Orders</div></div>
-    <div class="prod-stat"><div class="prod-stat-val">${totalItems}</div><div class="prod-stat-lbl">Products</div></div>
-    <div class="prod-stat"><div class="prod-stat-val">${totalUnits}</div><div class="prod-stat-lbl">Total Units</div></div>
-  </div>`
-  Object.keys(byDate).sort().forEach(date => {
-    const dayOrders = byDate[date]
-    const dayUnits  = dayOrders.reduce((s,o) => s + (o.items||[]).reduce((ss,i) => ss+i.quantity, 0), 0)
-    const itemMap = {}
-    dayOrders.forEach(o => {
-      (o.items||[]).forEach(i => {
-        if (!itemMap[i.item_name]) itemMap[i.item_name] = { qty: 0, unit: i.unit, vendors: [] }
-        itemMap[i.item_name].qty += i.quantity
-        if (!itemMap[i.item_name].vendors.includes(o.vendor_name)) itemMap[i.item_name].vendors.push(o.vendor_name)
-      })
-    })
-    const sortedItems = Object.entries(itemMap).sort((a,b) => b[1].qty - a[1].qty)
-    html += `<div class="prod-date-block">
-      <div class="prod-date-heading">
-        <span>${date===TODAY?'Today &mdash; ':''}${fmtDate(date)}</span>
-        <span class="prod-date-sub">${dayOrders.length} order${dayOrders.length!==1?'s':''} &middot; ${dayUnits} units</span>
-      </div>
-      ${sortedItems.map(([name,data])=>`
-        <div class="prod-item-row">
-          <div><div class="prod-item-name">${name}</div><div class="prod-item-vendors">${data.vendors.join(', ')}</div></div>
-          <div style="text-align:right;flex-shrink:0">
-            <span class="prod-item-qty">${data.qty}</span>
-            <span class="prod-item-unit">${data.unit==='each'?'each':(data.qty!==1?data.unit+'s':data.unit)}</span>
-          </div>
-        </div>`).join('')}
-    </div>`
-  })
-  el.innerHTML = html
-}
-
-function renderPacking() {
-  const el = document.getElementById('packing-content')
-  el.innerHTML = filterBarHtml('packing')
-  el.innerHTML += '<div id="pack-body"></div>'
-  renderPackingContent()
-}
-function renderPackingContent() {
-  const orders = filterOrders('packing')
-  const el = document.getElementById('pack-body')
-  if (!el) return
-  if (!orders.length) { el.innerHTML='<div class="empty-state">No orders for this period.</div>'; return }
-  const byDate = {}
-  orders.forEach(o => { if (!byDate[o.delivery_date]) byDate[o.delivery_date]=[]; byDate[o.delivery_date].push(o) })
-  let html = ''
-  Object.keys(byDate).sort().forEach(date => {
-    const dayOrders = byDate[date]
-    const dayUnits = dayOrders.reduce((s,o)=>s+(o.items||[]).reduce((ss,i)=>ss+i.quantity,0),0)
-    const byVendor = {}
-    dayOrders.forEach(o => {
-      if (!byVendor[o.vendor_name]) byVendor[o.vendor_name]={items:[],time:o.delivery_time,notes:o.notes,total:0}
-      ;(o.items||[]).forEach(i=>{
-        const ex=byVendor[o.vendor_name].items.find(x=>x.item_name===i.item_name)
-        if(ex)ex.quantity+=i.quantity;else byVendor[o.vendor_name].items.push({...i})
-        byVendor[o.vendor_name].total+=i.quantity
-      })
-    })
-    html+=`<div class="pack-date-block">
-      <div class="pack-date-heading">
-        <span>${date===TODAY?'Today &mdash; ':''}${fmtDate(date)}</span>
-        <span class="prod-date-sub">${Object.keys(byVendor).length} vendor${Object.keys(byVendor).length!==1?'s':''} &middot; ${dayUnits} units</span>
-      </div>
-      ${Object.entries(byVendor).sort((a,b)=>(a[1].time||'').localeCompare(b[1].time||'')).map(([vendor,data])=>`
-        <div class="pack-vendor-card">
-          <div class="pack-vendor-header">
-            <span class="pack-vendor-name">${vendor}</span>
-            <div style="display:flex;align-items:center;gap:14px">
-              ${data.time?`<span class="pack-vendor-time">Delivery: ${data.time.slice(0,5)}</span>`:''}
-              <span class="pack-vendor-total">${data.total} unit${data.total!==1?'s':''}</span>
-            </div>
-          </div>
-          ${data.items.map(i=>`
-            <div class="pack-item-row">
-              <span class="pack-item-name">${i.item_name}</span>
-              <span class="pack-item-qty">${i.quantity} ${i.unit==='each'?'each':(i.quantity!==1?i.unit+'s':i.unit)}</span>
-            </div>`).join('')}
-          ${data.notes?`<div class="pack-notes">Note: ${data.notes}</div>`:''}
-        </div>`).join('')}
-    </div>`
-  })
-  el.innerHTML = html
-}
-
-function printTab(tab) {
-  const orders  = filterOrders(tab)
-  const fs      = filterState[tab]
-  const range   = fs.mode==='custom'?{from:fs.from,to:fs.to}:getDateRange(fs.mode)
-  const title   = tab==='production'?'Production List':'Packing + Delivery'
-  const rangeLabel = range.from===range.to ? fmtDate(range.from) : fmtDate(range.from)+' \u2013 '+fmtDate(range.to)
-  const byDate = {}
+function renderProduction(){const el=document.getElementById('production-content');el.innerHTML=filterBarHtml('production')+'<div id="prod-body"></div>';renderProductionContent()}
+function renderProductionContent(){
+  const orders=filterOrders('production'),el=document.getElementById('prod-body');if(!el)return
+  if(!orders.length){el.innerHTML='<div class="empty-state">No orders for this period.</div>';return}
+  const byDate={}
   orders.forEach(o=>{if(!byDate[o.delivery_date])byDate[o.delivery_date]=[];byDate[o.delivery_date].push(o)})
-  let body = ''
-  if (!orders.length) { body='<p style="color:#6b6860;font-size:14px">No orders for this period.</p>' }
-  else if (tab==='production') {
+  const tI=new Set(orders.flatMap(o=>(o.items||[]).map(i=>i.item_name))).size,tU=orders.reduce((s,o)=>s+(o.items||[]).reduce((ss,i)=>ss+i.quantity,0),0)
+  let html=`<div class="prod-summary"><div class="prod-stat"><div class="prod-stat-val">${Object.keys(byDate).length}</div><div class="prod-stat-lbl">Days</div></div><div class="prod-stat"><div class="prod-stat-val">${orders.length}</div><div class="prod-stat-lbl">Orders</div></div><div class="prod-stat"><div class="prod-stat-val">${tI}</div><div class="prod-stat-lbl">Products</div></div><div class="prod-stat"><div class="prod-stat-val">${tU}</div><div class="prod-stat-lbl">Total Units</div></div></div>`
+  Object.keys(byDate).sort().forEach(date=>{
+    const dayO=byDate[date],dU=dayO.reduce((s,o)=>s+(o.items||[]).reduce((ss,i)=>ss+i.quantity,0),0),iM={}
+    dayO.forEach(o=>{(o.items||[]).forEach(i=>{if(!iM[i.item_name])iM[i.item_name]={qty:0,unit:i.unit,vendors:[]};iM[i.item_name].qty+=i.quantity;if(!iM[i.item_name].vendors.includes(o.vendor_name))iM[i.item_name].vendors.push(o.vendor_name)})})
+    html+=`<div class="prod-date-block"><div class="prod-date-heading"><span>${date===TODAY?'Today &mdash; ':''}${fmtDate(date)}</span><span class="prod-date-sub">${dayO.length} order${dayO.length!==1?'s':''} &middot; ${dU} units</span></div>${Object.entries(iM).sort((a,b)=>b[1].qty-a[1].qty).map(([name,data])=>`<div class="prod-item-row"><div><div class="prod-item-name">${name}</div><div class="prod-item-vendors">${data.vendors.join(', ')}</div></div><div style="text-align:right;flex-shrink:0"><span class="prod-item-qty">${data.qty}</span><span class="prod-item-unit">${data.unit==='each'?'each':(data.qty!==1?data.unit+'s':data.unit)}</span></div></div>`).join('')}</div>`
+  })
+  el.innerHTML=html
+}
+
+function renderPacking(){const el=document.getElementById('packing-content');el.innerHTML=filterBarHtml('packing')+'<div id="pack-body"></div>';renderPackingContent()}
+function renderPackingContent(){
+  const orders=filterOrders('packing'),el=document.getElementById('pack-body');if(!el)return
+  if(!orders.length){el.innerHTML='<div class="empty-state">No orders for this period.</div>';return}
+  const byDate={}
+  orders.forEach(o=>{if(!byDate[o.delivery_date])byDate[o.delivery_date]=[];byDate[o.delivery_date].push(o)})
+  let html=''
+  Object.keys(byDate).sort().forEach(date=>{
+    const dayO=byDate[date],dU=dayO.reduce((s,o)=>s+(o.items||[]).reduce((ss,i)=>ss+i.quantity,0),0),bV={}
+    dayO.forEach(o=>{if(!bV[o.vendor_name])bV[o.vendor_name]={items:[],time:o.delivery_time,notes:o.notes,total:0};(o.items||[]).forEach(i=>{const ex=bV[o.vendor_name].items.find(x=>x.item_name===i.item_name);if(ex)ex.quantity+=i.quantity;else bV[o.vendor_name].items.push({...i});bV[o.vendor_name].total+=i.quantity})})
+    html+=`<div class="pack-date-block"><div class="pack-date-heading"><span>${date===TODAY?'Today &mdash; ':''}${fmtDate(date)}</span><span class="prod-date-sub">${Object.keys(bV).length} vendor${Object.keys(bV).length!==1?'s':''} &middot; ${dU} units</span></div>${Object.entries(bV).sort((a,b)=>(a[1].time||'').localeCompare(b[1].time||'')).map(([vendor,data])=>`<div class="pack-vendor-card"><div class="pack-vendor-header"><span class="pack-vendor-name">${vendor}</span><div style="display:flex;align-items:center;gap:14px">${data.time?`<span class="pack-vendor-time">Delivery: ${data.time.slice(0,5)}</span>`:''}<span class="pack-vendor-total">${data.total} unit${data.total!==1?'s':''}</span></div></div>${data.items.map(i=>`<div class="pack-item-row"><span class="pack-item-name">${i.item_name}</span><span class="pack-item-qty">${i.quantity} ${i.unit==='each'?'each':(i.quantity!==1?i.unit+'s':i.unit)}</span></div>`).join('')}${data.notes?`<div class="pack-notes">Note: ${data.notes}</div>`:''}</div>`).join('')}</div>`
+  })
+  el.innerHTML=html
+}
+
+function printTab(tab){
+  const orders=filterOrders(tab),fs=filterState[tab],range=fs.mode==='custom'?{from:fs.from,to:fs.to}:getDateRange(fs.mode)
+  const title=tab==='production'?'Production List':'Packing + Delivery'
+  const rangeLabel=range.from===range.to?fmtDate(range.from):fmtDate(range.from)+' \u2013 '+fmtDate(range.to)
+  const byDate={}
+  orders.forEach(o=>{if(!byDate[o.delivery_date])byDate[o.delivery_date]=[];byDate[o.delivery_date].push(o)})
+  let body=''
+  if(!orders.length){body='<p style="color:#6b6860;font-size:14px">No orders for this period.</p>'}
+  else if(tab==='production'){
     Object.keys(byDate).sort().forEach(date=>{
-      const dayOrders=byDate[date]
-      const dayUnits=dayOrders.reduce((s,o)=>s+(o.items||[]).reduce((ss,i)=>ss+i.quantity,0),0)
-      const itemMap={}
-      dayOrders.forEach(o=>{(o.items||[]).forEach(i=>{
-        if(!itemMap[i.item_name])itemMap[i.item_name]={qty:0,unit:i.unit,vendors:[]}
-        itemMap[i.item_name].qty+=i.quantity
-        if(!itemMap[i.item_name].vendors.includes(o.vendor_name))itemMap[i.item_name].vendors.push(o.vendor_name)
-      })})
-      const sorted=Object.entries(itemMap).sort((a,b)=>b[1].qty-a[1].qty)
-      body+=`<div style="margin-bottom:32px;page-break-inside:avoid">
-        <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:2px solid #1a1916">
-          <span style="font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase">${fmtDate(date)}</span>
-          <span style="font-size:10px;color:#6b6860">${dayOrders.length} order${dayOrders.length!==1?'s':''} &middot; ${dayUnits} units</span>
-        </div>
-        <table style="width:100%;border-collapse:collapse">
-          <thead><tr>
-            <th style="padding:8px 0;text-align:left;font-size:10px;color:#6b6860;font-weight:500;border-bottom:1px solid #dedad4">Item</th>
-            <th style="padding:8px 0;text-align:left;font-size:10px;color:#6b6860;font-weight:500;border-bottom:1px solid #dedad4">Vendors</th>
-            <th style="padding:8px 0;text-align:right;font-size:10px;color:#6b6860;font-weight:500;border-bottom:1px solid #dedad4">Qty</th>
-          </tr></thead>
-          <tbody>${sorted.map(([name,data])=>`
-            <tr style="border-bottom:1px solid #f0ece6">
-              <td style="padding:10px 0;font-size:14px">${name}</td>
-              <td style="padding:10px 0;font-size:12px;color:#6b6860">${data.vendors.join(', ')}</td>
-              <td style="padding:10px 0;text-align:right;font-size:22px;font-weight:700">${data.qty} <span style="font-size:10px;font-weight:400;color:#6b6860">${data.unit==='each'?'each':(data.qty!==1?data.unit+'s':data.unit)}</span></td>
-            </tr>`).join('')}</tbody>
-        </table>
-      </div>`
+      const dO=byDate[date],dU=dO.reduce((s,o)=>s+(o.items||[]).reduce((ss,i)=>ss+i.quantity,0),0),iM={}
+      dO.forEach(o=>{(o.items||[]).forEach(i=>{if(!iM[i.item_name])iM[i.item_name]={qty:0,unit:i.unit,vendors:[]};iM[i.item_name].qty+=i.quantity;if(!iM[i.item_name].vendors.includes(o.vendor_name))iM[i.item_name].vendors.push(o.vendor_name)})})
+      body+=`<div style="margin-bottom:32px;page-break-inside:avoid"><div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:2px solid #1a1916"><span style="font-size:13px;font-weight:600;text-transform:uppercase">${fmtDate(date)}</span><span style="font-size:10px;color:#6b6860">${dO.length} order${dO.length!==1?'s':''} &middot; ${dU} units</span></div><table style="width:100%;border-collapse:collapse"><thead><tr><th style="padding:8px 0;text-align:left;font-size:10px;color:#6b6860;border-bottom:1px solid #dedad4">Item</th><th style="padding:8px 0;text-align:left;font-size:10px;color:#6b6860;border-bottom:1px solid #dedad4">Vendors</th><th style="padding:8px 0;text-align:right;font-size:10px;color:#6b6860;border-bottom:1px solid #dedad4">Qty</th></tr></thead><tbody>${Object.entries(iM).sort((a,b)=>b[1].qty-a[1].qty).map(([name,data])=>`<tr style="border-bottom:1px solid #f0ece6"><td style="padding:10px 0;font-size:14px">${name}</td><td style="padding:10px 0;font-size:12px;color:#6b6860">${data.vendors.join(', ')}</td><td style="padding:10px 0;text-align:right;font-size:22px;font-weight:700">${data.qty} <span style="font-size:10px;font-weight:400;color:#6b6860">${data.unit==='each'?'each':(data.qty!==1?data.unit+'s':data.unit)}</span></td></tr>`).join('')}</tbody></table></div>`
     })
-  } else {
+  }else{
     Object.keys(byDate).sort().forEach(date=>{
-      const dayOrders=byDate[date]
-      const byVendor={}
-      dayOrders.forEach(o=>{
-        if(!byVendor[o.vendor_name])byVendor[o.vendor_name]={items:[],time:o.delivery_time,notes:o.notes,total:0}
-        ;(o.items||[]).forEach(i=>{
-          const ex=byVendor[o.vendor_name].items.find(x=>x.item_name===i.item_name)
-          if(ex)ex.quantity+=i.quantity;else byVendor[o.vendor_name].items.push({...i})
-          byVendor[o.vendor_name].total+=i.quantity
-        })
-      })
-      const sortedVendors=Object.entries(byVendor).sort((a,b)=>(a[1].time||'').localeCompare(b[1].time||''))
-      body+=`<div style="margin-bottom:32px">
-        <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:2px solid #1a1916;margin-bottom:16px">
-          <span style="font-size:13px;font-weight:600">${fmtDate(date)}</span>
-          <span style="font-size:10px;color:#6b6860">${sortedVendors.length} vendor${sortedVendors.length!==1?'s':''}</span>
-        </div>
-        ${sortedVendors.map(([vendor,data])=>`
-          <div style="border:1px solid #dedad4;margin-bottom:10px;page-break-inside:avoid">
-            <div style="background:#f8f6f2;padding:10px 14px;display:flex;justify-content:space-between;border-bottom:1px solid #dedad4">
-              <span style="font-size:14px;font-weight:600">${vendor}</span>
-              <div>${data.time?`<span style="font-size:11px;color:#6b6860">Delivery ${data.time.slice(0,5)}</span>&ensp;`:''}<span style="font-size:10px;color:#6b6860">${data.total} unit${data.total!==1?'s':''}</span></div>
-            </div>
-            <table style="width:100%;border-collapse:collapse">
-              ${data.items.map(i=>`<tr style="border-bottom:1px solid #f0ece6">
-                <td style="padding:8px 14px;font-size:13px">${i.item_name}</td>
-                <td style="padding:8px 14px;font-size:13px;font-weight:600;text-align:right">${i.quantity} ${i.unit==='each'?'each':(i.quantity!==1?i.unit+'s':i.unit)}</td>
-              </tr>`).join('')}
-            </table>
-            ${data.notes?`<div style="padding:7px 14px;font-size:11px;color:#6b6860;font-style:italic;border-top:1px dashed #dedad4">Note: ${data.notes}</div>`:''}
-          </div>`).join('')}
-      </div>`
+      const dO=byDate[date],bV={}
+      dO.forEach(o=>{if(!bV[o.vendor_name])bV[o.vendor_name]={items:[],time:o.delivery_time,notes:o.notes,total:0};(o.items||[]).forEach(i=>{const ex=bV[o.vendor_name].items.find(x=>x.item_name===i.item_name);if(ex)ex.quantity+=i.quantity;else bV[o.vendor_name].items.push({...i});bV[o.vendor_name].total+=i.quantity})})
+      const sV=Object.entries(bV).sort((a,b)=>(a[1].time||'').localeCompare(b[1].time||''))
+      body+=`<div style="margin-bottom:32px"><div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:2px solid #1a1916;margin-bottom:16px"><span style="font-size:13px;font-weight:600">${fmtDate(date)}</span><span style="font-size:10px;color:#6b6860">${sV.length} vendor${sV.length!==1?'s':''}</span></div>${sV.map(([vendor,data])=>`<div style="border:1px solid #dedad4;margin-bottom:10px;page-break-inside:avoid"><div style="background:#f8f6f2;padding:10px 14px;display:flex;justify-content:space-between;border-bottom:1px solid #dedad4"><span style="font-size:14px;font-weight:600">${vendor}</span><div>${data.time?`<span style="font-size:11px;color:#6b6860">Delivery ${data.time.slice(0,5)}</span>&ensp;`:''}<span style="font-size:10px;color:#6b6860">${data.total} unit${data.total!==1?'s':''}</span></div></div><table style="width:100%;border-collapse:collapse">${data.items.map(i=>`<tr style="border-bottom:1px solid #f0ece6"><td style="padding:8px 14px;font-size:13px">${i.item_name}</td><td style="padding:8px 14px;font-size:13px;font-weight:600;text-align:right">${i.quantity} ${i.unit==='each'?'each':(i.quantity!==1?i.unit+'s':i.unit)}</td></tr>`).join('')}</table>${data.notes?`<div style="padding:7px 14px;font-size:11px;color:#6b6860;font-style:italic;border-top:1px dashed #dedad4">Note: ${data.notes}</div>`:''}</div>`).join('')}</div>`
     })
   }
-  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${title}</title>
-  <style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:'Helvetica Neue',Arial,sans-serif;color:#1a1916;padding:44px;max-width:800px;margin:0 auto;}@media print{body{padding:20px;}.no-print{display:none!important;}}.no-print{text-align:center;margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid #dedad4;}.print-btn{background:#1a1916;color:white;border:none;padding:9px 22px;font-size:11px;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;}</style>
-  </head><body>
-  <div class="no-print"><button class="print-btn" onclick="window.print()">Print / Save PDF</button></div>
-  <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:28px;padding-bottom:14px;border-bottom:1px solid #dedad4">
-    <div><div style="font-size:10px;color:#6b6860;margin-bottom:5px;text-transform:uppercase;letter-spacing:.2em">Village Bakery + Provisions</div><div style="font-size:22px;font-weight:700;text-transform:uppercase;letter-spacing:.04em">${title}</div></div>
-    <div style="text-align:right;font-size:12px;color:#6b6860;line-height:1.8"><div>${rangeLabel}</div><div>Printed ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}</div></div>
-  </div>${body}</body></html>`
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${title}</title><style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:'Helvetica Neue',Arial,sans-serif;color:#1a1916;padding:44px;max-width:800px;margin:0 auto;}@media print{body{padding:20px;}.no-print{display:none!important;}}.no-print{text-align:center;margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid #dedad4;}.print-btn{background:#1a1916;color:white;border:none;padding:9px 22px;font-size:11px;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;}</style></head><body><div class="no-print"><button class="print-btn" onclick="window.print()">Print / Save PDF</button></div><div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:28px;padding-bottom:14px;border-bottom:1px solid #dedad4"><div><div style="font-size:10px;color:#6b6860;margin-bottom:5px;text-transform:uppercase;letter-spacing:.2em">Village Bakery + Provisions</div><div style="font-size:22px;font-weight:700;text-transform:uppercase;letter-spacing:.04em">${title}</div></div><div style="text-align:right;font-size:12px;color:#6b6860;line-height:1.8"><div>${rangeLabel}</div><div>Printed ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}</div></div></div>${body}</body></html>`
   const w=window.open('','_blank');w.document.write(html);w.document.close();setTimeout(()=>w.print(),500)
 }
 
-let vendorPricingCache = {}
-async function togglePricing(vendorId) {
-  const panel=document.getElementById('pricing-panel-'+vendorId)
-  const btn=document.getElementById('pricing-btn-'+vendorId)
-  if (!panel) return
+let vendorPricingCache={}
+async function togglePricing(vendorId){
+  const panel=document.getElementById('pricing-panel-'+vendorId),btn=document.getElementById('pricing-btn-'+vendorId);if(!panel)return
   const isOpen=panel.style.display==='block'
-  document.querySelectorAll('.pricing-panel').forEach(p=>p.style.display='none')
-  document.querySelectorAll('.btn-pricing').forEach(b=>b.classList.remove('active'))
-  if (!isOpen) {
-    panel.style.display='block';btn.classList.add('active')
-    if (!vendorPricingCache[vendorId]) await loadVendorPricingForAdmin(vendorId)
-    renderPricingRows(vendorId)
-  }
+  document.querySelectorAll('.pricing-panel').forEach(p=>p.style.display='none');document.querySelectorAll('.btn-pricing').forEach(b=>b.classList.remove('active'))
+  if(!isOpen){panel.style.display='block';btn.classList.add('active');if(!vendorPricingCache[vendorId])await loadVendorPricingForAdmin(vendorId);renderPricingRows(vendorId)}
 }
-async function loadVendorPricingForAdmin(vendorId) {
-  const snap=await db.collection('vendor_pricing').where('vendor_id','==',vendorId).get()
-  vendorPricingCache[vendorId]={}
-  snap.docs.forEach(d=>{const data=d.data();vendorPricingCache[vendorId][data.menu_item_id]=Number(data.price)})
+async function loadVendorPricingForAdmin(vendorId){const snap=await db.collection('vendor_pricing').where('vendor_id','==',vendorId).get();vendorPricingCache[vendorId]={};snap.docs.forEach(d=>{const data=d.data();vendorPricingCache[vendorId][data.menu_item_id]=Number(data.price)})}
+function renderPricingRows(vendorId){
+  const el=document.getElementById('pricing-rows-'+vendorId),prices=vendorPricingCache[vendorId]||{},active=allMenu.filter(m=>m.active)
+  el.innerHTML=active.map(item=>{const custom=prices[item.id],defaultP=item.price||0;return`<div class="pricing-row"><div class="pricing-item-name">${item.name}</div><div class="pricing-default">Default: $${defaultP.toFixed(2)}</div><div class="pricing-override"><span>$</span><input class="price-override-input" type="number" step="0.01" min="0" id="vp-${vendorId}-${item.id}" value="${custom!==undefined?custom.toFixed(2):''}" placeholder="${defaultP.toFixed(2)}"></div></div>`}).join('')
 }
-function renderPricingRows(vendorId) {
-  const el=document.getElementById('pricing-rows-'+vendorId)
-  const prices=vendorPricingCache[vendorId]||{}
-  const active=allMenu.filter(m=>m.active)
-  el.innerHTML=active.map(item=>{
-    const custom=prices[item.id];const defaultP=item.price||0
-    return`<div class="pricing-row">
-      <div class="pricing-item-name">${item.name}</div>
-      <div class="pricing-default">Default: $${defaultP.toFixed(2)}</div>
-      <div class="pricing-override"><span>$</span>
-        <input class="price-override-input" type="number" step="0.01" min="0" id="vp-${vendorId}-${item.id}" value="${custom!==undefined?custom.toFixed(2):''}" placeholder="${defaultP.toFixed(2)}">
-      </div>
-    </div>`
-  }).join('')
-}
-async function savePricing(vendorId) {
-  const active=allMenu.filter(m=>m.active);const batch=db.batch()
-  active.forEach(item=>{
-    const input=document.getElementById(`vp-${vendorId}-${item.id}`);if(!input)return
-    const val=input.value.trim();const docRef=db.collection('vendor_pricing').doc(`${vendorId}_${item.id}`)
-    if(val!==''&&!isNaN(parseFloat(val)))batch.set(docRef,{vendor_id:vendorId,menu_item_id:item.id,price:parseFloat(val)})
-    else batch.delete(docRef)
-  })
+async function savePricing(vendorId){
+  const active=allMenu.filter(m=>m.active),batch=db.batch()
+  active.forEach(item=>{const input=document.getElementById(`vp-${vendorId}-${item.id}`);if(!input)return;const val=input.value.trim(),docRef=db.collection('vendor_pricing').doc(`${vendorId}_${item.id}`);if(val!==''&&!isNaN(parseFloat(val)))batch.set(docRef,{vendor_id:vendorId,menu_item_id:item.id,price:parseFloat(val)});else batch.delete(docRef)})
   await batch.commit()
   vendorPricingCache[vendorId]={}
-  active.forEach(item=>{
-    const input=document.getElementById(`vp-${vendorId}-${item.id}`);if(!input)return
-    const val=input.value.trim()
-    if(val!==''&&!isNaN(parseFloat(val)))vendorPricingCache[vendorId][item.id]=parseFloat(val)
-  })
-  const btn=document.querySelector(`#pricing-panel-${vendorId} .btn-save-prices`)
-  if(btn){btn.textContent='Saved';setTimeout(()=>btn.textContent='Save Prices',1800)}
+  active.forEach(item=>{const input=document.getElementById(`vp-${vendorId}-${item.id}`);if(!input)return;const val=input.value.trim();if(val!==''&&!isNaN(parseFloat(val)))vendorPricingCache[vendorId][item.id]=parseFloat(val)})
+  const btn=document.querySelector(`#pricing-panel-${vendorId} .btn-save-prices`);if(btn){btn.textContent='Saved';setTimeout(()=>btn.textContent='Save Prices',1800)}
 }
-async function clearPricing(vendorId) {
+async function clearPricing(vendorId){
   if(!confirm('Remove all custom prices for this vendor?'))return
-  const snap=await db.collection('vendor_pricing').where('vendor_id','==',vendorId).get()
-  const batch=db.batch();snap.docs.forEach(d=>batch.delete(d.ref));await batch.commit()
-  vendorPricingCache[vendorId]={};renderPricingRows(vendorId)
+  const snap=await db.collection('vendor_pricing').where('vendor_id','==',vendorId).get(),batch=db.batch()
+  snap.docs.forEach(d=>batch.delete(d.ref));await batch.commit();vendorPricingCache[vendorId]={};renderPricingRows(vendorId)
 }
 
-async function deleteOrderAdmin(orderId) {
+async function deleteOrderAdmin(orderId){
   if(!confirm('Delete this order? This cannot be undone.'))return
-  try {
+  try{
     await db.collection('orders').doc(orderId).delete()
     allOrders=allOrders.filter(o=>o.id!==orderId);renderOrders()
     document.getElementById('badge-orders').textContent=allOrders.length
     document.getElementById('stat-new').textContent=allOrders.filter(o=>o.status==='New').length
     document.getElementById('stat-today').textContent=allOrders.filter(o=>o.delivery_date===TODAY).length
     document.getElementById('stat-units').textContent=allOrders.reduce((s,o)=>s+(o.items||[]).reduce((ss,i)=>ss+i.quantity,0),0)
-  } catch(e){alert('Could not delete order: '+e.message)}
+  }catch(e){alert('Could not delete order: '+e.message)}
 }
 
-function exportCSV() {
+function exportCSV(){
   if(!allOrders.length){alert('No orders to export.');return}
   const rows=[['Order ID','Vendor','Delivery Date','Delivery Time','Status','Item','Quantity','Unit','Price','Notes','Order Placed']]
   allOrders.forEach(order=>{
-    const items=order.items||[]
-    const created=order.created_at?new Date(order.created_at.seconds*1000).toLocaleDateString('en-US'):''
-    if(!items.length){
-      rows.push([order.id.slice(0,8).toUpperCase(),order.vendor_name,order.delivery_date,(order.delivery_time||'').slice(0,5),order.status||'New','','','','',order.notes||'',created])
-    } else {
-      items.forEach((item,idx)=>{
-        rows.push([
-          idx===0?order.id.slice(0,8).toUpperCase():'',idx===0?order.vendor_name:'',
-          idx===0?order.delivery_date:'',idx===0?(order.delivery_time||'').slice(0,5):'',
-          idx===0?(order.status||'New'):'',item.item_name,item.quantity,item.unit,
-          item.price?'$'+Number(item.price).toFixed(2):'',idx===0?(order.notes||''):'',idx===0?created:''
-        ])
-      })
-    }
+    const items=order.items||[],created=order.created_at?new Date(order.created_at.seconds*1000).toLocaleDateString('en-US'):''
+    if(!items.length){rows.push([order.id.slice(0,8).toUpperCase(),order.vendor_name,order.delivery_date,(order.delivery_time||'').slice(0,5),order.status||'New','','','','',order.notes||'',created])}
+    else{items.forEach((item,idx)=>{rows.push([idx===0?order.id.slice(0,8).toUpperCase():'',idx===0?order.vendor_name:'',idx===0?order.delivery_date:'',idx===0?(order.delivery_time||'').slice(0,5):'',idx===0?(order.status||'New'):'',item.item_name,item.quantity,item.unit,item.price?'$'+Number(item.price).toFixed(2):'',idx===0?(order.notes||''):'',idx===0?created:''])})}
   })
   const csv=rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n')
-  const blob=new Blob([csv],{type:'text/csv'});const url=URL.createObjectURL(blob)
-  const a=document.createElement('a');a.href=url
-  a.download=`village-bakery-orders-${new Date().toISOString().split('T')[0]}.csv`
-  a.click();URL.revokeObjectURL(url)
+  const blob=new Blob([csv],{type:'text/csv'}),url=URL.createObjectURL(blob),a=document.createElement('a')
+  a.href=url;a.download=`village-bakery-orders-${new Date().toISOString().split('T')[0]}.csv`;a.click();URL.revokeObjectURL(url)
 }
 
 init()
