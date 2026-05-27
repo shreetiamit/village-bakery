@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Village Bakery — Order History</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="client-shared.css">
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+</head>
+<body>
+
+<div id="v-loading"><img class="spinner-logo" src="../assets/logo.png" alt=""></div>
+
+    <div id="v-auth" class="hidden">
+  <div class="auth-wrap">
+    <div class="auth-brand">
+      <img src="../assets/logo.png" class="auth-logo" alt="Village Bakery">
+      <span class="wordmark">Village Bakery + Provisions</span>
+      <div class="auth-divider"></div>
+      <span class="auth-portal-label">Wholesale Order Portal</span>
+    </div>
+    <div class="auth-card">
+      <div class="auth-form" style="padding-bottom:0">
+        <button class="btn-google" onclick="handleGoogleSignIn()">
+          <svg width="20" height="20" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">...</svg>
+          Continue with Google
+        </button>
+        <p class="error-msg" id="google-error" style="margin-top:-4px;margin-bottom:6px"></p>
+        <div class="auth-or"><span>or</span></div>
+      </div>
+      <div class="auth-tabs">
+        <button class="auth-tab active" data-tab="login" onclick="switchTab('login')">Sign In</button>
+        <button class="auth-tab" data-tab="signup" onclick="switchTab('signup')">Create Account</button>
+      </div>
+      <div id="login-form" class="auth-form">
+        <div class="field"><label>Email</label><input type="email" id="login-email" placeholder="your@email.com"></div>
+        <div class="field"><label>Password</label><input type="password" id="login-password"></div>
+        <p class="error-msg" id="login-error"></p>
+        <button class="btn-submit" onclick="handleLogin()">Sign In</button>
+      </div>
+      <div id="signup-form" class="auth-form hidden">
+        <div class="field"><label>Business Name</label><input type="text" id="signup-bname" placeholder="Your business"></div>
+        <div class="field"><label>Email</label><input type="email" id="signup-email" placeholder="your@email.com"></div>
+        <div class="field"><label>Password</label><input type="password" id="signup-password" placeholder="At least 6 characters"></div>
+        <p class="error-msg" id="signup-error"></p>
+        <button class="btn-submit" onclick="handleSignup()">Create Account</button>
+        <p class="auth-note">Your account will require approval before placing orders.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="v-business-name" class="hidden">
+  <div class="auth-wrap">
+    <div class="auth-brand">
+      <span class="wordmark">Village Bakery + Provisions</span>
+      <div class="auth-divider"></div>
+      <span class="auth-portal-label">Wholesale Order Portal</span>
+    </div>
+    <div class="bname-card">
+      <p class="bname-greeting" id="bname-greeting">Welcome!</p>
+      <p class="bname-sub">One last thing — what's the name of your business? This is how your orders will appear to Village Bakery.</p>
+      <div class="field"><label>Business Name</label><input type="text" id="google-bname" placeholder="Your business name"></div>
+      <p class="error-msg" id="bname-error"></p>
+      <button class="btn-submit" onclick="completeGoogleSignup()">Continue</button>
+    </div>
+  </div>
+</div>
+
+<div id="v-pending" class="hidden">
+  <div class="pending-wrap">
+    <span class="wordmark" style="text-align:center;display:block;margin-bottom:56px;font-size:16px">Village Bakery + Provisions</span>
+    <div class="pending-box">
+      <h2>Pending Approval</h2>
+      <p>Your account is awaiting approval from Village Bakery + Provisions. You will be able to place orders once approved.</p>
+      <button class="btn-text" onclick="handleSignout()">Sign Out</button>
+    </div>
+  </div>
+</div>
+
+<div id="v-app" class="hidden">
+  <div class="app-header">...</div> <!-- same as single-orders -->
+  <div class="app-nav">
+    <a href="single-orders.html" class="nav-btn" data-tab="tab-order">Single Orders</a>
+    <a href="weekly-orders.html" class="nav-btn" data-tab="tab-weekly">Weekly Orders</a>
+    <a href="history.html" class="nav-btn" data-tab="tab-history">Order History</a>
+  </div>
+
+<div id="v-app" class="hidden">
+  <div class="app-header">...</div>
+  <div class="app-nav">
+    <a href="single-orders.html" class="nav-btn" data-tab="tab-order">Single Orders</a>
+    <a href="weekly-orders.html" class="nav-btn" data-tab="tab-weekly">Weekly Orders</a>
+    <a href="history.html" class="nav-btn" data-tab="tab-history">Order History</a>
+  </div>
+  <div class="app-content">
+    <div id="tab-history">
+      <div id="history-list"><div class="empty-state">Loading...</div></div>
+    </div>
+  </div>
+</div>
+
+<script src="client-common.js"></script>
+</body>
+</html>
