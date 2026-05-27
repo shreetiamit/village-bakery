@@ -812,7 +812,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
   </div>
   <div class="tabs">
     <button class="tab active" onclick="switchTab('orders',this)">Orders <span class="tab-badge" id="badge-orders">0</span></button>
-    <button class="tab" onclick="switchTab('vendors',this)">Vendors <span class="tab-badge alert" id="badge-vendors">0</span></button>
+    <button class="tab" onclick="switchTab('vendors',this)">Clients <span class="tab-badge alert" id="badge-vendors">0</span></button>
     <button class="tab" onclick="switchTab('menu',this)">Menu <span class="tab-badge" id="badge-menu">0</span></button>
     <button class="tab" onclick="switchTab('production',this)">Production</button>
     <button class="tab" onclick="switchTab('packing',this)">Packing + Delivery</button>
@@ -1480,7 +1480,7 @@ function printTab(tab) {
           <table style="width:100%;border-collapse:collapse">
             <thead><tr>
               <th style="padding:8px 0;text-align:left;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:#6b6860;font-weight:500;border-bottom:1px solid #dedad4">Item</th>
-              <th style="padding:8px 0;text-align:left;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:#6b6860;font-weight:500;border-bottom:1px solid #dedad4">Vendors</th>
+              <th style="padding:8px 0;text-align:left;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:#6b6860;font-weight:500;border-bottom:1px solid #dedad4">Clients</th>
               <th style="padding:8px 0;text-align:right;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:#6b6860;font-weight:500;border-bottom:1px solid #dedad4">Qty</th>
             </tr></thead>
             <tbody>
@@ -1642,7 +1642,7 @@ async function savePricing(vendorId) {
   if (btn) { btn.textContent = 'Saved'; setTimeout(() => btn.textContent = 'Save Prices', 1800) }
 }
 async function clearPricing(vendorId) {
-  if (!confirm('Remove all custom prices for this vendor? They will see default menu prices.')) return
+  if (!confirm('Remove all custom prices for this client? They will see default menu prices.')) return
   await sb.from('vendor_pricing').delete().eq('vendor_id', vendorId)
   vendorPricingCache[vendorId] = {}
   renderPricingRows(vendorId)
