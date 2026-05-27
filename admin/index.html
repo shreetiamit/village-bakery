@@ -1281,6 +1281,7 @@ function renderProductionContent(){
   const byDate={}
   orders.forEach(o=>{if(!byDate[o.delivery_date])byDate[o.delivery_date]=[];byDate[o.delivery_date].push(o)})
   const tI=new Set(orders.flatMap(o=>(o.items||[]).map(i=>i.item_name))).size,tU=orders.reduce((s,o)=>s+(o.items||[]).reduce((ss,i)=>ss+i.quantity,0),0)
+  let html=`<div class="prod-summary"><div class="prod-stat"><div class="prod-stat-val">${Object.keys(byDate).length}</div><div class="prod-stat-lbl">Days</div></div><div class="prod-stat"><div class="prod-stat-val">${orders.length}</div><div class="prod-stat-lbl">Orders</div></div><div class="prod-stat"><div class="prod-stat-val">${tI}</div><div class="prod-stat-lbl">Products</div></div><div class="prod-stat"><div class="prod-stat-val">${tU}</div><div class="prod-stat-lbl">Total Units</div></div></div>`
   Object.keys(byDate).sort().forEach(date=>{
     const dO=byDate[date],dU=dO.reduce((s,o)=>s+(o.items||[]).reduce((ss,i)=>ss+i.quantity,0),0),iM={}
     dO.forEach(o=>{(o.items||[]).forEach(i=>{if(!iM[i.item_name])iM[i.item_name]={qty:0,unit:i.unit,vendors:[]};iM[i.item_name].qty+=i.quantity;if(!iM[i.item_name].vendors.includes(o.vendor_name))iM[i.item_name].vendors.push(o.vendor_name)})})
