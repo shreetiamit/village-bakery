@@ -1303,7 +1303,8 @@ function renderPackingContent(){
   })
   el.innerHTML=html
 }
-  // --- INVOICING branch ---
+function printTab(tab){
+    // --- INVOICING branch ---
   if (tab === 'invoicing') {
     const fs = filterState.invoicing;
     const range = fs.mode === 'custom' ? { from: fs.from, to: fs.to } : getDateRange(fs.mode);
@@ -1355,7 +1356,6 @@ function renderPackingContent(){
     setTimeout(() => win.print(), 300);
     return;
   }
-function printTab(tab){
   const orders=filterOrders(tab),fs=filterState[tab],range=fs.mode==='custom'?{from:fs.from,to:fs.to}:getDateRange(fs.mode)
   const title=tab==='production'?'Production List':'Packing + Delivery'
   const rangeLabel=range.from===range.to?fmtDate(range.from):fmtDate(range.from)+' \u2013 '+fmtDate(range.to)
