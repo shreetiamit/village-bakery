@@ -27,7 +27,7 @@ function show(id) {
   ['v-loading', 'v-auth', 'v-unauthorized', 'v-app'].forEach(v => document.getElementById(v).classList.toggle('hidden', v !== id));
 }
 
-// ==================== INVOICING HELPER (same as original) ====================
+// ==================== INVOICING HELPER ====================
 function escapeHtml(str) {
   return str.replace(/[&<>]/g, function(m) {
     if (m === '&') return '&amp;';
@@ -131,15 +131,19 @@ function setCustomRange(tab) {
   if (tab === 'invoicing') renderInvoicingContent();
 }
 
-// ---------- Data loading functions (unchanged) ----------
+// ---------- Data loading functions ----------
 async function loadOrders() {
   const snap = await db.collection('orders').orderBy('delivery_date').get();
   allOrders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
   allOrders.sort((a, b) => a.delivery_date !== b.delivery_date ? a.delivery_date.localeCompare(b.delivery_date) : (a.delivery_time || '').localeCompare(b.delivery_time || ''));
-  document.getElementById('badge-orders').textContent = allOrders.length;
-  document.getElementById('stat-new').textContent = allOrders.filter(o => o.status === 'New').length;
-  document.getElementById('stat-today').textContent = allOrders.filter(o => o.delivery_date === TODAY).length;
-  document.getElementById('stat-units').textContent = allOrders.reduce((s, o) => s + (o.items || []).reduce((ss, i) => ss + i.quantity, 0), 0);
+  const badgeOrders = document.getElementById('badge-orders');
+  if (badgeOrders) badgeOrders.textContent = allOrders.length;
+  const statNew = document.getElementById('stat-new');
+  if (statNew) statNew.textContent = allOrders.filter(o => o.status === 'New').length;
+  const statToday = document.getElementById('stat-today');
+  if (statToday) statToday.textContent = allOrders.filter(o => o.delivery_date === TODAY).length;
+  const statUnits = document.getElementById('stat-units');
+  if (statUnits) statUnits.textContent = allOrders.reduce((s, o) => s + (o.items || []).reduce((ss, i) => ss + i.quantity, 0), 0);
 }
 
 async function loadVendors() {
@@ -147,31 +151,39 @@ async function loadVendors() {
   allVendors = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(v => !v.is_admin).sort((a, b) => (b.created_at?.seconds || 0) - (a.created_at?.seconds || 0));
   const pending = allVendors.filter(v => !v.approved).length;
   const badgeEl = document.getElementById('badge-vendors');
-  badgeEl.textContent = pending || allVendors.length;
-  if (pending > 0) badgeEl.classList.add('alert'); else badgeEl.classList.remove('alert');
+  if (badgeEl) {
+    badgeEl.textContent = pending || allVendors.length;
+    if (pending > 0) badgeEl.classList.add('alert'); else badgeEl.classList.remove('alert');
+  }
 }
 
 async function loadMenu() {
   const snap = await db.collection('menu_items').orderBy('sort_order').get();
   allMenu = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-  document.getElementById('badge-menu').textContent = allMenu.filter(m => m.active).length;
+  const badgeMenu = document.getElementById('badge-menu');
+  if (badgeMenu) badgeMenu.textContent = allMenu.filter(m => m.active).length;
 }
 
-// ---------- Create order globals (unchanged) ----------
+// ---------- Create order globals ----------
 let coQtys = {}, coWeeklyQtys = {}, coWeekOffset = 0, coOrderType = 'single';
 
 function toggleCreateOrder() {
   const form = document.getElementById('create-order-form');
+  if (!form) return;
   const opening = !form.classList.contains('open');
   form.classList.toggle('open');
   if (opening) buildCreateOrderForm();
 }
 function switchOrderType(type) {
   coOrderType = type;
-  document.getElementById('ot-single').classList.toggle('active', type === 'single');
-  document.getElementById('ot-weekly').classList.toggle('active', type === 'weekly');
-  document.getElementById('co-single-section').style.display = type === 'single' ? 'block' : 'none';
-  document.getElementById('co-weekly-section').style.display = type === 'weekly' ? 'block' : 'none';
+  const otSingle = document.getElementById('ot-single');
+  const otWeekly = document.getElementById('ot-weekly');
+  if (otSingle) otSingle.classList.toggle('active', type === 'single');
+  if (otWeekly) otWeekly.classList.toggle('active', type === 'weekly');
+  const singleSec = document.getElementById('co-single-section');
+  const weeklySec = document.getElementById('co-weekly-section');
+  if (singleSec) singleSec.style.display = type === 'single' ? 'block' : 'none';
+  if (weeklySec) weeklySec.style.display = type === 'weekly' ? 'block' : 'none';
   if (type === 'weekly') coRenderWeeklyGrid();
 }
 function buildCreateOrderForm() {
@@ -181,6 +193,7 @@ function buildCreateOrderForm() {
   coOrderType = 'single';
   switchOrderType('single');
   const sel = document.getElementById('co-vendor-select');
+  if (!sel) return;
   sel.innerHTML = '<option value="">Select client...</option>';
   allVendors.filter(v => v.approved && v.active !== false).forEach(v => {
     const opt = document.createElement('option');
@@ -192,30 +205,42 @@ function buildCreateOrderForm() {
   mo.value = '__manual__';
   mo.textContent = '─ Other / Type name ─';
   sel.appendChild(mo);
-  document.getElementById('co-manual-field').style.display = 'none';
-  document.getElementById('co-manual-name').value = '';
-  document.getElementById('co-date').value = TODAY;
-  document.getElementById('co-time').value = '08:00';
-  document.getElementById('co-notes').value = '';
-  document.getElementById('co-error').style.display = 'none';
-  document.getElementById('co-weekly-error').style.display = 'none';
-  document.getElementById('co-items-grid').innerHTML = allMenu.filter(m => m.active).map(item => `
-    <div class="co-item-row">
-      <div class="co-item-name">${item.name}</div>
-      <div class="co-item-unit">${item.unit}</div>
-      <div class="co-qty-ctrl">
-        <button class="co-qty-btn" onclick="coChangeQty('${item.id}',-1)">−</button>
-        <input class="co-qty-input" type="number" id="co-qty-${item.id}" value="" min="0" max="999" placeholder="0" oninput="coSetQty('${item.id}',this.value)">
-        <button class="co-qty-btn" onclick="coChangeQty('${item.id}',1)">+</button>
-      </div>
-    </div>`).join('');
+  const manualField = document.getElementById('co-manual-field');
+  if (manualField) manualField.style.display = 'none';
+  const manualName = document.getElementById('co-manual-name');
+  if (manualName) manualName.value = '';
+  const coDate = document.getElementById('co-date');
+  if (coDate) coDate.value = TODAY;
+  const coTime = document.getElementById('co-time');
+  if (coTime) coTime.value = '08:00';
+  const coNotes = document.getElementById('co-notes');
+  if (coNotes) coNotes.value = '';
+  const coError = document.getElementById('co-error');
+  if (coError) coError.style.display = 'none';
+  const coWeeklyError = document.getElementById('co-weekly-error');
+  if (coWeeklyError) coWeeklyError.style.display = 'none';
+  const itemsGrid = document.getElementById('co-items-grid');
+  if (itemsGrid) {
+    itemsGrid.innerHTML = allMenu.filter(m => m.active).map(item => `
+      <div class="co-item-row">
+        <div class="co-item-name">${item.name}</div>
+        <div class="co-item-unit">${item.unit}</div>
+        <div class="co-qty-ctrl">
+          <button class="co-qty-btn" onclick="coChangeQty('${item.id}',-1)">−</button>
+          <input class="co-qty-input" type="number" id="co-qty-${item.id}" value="" min="0" max="999" placeholder="0" oninput="coSetQty('${item.id}',this.value)">
+          <button class="co-qty-btn" onclick="coChangeQty('${item.id}',1)">+</button>
+        </div>
+      </div>`).join('');
+  }
 }
 function onCoVendorChange() {
-  const val = document.getElementById('co-vendor-select').value;
-  document.getElementById('co-manual-field').style.display = val === '__manual__' ? 'block' : 'none';
+  const val = document.getElementById('co-vendor-select')?.value;
+  const manualField = document.getElementById('co-manual-field');
+  if (manualField) manualField.style.display = val === '__manual__' ? 'block' : 'none';
 }
 function coChangeQty(id, delta) {
   const el = document.getElementById('co-qty-' + id);
+  if (!el) return;
   el.value = Math.max(0, (parseInt(el.value) || 0) + delta);
   coSetQty(id, el.value);
 }
@@ -253,8 +278,10 @@ function coChangeWeek(delta) {
 }
 function coRenderWeeklyGrid() {
   const dates = coGetWeekDates(coWeekOffset);
-  document.getElementById('co-week-label').textContent = coGetWeekLabel(coWeekOffset);
-  document.getElementById('co-week-prev').disabled = coWeekOffset <= 0;
+  const weekLabel = document.getElementById('co-week-label');
+  if (weekLabel) weekLabel.textContent = coGetWeekLabel(coWeekOffset);
+  const prevBtn = document.getElementById('co-week-prev');
+  if (prevBtn) prevBtn.disabled = coWeekOffset <= 0;
   const headers = dates.map(d => `<th>${d.dayName}<br><span style="font-weight:400;font-size:11px;opacity:.7">${d.label}</span></th>`).join('');
   const rows = allMenu.filter(m => m.active).map(item => {
     const cells = dates.map(d => {
@@ -263,7 +290,8 @@ function coRenderWeeklyGrid() {
     }).join('');
     return `<tr><td class="item-col"><div class="weekly-item-name">${item.name}</div><div class="weekly-item-unit">per ${item.unit}</div></td>${cells}</tr>`;
   }).join('');
-  document.getElementById('co-weekly-grid').innerHTML = `<table class="weekly-table"><thead><tr><th class="item-col">Item</th>${headers}</tr></thead><tbody>${rows}</tbody></table>`;
+  const gridDiv = document.getElementById('co-weekly-grid');
+  if (gridDiv) gridDiv.innerHTML = `<table class="weekly-table"><thead><tr><th class="item-col">Item</th>${headers}</tr></thead><tbody>${rows}</tbody></table>`;
   coUpdateWeeklyPreview();
 }
 function coSetWeeklyQty(dateStr, itemId, val) {
@@ -293,8 +321,8 @@ function coUpdateWeeklyPreview() {
   el.innerHTML = `<div class="weekly-preview"><div style="font-size:var(--fs-sm);font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--text2);margin-bottom:10px">${allDates.length} Order${allDates.length !== 1 ? 's' : ''} · ${totalUnits} Total Units</div>${rows}</div>`;
 }
 function resolveVendor() {
-  const vendorId = document.getElementById('co-vendor-select').value;
-  const manualName = document.getElementById('co-manual-name').value.trim();
+  const vendorId = document.getElementById('co-vendor-select')?.value;
+  const manualName = document.getElementById('co-manual-name')?.value.trim();
   if (!vendorId) return null;
   if (vendorId === '__manual__') {
     if (!manualName) return null;
@@ -305,19 +333,21 @@ function resolveVendor() {
 }
 async function submitCreateOrder() {
   const errEl = document.getElementById('co-error');
-  errEl.style.display = 'none';
+  if (errEl) errEl.style.display = 'none';
   const vendor = resolveVendor();
   if (!vendor) {
-    errEl.textContent = document.getElementById('co-vendor-select').value === '__manual__' ? 'Please enter the client name.' : 'Please select a client.';
-    errEl.style.display = 'block';
+    if (errEl) {
+      errEl.textContent = document.getElementById('co-vendor-select')?.value === '__manual__' ? 'Please enter the client name.' : 'Please select a client.';
+      errEl.style.display = 'block';
+    }
     return;
   }
-  const date = document.getElementById('co-date').value;
-  const time = document.getElementById('co-time').value;
-  const notes = document.getElementById('co-notes').value.trim();
-  if (!date) { errEl.textContent = 'Please set a delivery date.'; errEl.style.display = 'block'; return; }
-  if (!time) { errEl.textContent = 'Please set a delivery time.'; errEl.style.display = 'block'; return; }
-  if (!Object.keys(coQtys).length) { errEl.textContent = 'Please add at least one item.'; errEl.style.display = 'block'; return; }
+  const date = document.getElementById('co-date')?.value;
+  const time = document.getElementById('co-time')?.value;
+  const notes = document.getElementById('co-notes')?.value.trim() || '';
+  if (!date) { if (errEl) { errEl.textContent = 'Please set a delivery date.'; errEl.style.display = 'block'; } return; }
+  if (!time) { if (errEl) { errEl.textContent = 'Please set a delivery time.'; errEl.style.display = 'block'; } return; }
+  if (!Object.keys(coQtys).length) { if (errEl) { errEl.textContent = 'Please add at least one item.'; errEl.style.display = 'block'; } return; }
   const items = Object.entries(coQtys).map(([id, qty]) => {
     const m = allMenu.find(m => m.id === id);
     return { item_name: m.name, quantity: qty, unit: m.unit, price: m.price || 0 };
@@ -336,24 +366,27 @@ async function submitCreateOrder() {
     });
     await loadOrders();
     renderOrders();
-    document.getElementById('create-order-form').classList.remove('open');
+    const form = document.getElementById('create-order-form');
+    if (form) form.classList.remove('open');
     coQtys = {};
-  } catch (e) { errEl.textContent = e.message; errEl.style.display = 'block'; }
+  } catch (e) { if (errEl) { errEl.textContent = e.message; errEl.style.display = 'block'; } }
 }
 async function submitCreateWeeklyOrders() {
   const errEl = document.getElementById('co-weekly-error');
-  errEl.style.display = 'none';
+  if (errEl) errEl.style.display = 'none';
   const vendor = resolveVendor();
   if (!vendor) {
-    errEl.textContent = document.getElementById('co-vendor-select').value === '__manual__' ? 'Please enter the client name.' : 'Please select a client.';
-    errEl.style.display = 'block';
+    if (errEl) {
+      errEl.textContent = document.getElementById('co-vendor-select')?.value === '__manual__' ? 'Please enter the client name.' : 'Please select a client.';
+      errEl.style.display = 'block';
+    }
     return;
   }
-  const time = document.getElementById('co-weekly-time').value;
-  const notes = document.getElementById('co-weekly-notes').value.trim();
-  if (!time) { errEl.textContent = 'Please set a delivery time.'; errEl.style.display = 'block'; return; }
+  const time = document.getElementById('co-weekly-time')?.value;
+  const notes = document.getElementById('co-weekly-notes')?.value.trim() || '';
+  if (!time) { if (errEl) { errEl.textContent = 'Please set a delivery time.'; errEl.style.display = 'block'; } return; }
   const daysWithItems = Object.keys(coWeeklyQtys).filter(d => Object.keys(coWeeklyQtys[d] || {}).length > 0).sort();
-  if (!daysWithItems.length) { errEl.textContent = 'Please enter quantities for at least one day.'; errEl.style.display = 'block'; return; }
+  if (!daysWithItems.length) { if (errEl) { errEl.textContent = 'Please enter quantities for at least one day.'; errEl.style.display = 'block'; } return; }
   try {
     let placed = 0;
     for (const date of daysWithItems) {
@@ -377,47 +410,57 @@ async function submitCreateWeeklyOrders() {
     }
     await loadOrders();
     renderOrders();
-    document.getElementById('create-order-form').classList.remove('open');
+    const form = document.getElementById('create-order-form');
+    if (form) form.classList.remove('open');
     coWeeklyQtys = {};
-  } catch (e) { errEl.textContent = e.message; errEl.style.display = 'block'; }
+  } catch (e) { if (errEl) { errEl.textContent = e.message; errEl.style.display = 'block'; } }
 }
 
-// ---------- Vendors / Clients functions (unchanged) ----------
+// ---------- Vendors / Clients functions ----------
 function toggleAddClient() {
   const form = document.getElementById('add-client-form');
+  if (!form) return;
   form.classList.toggle('open');
   if (!form.classList.contains('open')) {
-    document.getElementById('ac-name').value = '';
-    document.getElementById('ac-email').value = '';
-    document.getElementById('ac-phone').value = '';
-    document.getElementById('ac-error').style.display = 'none';
+    const acName = document.getElementById('ac-name');
+    if (acName) acName.value = '';
+    const acEmail = document.getElementById('ac-email');
+    if (acEmail) acEmail.value = '';
+    const acPhone = document.getElementById('ac-phone');
+    if (acPhone) acPhone.value = '';
+    const acError = document.getElementById('ac-error');
+    if (acError) acError.style.display = 'none';
   }
 }
 async function submitAddClient() {
-  const name = document.getElementById('ac-name').value.trim();
-  const email = document.getElementById('ac-email').value.trim();
-  const phone = document.getElementById('ac-phone').value.trim();
+  const name = document.getElementById('ac-name')?.value.trim();
+  const email = document.getElementById('ac-email')?.value.trim() || '';
+  const phone = document.getElementById('ac-phone')?.value.trim() || '';
   const errEl = document.getElementById('ac-error');
-  errEl.style.display = 'none';
-  if (!name) { errEl.textContent = 'Business name is required.'; errEl.style.display = 'block'; return; }
+  if (errEl) errEl.style.display = 'none';
+  if (!name) { if (errEl) { errEl.textContent = 'Business name is required.'; errEl.style.display = 'block'; } return; }
   try {
     const docRef = await db.collection('profiles').add({
       business_name: name,
-      email: email || '',
-      phone: phone || '',
+      email: email,
+      phone: phone,
       approved: true,
       active: true,
       is_admin: false,
       created_at: firebase.firestore.FieldValue.serverTimestamp(),
       created_by_admin: true
     });
-    allVendors.unshift({ id: docRef.id, business_name: name, email: email || '', phone: phone || '', approved: true, active: true, created_by_admin: true });
+    allVendors.unshift({ id: docRef.id, business_name: name, email: email, phone: phone, approved: true, active: true, created_by_admin: true });
     renderVendors();
-    document.getElementById('add-client-form').classList.remove('open');
-    document.getElementById('ac-name').value = '';
-    document.getElementById('ac-email').value = '';
-    document.getElementById('ac-phone').value = '';
-  } catch (e) { errEl.textContent = e.message; errEl.style.display = 'block'; }
+    const form = document.getElementById('add-client-form');
+    if (form) form.classList.remove('open');
+    const acName = document.getElementById('ac-name');
+    if (acName) acName.value = '';
+    const acEmail = document.getElementById('ac-email');
+    if (acEmail) acEmail.value = '';
+    const acPhone = document.getElementById('ac-phone');
+    if (acPhone) acPhone.value = '';
+  } catch (e) { if (errEl) { errEl.textContent = e.message; errEl.style.display = 'block'; } }
 }
 async function approveVendor(id) {
   await db.collection('profiles').doc(id).update({ approved: true });
@@ -425,8 +468,10 @@ async function approveVendor(id) {
   if (v) v.approved = true;
   const pending = allVendors.filter(v => !v.approved).length;
   const badgeEl = document.getElementById('badge-vendors');
-  badgeEl.textContent = pending || allVendors.length;
-  if (pending > 0) badgeEl.classList.add('alert'); else badgeEl.classList.remove('alert');
+  if (badgeEl) {
+    badgeEl.textContent = pending || allVendors.length;
+    if (pending > 0) badgeEl.classList.add('alert'); else badgeEl.classList.remove('alert');
+  }
   renderVendors();
 }
 async function toggleActive(id, active) {
@@ -445,7 +490,7 @@ async function editVendorName(id) {
   renderVendors();
 }
 
-// ---------- Menu functions (unchanged) ----------
+// ---------- Menu functions ----------
 async function updatePrice(id, price) {
   const p = parseFloat(price) || 0;
   await db.collection('menu_items').doc(id).update({ price: p });
@@ -465,9 +510,9 @@ async function deleteItem(id) {
   renderMenu();
 }
 async function addItem() {
-  const name = document.getElementById('new-name').value.trim();
-  const unit = document.getElementById('new-unit').value;
-  const price = parseFloat(document.getElementById('new-price').value) || 0;
+  const name = document.getElementById('new-name')?.value.trim();
+  const unit = document.getElementById('new-unit')?.value;
+  const price = parseFloat(document.getElementById('new-price')?.value) || 0;
   if (!name) return;
   const sortOrder = Math.max(0, ...allMenu.map(m => m.sort_order || 0)) + 1;
   const docRef = await db.collection('menu_items').add({ name, unit, price, sort_order: sortOrder, active: true });
@@ -475,7 +520,7 @@ async function addItem() {
   renderMenu();
 }
 
-// ---------- Invoice printing (unchanged) ----------
+// ---------- Invoice printing ----------
 function openInvoice(orderId) {
   const order = allOrders.find(o => o.id === orderId);
   if (!order) return;
@@ -505,7 +550,8 @@ async function updateStatus(orderId, sel) {
   await db.collection('orders').doc(orderId).update({ status });
   const o = allOrders.find(o => o.id === orderId);
   if (o) o.status = status;
-  document.getElementById('stat-new').textContent = allOrders.filter(o => o.status === 'New').length;
+  const statNew = document.getElementById('stat-new');
+  if (statNew) statNew.textContent = allOrders.filter(o => o.status === 'New').length;
 }
 async function deleteOrderAdmin(orderId) {
   if (!confirm('Delete this order? This cannot be undone.')) return;
@@ -513,10 +559,14 @@ async function deleteOrderAdmin(orderId) {
     await db.collection('orders').doc(orderId).delete();
     allOrders = allOrders.filter(o => o.id !== orderId);
     renderOrders();
-    document.getElementById('badge-orders').textContent = allOrders.length;
-    document.getElementById('stat-new').textContent = allOrders.filter(o => o.status === 'New').length;
-    document.getElementById('stat-today').textContent = allOrders.filter(o => o.delivery_date === TODAY).length;
-    document.getElementById('stat-units').textContent = allOrders.reduce((s, o) => s + (o.items || []).reduce((ss, i) => ss + i.quantity, 0), 0);
+    const badgeOrders = document.getElementById('badge-orders');
+    if (badgeOrders) badgeOrders.textContent = allOrders.length;
+    const statNew = document.getElementById('stat-new');
+    if (statNew) statNew.textContent = allOrders.filter(o => o.status === 'New').length;
+    const statToday = document.getElementById('stat-today');
+    if (statToday) statToday.textContent = allOrders.filter(o => o.delivery_date === TODAY).length;
+    const statUnits = document.getElementById('stat-units');
+    if (statUnits) statUnits.textContent = allOrders.reduce((s, o) => s + (o.items || []).reduce((ss, i) => ss + i.quantity, 0), 0);
   } catch (e) { alert('Could not delete order: ' + e.message); }
 }
 function exportCSV() {
@@ -557,7 +607,7 @@ function exportCSV() {
   URL.revokeObjectURL(url);
 }
 
-// ---------- Pricing overrides (unchanged) ----------
+// ---------- Pricing overrides ----------
 let vendorPricingCache = {};
 async function togglePricing(vendorId) {
   const panel = document.getElementById('pricing-panel-' + vendorId);
@@ -568,7 +618,7 @@ async function togglePricing(vendorId) {
   document.querySelectorAll('.btn-pricing').forEach(b => b.classList.remove('active'));
   if (!isOpen) {
     panel.style.display = 'block';
-    btn.classList.add('active');
+    if (btn) btn.classList.add('active');
     if (!vendorPricingCache[vendorId]) await loadVendorPricingForAdmin(vendorId);
     renderPricingRows(vendorId);
   }
@@ -583,6 +633,7 @@ async function loadVendorPricingForAdmin(vendorId) {
 }
 function renderPricingRows(vendorId) {
   const el = document.getElementById('pricing-rows-' + vendorId);
+  if (!el) return;
   const prices = vendorPricingCache[vendorId] || {};
   const active = allMenu.filter(m => m.active);
   el.innerHTML = active.map(item => {
@@ -626,9 +677,10 @@ async function clearPricing(vendorId) {
   renderPricingRows(vendorId);
 }
 
-// ---------- Render functions (Orders, Vendors, Menu, Production, Packing, Invoicing) ----------
+// ---------- Render functions ----------
 function renderOrders() {
   const el = document.getElementById('orders-list');
+  if (!el) return;
   if (!allOrders.length) { el.innerHTML = '<div class="empty-state">No orders yet.</div>'; return; }
   const byDate = {};
   allOrders.forEach(o => { if (!byDate[o.delivery_date]) byDate[o.delivery_date] = []; byDate[o.delivery_date].push(o); });
@@ -671,6 +723,7 @@ function renderOrders() {
 
 function renderVendors() {
   const el = document.getElementById('vendors-list');
+  if (!el) return;
   const pending = allVendors.filter(v => !v.approved);
   const active = allVendors.filter(v => v.approved && v.active !== false);
   const inactive = allVendors.filter(v => v.approved && v.active === false);
@@ -681,10 +734,13 @@ function renderVendors() {
 }
 
 function renderMenu() {
+  const el = document.getElementById('menu-card');
+  if (!el) return;
   const active = allMenu.filter(m => m.active);
   const inactive = allMenu.filter(m => !m.active);
-  document.getElementById('badge-menu').textContent = active.length;
-  document.getElementById('menu-card').innerHTML = `
+  const badgeMenu = document.getElementById('badge-menu');
+  if (badgeMenu) badgeMenu.textContent = active.length;
+  el.innerHTML = `
     <div class="section-label">Active Items &mdash; ${active.length}</div>
     ${active.map(item => `<div class="menu-row"><div class="menu-item-name">${item.name}</div><div class="menu-item-unit">${item.unit}</div><div class="price-field"><span class="price-symbol">$</span><input class="price-input" type="number" step="0.01" min="0" value="${Number(item.price || 0).toFixed(2)}" onblur="updatePrice('${item.id}',this.value)" onkeydown="if(event.key==='Enter')this.blur()"></div><div class="menu-actions"><button class="btn-hide" onclick="toggleItem('${item.id}',false)">Hide</button><button class="btn-delete" onclick="deleteItem('${item.id}')">Delete</button></div></div>`).join('')}
     ${inactive.length ? `<div class="section-label" style="margin-top:12px">Hidden &mdash; ${inactive.length}</div>${inactive.map(item => `<div class="menu-row inactive"><div class="menu-item-name">${item.name}</div><div class="menu-item-unit">${item.unit}</div><div class="price-field"><span class="price-symbol">$</span><input class="price-input" type="number" step="0.01" min="0" value="${Number(item.price || 0).toFixed(2)}" onblur="updatePrice('${item.id}',this.value)" onkeydown="if(event.key==='Enter')this.blur()"></div><div class="menu-actions"><button class="btn-show" onclick="toggleItem('${item.id}',true)">Show</button><button class="btn-delete" onclick="deleteItem('${item.id}')">Delete</button></div></div>`).join('')}` : ''}
@@ -693,6 +749,7 @@ function renderMenu() {
 
 function renderProduction() {
   const el = document.getElementById('production-content');
+  if (!el) return;
   el.innerHTML = filterBarHtml('production') + '<div id="prod-body"></div>';
   renderProductionContent();
 }
@@ -724,6 +781,7 @@ function renderProductionContent() {
 
 function renderPacking() {
   const el = document.getElementById('packing-content');
+  if (!el) return;
   el.innerHTML = filterBarHtml('packing') + '<div id="pack-body"></div>';
   renderPackingContent();
 }
@@ -755,6 +813,7 @@ function renderPackingContent() {
 
 function renderInvoicing() {
   const el = document.getElementById('invoicing-content');
+  if (!el) return;
   el.innerHTML = filterBarHtml('invoicing') + '<div id="invoicing-body"></div>';
   renderInvoicingContent();
 }
@@ -762,12 +821,14 @@ function renderInvoicingContent() {
   const fs = filterState.invoicing;
   const range = fs.mode === 'custom' ? { from: fs.from, to: fs.to } : getDateRange(fs.mode);
   if (!range) {
-    document.getElementById('invoicing-body').innerHTML = '<div class="empty-state">Invalid date range</div>';
+    const body = document.getElementById('invoicing-body');
+    if (body) body.innerHTML = '<div class="empty-state">Invalid date range</div>';
     return;
   }
   const filtered = allOrders.filter(o => o.delivery_date >= range.from && o.delivery_date <= range.to);
   if (!filtered.length) {
-    document.getElementById('invoicing-body').innerHTML = '<div class="empty-state">No orders in this period.</div>';
+    const body = document.getElementById('invoicing-body');
+    if (body) body.innerHTML = '<div class="empty-state">No orders in this period.</div>';
     return;
   }
   const clientMap = new Map();
@@ -796,14 +857,15 @@ function renderInvoicingContent() {
       </div>
       <table class="invoice-items-table">
         <thead><tr><th>Item</th><th style="text-align:right">Total Qty</th></tr></thead>
-        <tbody>${sortedItems.map(([itemName, qty]) => `<tr><td>${escapeHtml(itemName)}</td><td style="text-align:right;font-weight:600">${qty}</td></tr>`).join('')}</tbody>
+        <tbody>${sortedItems.map(([itemName, qty]) => `<tr><td>${escapeHtml(itemName)}</td><td style="text-align:right;font-weight:600">${qty}</td>`).join('')}</tbody>
       </table>
     </div>`;
   }
-  document.getElementById('invoicing-body').innerHTML = html;
+  const bodyDiv = document.getElementById('invoicing-body');
+  if (bodyDiv) bodyDiv.innerHTML = html;
 }
 
-// ---------- Print function (handles all tabs) ----------
+// ---------- Print function ----------
 function printTab(tab) {
   if (tab === 'invoicing') {
     const fs = filterState.invoicing;
@@ -901,7 +963,7 @@ function printTab(tab) {
   setTimeout(() => w.print(), 500);
 }
 
-// ---------- Auth and data initialization (renamed from init) ----------
+// ---------- Auth and data initialization ----------
 async function initAuthAndData() {
   auth.onAuthStateChanged(async (user) => {
     if (!user) { show('v-auth'); return; }
@@ -911,14 +973,12 @@ async function initAuthAndData() {
       profile = snap.exists ? { id: snap.id, ...snap.data() } : null;
       if (!profile?.is_admin) { show('v-unauthorized'); return; }
       await Promise.all([loadOrders(), loadVendors(), loadMenu()]);
-      // After data loads, render the current page's content
       renderCurrentPage();
       show('v-app');
     } catch (e) { console.error(e); show('v-auth'); }
   });
 }
 
-// Helper to determine current page and call the appropriate render function
 function renderCurrentPage() {
   const path = window.location.pathname;
   if (path.includes('clients.html')) renderVendors();
@@ -926,15 +986,14 @@ function renderCurrentPage() {
   else if (path.includes('production.html')) renderProduction();
   else if (path.includes('packing.html')) renderPacking();
   else if (path.includes('invoicing.html')) renderInvoicing();
-  else renderOrders(); // default orders.html
+  else renderOrders();
 }
 
-// Login / Logout handlers (unchanged)
 window.handleLogin = async function() {
   const email = document.getElementById('admin-email').value.trim();
   const pass = document.getElementById('admin-pass').value;
   const errEl = document.getElementById('auth-error');
-  errEl.style.display = 'none';
+  if (errEl) errEl.style.display = 'none';
   try {
     const { user } = await auth.signInWithEmailAndPassword(email, pass);
     currentUser = user;
@@ -944,13 +1003,12 @@ window.handleLogin = async function() {
     await Promise.all([loadOrders(), loadVendors(), loadMenu()]);
     renderCurrentPage();
     show('v-app');
-  } catch (e) { errEl.textContent = e.message; errEl.style.display = 'block'; }
+  } catch (e) { if (errEl) { errEl.textContent = e.message; errEl.style.display = 'block'; } }
 };
 window.handleLogout = async function() { await auth.signOut(); show('v-auth'); };
 
-// ---------- DOMContentLoaded: set active tab, call init ----------
+// ---------- DOMContentLoaded ----------
 document.addEventListener('DOMContentLoaded', () => {
-  // Set active class on tab links based on current file
   const currentFile = window.location.pathname.split('/').pop();
   let activeTab = 'orders';
   if (currentFile === 'clients.html') activeTab = 'vendors';
@@ -963,6 +1021,5 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnTab === activeTab) btn.classList.add('active');
     else btn.classList.remove('active');
   });
-  // Start auth flow
   initAuthAndData();
 });

@@ -13,49 +13,13 @@
 </head>
 <body>
 
-<div id="v-loading"><img class="spinner-logo" src="../assets/logo.png" alt=""></div>
-<div id="v-auth" class="hidden">
-  <div class="auth-wrap">
-    <div class="auth-brand">
-      <img src="../assets/logo.png" class="auth-logo" alt="Village Bakery">
-      <div class="wordmark" style="text-align:center">Village Bakery + Provisions</div>
-      <div class="auth-divider"></div>
-      <div class="auth-sub" style="text-align:center">Admin Panel</div>
-    </div>
-    <div class="auth-card" style="margin-top:32px">
-      <div class="field"><label>Email</label><input type="email" id="admin-email" placeholder="orders@..."></div>
-      <div class="field"><label>Password</label><input type="password" id="admin-pass"></div>
-      <p class="error-msg" id="auth-error"></p>
-      <button class="btn-primary" style="margin-top:8px" onclick="handleLogin()">Sign In</button>
-    </div>
-  </div>
-</div>
-<div id="v-unauthorized" class="hidden">
-  <div class="unauth-card">
-    <h2>Not Authorized</h2>
-    <p>This account does not have admin access.</p>
-    <button class="btn-primary" onclick="handleLogout()">Sign Out</button>
-  </div>
-</div>
+<div id="v-loading"><img class="spinner-logo" src="assets/logo.png" alt=""></div>
+<div id="v-auth" class="hidden">...</div>
+<div id="v-unauthorized" class="hidden">...</div>
 <div id="v-app" class="hidden">
-  <div class="header">
-    <div class="header-brand">
-      <span class="header-wordmark">Village Bakery + Provisions</span>
-      <div class="header-sep"></div>
-      <span class="header-label">Admin</span>
-    </div>
-    <button class="btn-signout" onclick="handleLogout()">Sign Out</button>
-  </div>
-  <div class="tabs">
-    <a href="orders.html" class="tab" data-tab="orders">Orders <span class="tab-badge" id="badge-orders">0</span></a>
-    <a href="clients.html" class="tab" data-tab="vendors">Clients <span class="tab-badge alert" id="badge-vendors">0</span></a>
-    <a href="menu.html" class="tab" data-tab="menu">Menu <span class="tab-badge" id="badge-menu">0</span></a>
-    <a href="production.html" class="tab" data-tab="production">Production</a>
-    <a href="packing.html" class="tab" data-tab="packing">Packing + Delivery</a>
-    <a href="invoicing.html" class="tab" data-tab="invoicing">Invoicing</a>
-  </div>
+  <div class="header">...</div>
+  <div class="tabs">...</div>
   <div class="content">
-    <!-- Packing panel content (original panel-packing) -->
     <div id="panel-packing">
       <div id="packing-content"></div>
     </div>
