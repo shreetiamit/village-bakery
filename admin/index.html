@@ -259,7 +259,8 @@ firebase.initializeApp(firebaseConfig)
 const auth = firebase.auth()
 const db   = firebase.firestore()
 let currentUser=null,profile=null,allOrders=[],allVendors=[],allMenu=[]
-const TODAY=new Date().toISOString().split('T')[0]
+const now0=new Date()
+const TODAY=`${now0.getFullYear()}-${String(now0.getMonth()+1).padStart(2,'0')}-${String(now0.getDate()).padStart(2,'0')}`
 const filterState={production:{mode:'today',from:TODAY,to:TODAY},packing:{mode:'today',from:TODAY,to:TODAY}}
 
 function show(id){['v-loading','v-auth','v-unauthorized','v-app'].forEach(v=>document.getElementById(v).classList.toggle('hidden',v!==id))}
@@ -417,14 +418,22 @@ function generateInvoiceHtml(order){
 }
 
 function getDateRange(mode){
-  const now=new Date(),todayStr=now.toISOString().split('T')[0],dow=now.getDay(),diff=(dow+6)%7
+  const now=new Date()
+  const fmt=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`
+  const todayStr=fmt(now)
+  const dow=now.getDay(),diff=(dow+6)%7
   const mon=new Date(now);mon.setDate(now.getDate()-diff)
   const sun=new Date(mon);sun.setDate(mon.getDate()+6)
   const nmon=new Date(mon);nmon.setDate(mon.getDate()+7)
   const nsun=new Date(nmon);nsun.setDate(nmon.getDate()+6)
   const tmr=new Date(now);tmr.setDate(now.getDate()+1)
-  const fmt=d=>d.toISOString().split('T')[0]
-  switch(mode){case'today':return{from:todayStr,to:todayStr};case'tomorrow':return{from:fmt(tmr),to:fmt(tmr)};case'thisweek':return{from:fmt(mon),to:fmt(sun)};case'nextweek':return{from:fmt(nmon),to:fmt(nsun)};default:return null}
+  switch(mode){
+    case'today':    return{from:todayStr,to:todayStr}
+    case'tomorrow': return{from:fmt(tmr),to:fmt(tmr)}
+    case'thisweek': return{from:fmt(mon),to:fmt(sun)}
+    case'nextweek': return{from:fmt(nmon),to:fmt(nsun)}
+    default:        return null
+  }
 }
 function filterOrders(tab){const fs=filterState[tab],range=fs.mode==='custom'?{from:fs.from,to:fs.to}:getDateRange(fs.mode);if(!range)return allOrders;return allOrders.filter(o=>o.delivery_date>=range.from&&o.delivery_date<=range.to)}
 function fmtDate(d){return new Date(d+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'})}
