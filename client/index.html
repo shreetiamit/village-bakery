@@ -393,10 +393,8 @@ body{font-weight:500;color:var(--text);}
       <div id="weekly-form-area">
         <div class="form-section">
           <div class="week-nav">
-            <button class="btn-text" style="margin-left:12px;" onclick="loadPastWeekOrders()">Load this week's orders</button>
-            <button class="btn-text" onclick="clearWeeklyGrid()">Clear week</button>
             <button class="week-arrow" id="week-prev" onclick="changeWeek(-1)">&#8592;</button>
-            <div class="week-nav-center">
+              <div class="week-nav-center">
               <div class="week-nav-label">Weekly Order</div>
               <div class="week-nav-dates" id="week-label">Loading...</div>
             </div>
@@ -405,6 +403,8 @@ body{font-weight:500;color:var(--text);}
           <div class="weekly-table-wrap"><div id="weekly-grid"></div></div>
           <div class="weekly-summary" id="weekly-summary"></div>
         </div>
+        <button class="btn-text" style="margin-left:12px;" onclick="loadPastWeekOrders()">Load last week's orders</button>
+            <button class="btn-text" onclick="clearWeeklyGrid()">Clear week</button>
         <div class="form-section">
           <div class="section-title">Delivery Details</div>
           <div class="field"><label>Delivery Time (same for all days)</label><input type="time" id="weekly-time" value="08:00"></div>
