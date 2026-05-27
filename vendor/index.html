@@ -522,7 +522,7 @@ function getWeekDates(offset){
   mon.setDate(now.getDate()+diffToMon+(offset*7))
   mon.setHours(12,0,0,0)
   const dates=[]
-  for(let i=0;i<5;i++){
+  for(let i=0;i<7;i++){
     const d=new Date(mon);d.setDate(mon.getDate()+i)
     dates.push({dateStr:localDateStr(d),dayName:DAY_NAMES[d.getDay()],label:`${d.getMonth()+1}/${d.getDate()}`})
   }
@@ -532,7 +532,7 @@ function getWeekDates(offset){
 function getWeekLabel(offset){
   const dates=getWeekDates(offset)
   const [fy,fm,fd]=dates[0].dateStr.split('-')
-  const [ly,lm,ld]=dates[4].dateStr.split('-')
+  const [ly,lm,ld]=dates[6].dateStr.split('-')
   const m1=MONTHS[parseInt(fm)-1],m2=MONTHS[parseInt(lm)-1]
   return fm===lm ? `${m1} ${parseInt(fd)} – ${parseInt(ld)}` : `${m1} ${parseInt(fd)} – ${m2} ${parseInt(ld)}`
 }
