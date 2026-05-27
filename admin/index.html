@@ -653,21 +653,6 @@ body{font-weight:500;color:var(--text);}
 .add-input::placeholder{font-size:13px;color:#8A6240;}
 .add-select{font-size:12px;padding:7px 10px;}
 .btn-add{padding:9px 18px;font-size:10px;}
-/* ── Invoicing Tab Styles ── */
-.invoice-client-card{margin-bottom:28px;background:var(--surface);border:1px solid var(--border);transition:all 0.1s;}
-.invoice-client-header{background:var(--bg);padding:18px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;}
-.invoice-client-name{font-size:var(--fs-md);font-weight:700;color:var(--text);letter-spacing:-0.2px;}
-.invoice-client-meta{font-size:var(--fs-xs);font-weight:500;color:var(--text2);letter-spacing:.1em;}
-.invoice-items-table{width:100%;border-collapse:collapse;}
-.invoice-items-table th{text-align:left;padding:14px 24px 8px;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text2);border-bottom:1px solid var(--border);}
-.invoice-items-table td{padding:12px 24px;border-bottom:1px solid var(--border);font-size:var(--fs-base);color:var(--text);font-weight:500;}
-.invoice-item-name{font-weight:600;}
-.invoice-item-qty{font-weight:700;color:var(--accent);}
-.invoice-total-row{background:var(--bg);padding:10px 24px;text-align:right;font-weight:700;border-top:2px solid var(--accent);font-size:13px;}
-.range-summary{margin-bottom:20px;font-size:var(--fs-sm);color:var(--text3);border-left:3px solid var(--accent);padding-left:14px;font-weight:500;}
-@media print{.header,.tabs,.filter-bar,.print-btn,.btn-add{display:none!important;}.content{padding:0!important;}.invoice-client-card{page-break-inside:avoid;break-inside:avoid;border:1px solid #ddd;margin-bottom:24px;}}
-/* scale corrections */
-.invoice-client-name{font-size:14px;}.invoice-client-meta{font-size:10px;}.invoice-items-table td{font-size:13px;padding:10px 20px;}.invoice-items-table th{padding:12px 20px 6px;font-size:10px;}
 </style>
 </head>
 <body>
@@ -710,8 +695,6 @@ body{font-weight:500;color:var(--text);}
     <button class="tab" onclick="switchTab('menu',this)">Menu <span class="tab-badge" id="badge-menu">0</span></button>
     <button class="tab" onclick="switchTab('production',this)">Production</button>
     <button class="tab" onclick="switchTab('packing',this)">Packing + Delivery</button>
-    <button class="tab" onclick="switchTab('invoicing',this)">Invoicing</button>
-
   </div>
   <div class="content">
     <div class="panel active" id="panel-orders">
@@ -801,12 +784,6 @@ body{font-weight:500;color:var(--text);}
     <div class="panel" id="panel-menu"><div id="menu-card"><div class="empty-state">Loading...</div></div></div>
     <div class="panel" id="panel-production"><div id="production-content"></div></div>
     <div class="panel" id="panel-packing"><div id="packing-content"></div></div>
-    <div class="panel" id="panel-invoicing">
-  <div style="margin-bottom:16px">
-    <button class="btn-add" onclick="exportInvoiceCSV()">Export Summary CSV</button>
-  </div>
-  <div id="invoicing-content"></div>
-</div>
   </div>
 </div>
 <script>
@@ -816,19 +793,11 @@ const auth=firebase.auth(),db=firebase.firestore()
 let currentUser=null,profile=null,allOrders=[],allVendors=[],allMenu=[]
 const now0=new Date()
 const TODAY=`${now0.getFullYear()}-${String(now0.getMonth()+1).padStart(2,'0')}-${String(now0.getDate()).padStart(2,'0')}`
-const filterState = {invoicing: {mode:'thisweek',from: getMondayStr(new Date()), to: getSundayStr(new Date())}};
 const filterState={production:{mode:'today',from:TODAY,to:TODAY},packing:{mode:'today',from:TODAY,to:TODAY}}
 const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
 const DAY_NAMES=['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
 function localDateStr(d){return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
 function show(id){['v-loading','v-auth','v-unauthorized','v-app'].forEach(v=>document.getElementById(v).classList.toggle('hidden',v!==id))}
-function switchTab(name,el){
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));el.classList.add('active')
-  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.getElementById('panel-'+name).classList.add('active')
-  if(name==='production'){ if(typeof renderProduction === 'function') renderProduction();}
-  else if(name==='packing') { if(typeof renderPacking === 'function') renderPacking();}
-  else if(name==='invoicing') renderInvoicing();
-}
 function switchTab(name,el){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));el.classList.add('active')
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.getElementById('panel-'+name).classList.add('active')
@@ -843,8 +812,6 @@ function init(){
       if(!profile?.is_admin){show('v-unauthorized');return}
       await Promise.all([loadOrders(),loadVendors(),loadMenu()])
       renderOrders();renderVendors();renderMenu();show('v-app')
-      await Promise.all([loadOrders(),loadVendors(),loadMenu()])
-  renderInvoicing(); // Add this line
     }catch(e){console.error(e);show('v-auth')}
   })
 }
@@ -1237,225 +1204,6 @@ function exportCSV(){
   a.href=url;a.download=`village-bakery-orders-${localDateStr(new Date())}.csv`;a.click();URL.revokeObjectURL(url)
 }
 init()
-// ---------- INVOICING TAB: weekly summary per client ----------
-function renderInvoicing(){
-  const container = document.getElementById('invoicing-content');
-  if(!container) return;
-  const fs = filterState.invoicing;
-  const range = fs.mode === 'custom' ? {from: fs.from, to: fs.to} : getDateRangeForMode(fs.mode);
-  if(!range){ container.innerHTML='<div class="empty-state">Invalid date range</div>'; return; }
-  const filteredOrders = allOrders.filter(o => o.delivery_date >= range.from && o.delivery_date <= range.to);
-  if(filteredOrders.length === 0){
-    container.innerHTML = `<div>${invoiceFilterBarHtml()}<div class="empty-state">No orders in this period.</div></div>`;
-    return;
-  }
-  // Build per-client item aggregates
-  const clientMap = new Map();
-  for(const order of filteredOrders){
-    const clientName = order.vendor_name || 'Unknown Client';
-    if(!clientMap.has(clientName)) clientMap.set(clientName, { items: new Map(), totalUnits: 0 });
-    const clientData = clientMap.get(clientName);
-    const itemsArr = order.items || [];
-    for(const it of itemsArr){
-      const itemKey = it.item_name;
-      const qty = it.quantity || 0;
-      if(qty === 0) continue;
-      if(!clientData.items.has(itemKey)){
-        clientData.items.set(itemKey, { qty: 0, unit: it.unit || 'each' });
-      }
-      const entry = clientData.items.get(itemKey);
-      entry.qty += qty;
-      clientData.totalUnits += qty;
-    }
-  }
-  const sortedClients = Array.from(clientMap.keys()).sort();
-  const fromDate = new Date(range.from+'T12:00:00');
-  const toDate = new Date(range.to+'T12:00:00');
-  const rangeLabel = range.from === range.to ? fromDate.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}) : `${fromDate.toLocaleDateString('en-US',{month:'long',day:'numeric'})} – ${toDate.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}`;
-  let html = invoiceFilterBarHtml();
-  html += `<div class="range-summary">📋 Invoicing summary for <strong>${rangeLabel}</strong> · ${filteredOrders.length} orders · ${clientMap.size} clients</div>`;
-  for(const clientName of sortedClients){
-    const data = clientMap.get(clientName);
-    const itemsSorted = Array.from(data.items.entries()).sort((a,b)=>a[0].localeCompare(b[0]));
-    html += `<div class="invoice-client-card">
-      <div class="invoice-client-header">
-        <span class="invoice-client-name">${escapeHtml(clientName)}</span>
-        <span class="invoice-client-meta">${data.totalUnits} total units · ${itemsSorted.length} product types</span>
-      </div>
-      <table class="invoice-items-table">
-        <thead>
-          <tr><th>Item</th><th style="text-align:right">Total Quantity</th><th>Unit</th></tr>
-        </thead>
-        <tbody>`;
-    for(const [itemName, details] of itemsSorted){
-      html += `<tr>
-        <td class="invoice-item-name">${escapeHtml(itemName)}</td>
-        <td style="text-align:right" class="invoice-item-qty">${details.qty}</td>
-        <td style="color:var(--text3);">${details.unit}</td>
-      </tr>`;
-    }
-    html += `</tbody></table><div class="invoice-total-row">Total units: ${data.totalUnits}</div></div>`;
-  }
-  container.innerHTML = html;
-}
-
-function invoiceFilterBarHtml(){
-  const fs = filterState.invoicing;
-  const modes = [{key:'today',label:'Today'},{key:'tomorrow',label:'Tomorrow'},{key:'thisweek',label:'This Week'},{key:'nextweek',label:'Next Week'},{key:'custom',label:'Custom'}];
-  return `<div class="filter-bar" id="filter-bar-invoicing">
-    ${modes.map(m => `<button class="filter-btn ${fs.mode===m.key ? 'active' : ''}" onclick="setInvoiceFilter('${m.key}')">${m.label}</button>`).join('')}
-    <div class="filter-sep"></div>
-    <span id="custom-label-invoicing" style="display:${fs.mode==='custom' ? 'flex' : 'none'};align-items:center;gap:10px">
-      <input class="filter-date-input" type="date" id="filter-from-invoicing" value="${fs.from}" onchange="setInvoiceCustomRange()">
-      <span style="font-size:var(--fs-sm);color:var(--text3)">to</span>
-      <input class="filter-date-input" type="date" id="filter-to-invoicing" value="${fs.to}" onchange="setInvoiceCustomRange()">
-    </span>
-    <button class="print-btn" onclick="printInvoicing()">Print Summary</button>
-  </div>`;
-}
-
-function setInvoiceFilter(mode){
-  filterState.invoicing.mode = mode;
-  if(mode !== 'custom'){
-    const r = getDateRangeForMode(mode);
-    if(r){ filterState.invoicing.from = r.from; filterState.invoicing.to = r.to; }
-  }
-  renderInvoicing();
-}
-
-function setInvoiceCustomRange(){
-  const from = document.getElementById('filter-from-invoicing')?.value;
-  const to = document.getElementById('filter-to-invoicing')?.value;
-  if(from) filterState.invoicing.from = from;
-  if(to) filterState.invoicing.to = to;
-  filterState.invoicing.mode = 'custom';
-  renderInvoicing();
-}
-
-function printInvoicing(){
-  const fs = filterState.invoicing;
-  const range = fs.mode === 'custom' ? {from: fs.from, to: fs.to} : getDateRangeForMode(fs.mode);
-  if(!range) return;
-  const filteredOrders = allOrders.filter(o => o.delivery_date >= range.from && o.delivery_date <= range.to);
-  const clientMap = new Map();
-  for(const order of filteredOrders){
-    const clientName = order.vendor_name || 'Unknown Client';
-    if(!clientMap.has(clientName)) clientMap.set(clientName, { items: new Map(), totalUnits: 0 });
-    const data = clientMap.get(clientName);
-    (order.items || []).forEach(it => {
-      const q = it.quantity || 0;
-      if(q === 0) return;
-      if(!data.items.has(it.item_name)) data.items.set(it.item_name, { qty:0, unit: it.unit || 'each' });
-      data.items.get(it.item_name).qty += q;
-      data.totalUnits += q;
-    });
-  }
-  const fromD = new Date(range.from+'T12:00:00');
-  const toD = new Date(range.to+'T12:00:00');
-  const rangeLabel = range.from === range.to ? fromD.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'}) : `${fromD.toLocaleDateString('en-US',{month:'long',day:'numeric'})} – ${toD.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}`;
-  let body = `<div style="max-width:900px;margin:0 auto;font-family:'DM Sans',sans-serif;">`;
-  body += `<div style="text-align:center;margin-bottom:32px;"><div style="font-size:10px;letter-spacing:.2em;color:#6b6860;">VILLAGE BAKERY + PROVISIONS</div><div style="font-size:24px;font-weight:700;margin-top:6px;">Invoicing Summary</div><div style="font-size:12px;color:#5A3B1C;margin-top:6px;">${rangeLabel}</div><div style="font-size:11px;color:#8A6240;">${filteredOrders.length} orders · ${clientMap.size} clients</div></div>`;
-  for(const [clientName, data] of Array.from(clientMap.entries()).sort()){
-    const itemsSorted = Array.from(data.items.entries()).sort();
-    body += `<div style="border:1px solid #E2C99A;margin-bottom:24px;background:white;page-break-inside:avoid;">
-      <div style="background:#F5EDD8;padding:14px 20px;border-bottom:1px solid #E2C99A;display:flex;justify-content:space-between;">
-        <span style="font-weight:700;font-size:16px;">${escapeHtml(clientName)}</span>
-        <span style="font-size:12px;color:#7A5530;">${data.totalUnits} total units</span>
-      </div>
-      <table style="width:100%;border-collapse:collapse;">
-        <thead><tr style="border-bottom:1px solid #E2C99A;"><th style="text-align:left;padding:12px 20px 8px;font-size:10px;text-transform:uppercase;color:#7A5530;">Item</th><th style="text-align:right;padding:12px 20px 8px;font-size:10px;">Qty</th><th style="text-align:left;padding:12px 20px 8px;font-size:10px;">Unit</th></tr></thead>
-        <tbody>`;
-    for(const [itemName, det] of itemsSorted){
-      body += `<tr><td style="padding:10px 20px;font-size:13px;">${escapeHtml(itemName)}</td><td style="padding:10px 20px;text-align:right;font-weight:600;">${det.qty}</td><td style="padding:10px 20px;color:#6b6860;">${det.unit}</td></tr>`;
-    }
-    body += `</tbody></table><div style="padding:9px 20px;border-top:1px solid #E2C99A;text-align:right;font-size:12px;font-weight:500;">Total units: ${data.totalUnits}</div></div>`;
-  }
-  body += `<div style="margin-top:32px;text-align:center;font-size:10px;color:#8A6240;">Village Bakery + Provisions · Generated ${new Date().toLocaleString()}</div></div>`;
-  const printWindow = window.open('','_blank');
-  printWindow.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Invoicing Summary</title><style>body{font-family:'DM Sans',sans-serif;background:#F5EDD8;padding:32px;margin:0;}@media print{body{padding:20px;background:white;}}</style></head><body>${body}</body></html>`);
-  printWindow.document.close();
-  printWindow.print();
-}
-
-function exportInvoiceCSV(){
-  const fs = filterState.invoicing;
-  const range = fs.mode === 'custom' ? {from: fs.from, to: fs.to} : getDateRangeForMode(fs.mode);
-  if(!range) return;
-  const filteredOrders = allOrders.filter(o => o.delivery_date >= range.from && o.delivery_date <= range.to);
-  const clientMap = new Map();
-  for(const order of filteredOrders){
-    const client = order.vendor_name || 'Unknown';
-    if(!clientMap.has(client)) clientMap.set(client, new Map());
-    const itemMap = clientMap.get(client);
-    (order.items || []).forEach(it => {
-      const q = it.quantity || 0;
-      if(q===0) return;
-      const key = it.item_name;
-      const current = itemMap.get(key) || { qty:0, unit: it.unit || 'each' };
-      current.qty += q;
-      itemMap.set(key, current);
-    });
-  }
-  const rows = [['Client Name','Item Name','Total Quantity','Unit']];
-  for(const [client, items] of Array.from(clientMap.entries()).sort()){
-    for(const [itemName, det] of Array.from(items.entries()).sort()){
-      rows.push([`"${client.replace(/"/g,'""')}"`,`"${itemName.replace(/"/g,'""')}"`,det.qty,det.unit]);
-    }
-  }
-  const csv = rows.map(r => r.join(',')).join('\n');
-  const blob = new Blob([csv],{type:'text/csv'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `invoicing-summary-${range.from}_to_${range.to}.csv`;
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
-function escapeHtml(str){
-  if(!str) return '';
-  return str.replace(/[&<>]/g, function(m){
-    if(m === '&') return '&amp;';
-    if(m === '<') return '&lt;';
-    if(m === '>') return '&gt;';
-    return m;
-  });
-}
-
-function getDateRangeForMode(mode){
-  const now = new Date();
-  const todayStr = now.toISOString().slice(0,10);
-  if(mode === 'today') return {from: todayStr, to: todayStr};
-  if(mode === 'tomorrow'){
-    const t = new Date(now);
-    t.setDate(t.getDate() + 1);
-    const s = t.toISOString().slice(0,10);
-    return {from: s, to: s};
-  }
-  if(mode === 'thisweek') return {from: getMondayStr(now), to: getSundayStr(now)};
-  if(mode === 'nextweek'){
-    const nxt = new Date(now);
-    nxt.setDate(nxt.getDate() + 7);
-    return {from: getMondayStr(nxt), to: getSundayStr(nxt)};
-  }
-  return null;
-}
-
-function getMondayStr(d){
-  const date = new Date(d);
-  const day = date.getDay();
-  const diff = (day === 0 ? -6 : 1 - day);
-  date.setDate(date.getDate() + diff);
-  return date.toISOString().slice(0,10);
-}
-
-function getSundayStr(d){
-  const date = new Date(d);
-  const day = date.getDay();
-  const add = (day === 0 ? 0 : 7 - day);
-  date.setDate(date.getDate() + add);
-  return date.toISOString().slice(0,10);
-}
 </script>
 </body>
 </html>
