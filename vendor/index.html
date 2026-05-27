@@ -11,6 +11,13 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+@font-face {
+  font-family: 'BakeryFont';
+src: url('../assets/fonts/Chainprinter Regular.ttf') format('truetype');
+       url('../assets/fonts/Chainprinter Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
 :root{
   --bg:#F5EDD8;--surface:#FFFDF5;--text:#2C1A0E;--text2:#7A5530;--text3:#B8906A;
   --border:#E2C99A;--border2:#C9A96E;--accent:#C4852A;--dark:#2C1A0E;--err:#A03A26;--green:#3A6B37;
@@ -18,7 +25,7 @@
 html{font-size:16px;}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;}
 .hidden{display:none!important;}
-.wordmark{font-family:'Cormorant Garamond',serif;font-size:13px;font-weight:600;letter-spacing:.25em;text-transform:uppercase;color:var(--text);display:block;}
+.wordmark{font-family:'BakeryFont',serif;font-size:13px;font-weight:600;letter-spacing:.25em;text-transform:uppercase;color:var(--text);display:block;}
 #v-loading{display:flex;align-items:center;justify-content:center;min-height:100vh;}
 .spinner-logo{width:72px;height:72px;object-fit:contain;animation:logoPulse 1.6s ease-in-out infinite;}
 @keyframes logoPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.9)}}
