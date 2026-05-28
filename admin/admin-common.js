@@ -777,8 +777,26 @@ function renderMenu() {
     <div class="section-label">Active Items &mdash; ${active.length}</div>
     ${active.map(item => `<div class="menu-row"><div class="menu-item-name">${item.name}</div><div class="menu-item-unit">${item.unit}</div><div class="price-field"><span class="price-symbol">$</span><input class="price-input" type="number" step="0.01" min="0" value="${Number(item.price || 0).toFixed(2)}" onblur="updatePrice('${item.id}',this.value)" onkeydown="if(event.key==='Enter')this.blur()"></div><div class="menu-actions"><button class="btn-hide" onclick="toggleItem('${item.id}',false)">Hide</button><button class="btn-delete" onclick="deleteItem('${item.id}')">Delete</button></div></div>`).join('')}
     ${inactive.length ? `<div class="section-label" style="margin-top:12px">Hidden &mdash; ${inactive.length}</div>${inactive.map(item => `<div class="menu-row inactive"><div class="menu-item-name">${item.name}</div><div class="menu-item-unit">${item.unit}</div><div class="price-field"><span class="price-symbol">$</span><input class="price-input" type="number" step="0.01" min="0" value="${Number(item.price || 0).toFixed(2)}" onblur="updatePrice('${item.id}',this.value)" onkeydown="if(event.key==='Enter')this.blur()"></div><div class="menu-actions"><button class="btn-show" onclick="toggleItem('${item.id}',true)">Show</button><button class="btn-delete" onclick="deleteItem('${item.id}')">Delete</button></div></div>`).join('')}` : ''}
-    <div class="add-form"><div class="add-form-title">Add New Item</div><div class="add-form-row"><input class="add-input" id="new-name" type="text" placeholder="Item name"><select class="add-select" id="new-unit"><option value="each">each</option><option value="loaf">loaf</option><option value="tray">tray</option><option value="8-pack">8-pack</option><option value="dozen">dozen</option><option value="box">box</option></select><input class="add-input" id="new-price" type="number" step="0.01" min="0" placeholder="Price $" style="max-width:110px"><button class="btn-add" onclick="addItem()">Add</button></div></div>`;
-}
+    <div class="add-form">
+  <div class="add-form-title">Add New Item</div>
+  <div class="add-form-row">
+    <input class="add-input" id="new-name" type="text" placeholder="Item name">
+    <select class="add-select" id="new-unit">
+      <option value="each">each</option><option value="loaf">loaf</option><option value="tray">tray</option>
+      <option value="8-pack">8-pack</option><option value="dozen">dozen</option><option value="box">box</option>
+    </select>
+    <input class="add-input" id="new-price" type="number" step="0.01" min="0" placeholder="Price $" style="max-width:110px">
+    <select class="add-select" id="new-category">
+      <option value="Uncategorized">Uncategorized</option>
+      <option value="Breads">Breads</option>
+      <option value="Pastries">Pastries</option>
+      <option value="Cookies">Cookies</option>
+      <option value="Savory">Savory</option>
+      <option value="Other">Other</option>
+    </select>
+    <button class="btn-add" onclick="addItem()">Add</button>
+  </div>
+</div>`;
 
 function renderProduction() {
   const el = document.getElementById('production-content');
