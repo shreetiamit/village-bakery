@@ -513,10 +513,20 @@ async function addItem() {
   const name = document.getElementById('new-name')?.value.trim();
   const unit = document.getElementById('new-unit')?.value;
   const price = parseFloat(document.getElementById('new-price')?.value) || 0;
+  const category = document.getElementById('new-category')?.value || 'Uncategorized';
   if (!name) return;
   const sortOrder = Math.max(0, ...allMenu.map(m => m.sort_order || 0)) + 1;
-  const docRef = await db.collection('menu_items').add({ name, unit, price, sort_order: sortOrder, active: true });
-  allMenu.push({ id: docRef.id, name, unit, price, sort_order: sortOrder, active: true });
+  const docRef = await db.collection('menu_items').add({
+    name, unit, price, category,
+    sort_order: sortOrder,
+    active: true
+  });
+  allMenu.push({
+    id: docRef.id,
+    name, unit, price, category,
+    sort_order: sortOrder,
+    active: true
+  });
   renderMenu();
 }
 
@@ -773,30 +783,90 @@ function renderMenu() {
   const inactive = allMenu.filter(m => !m.active);
   const badgeMenu = document.getElementById('badge-menu');
   if (badgeMenu) badgeMenu.textContent = active.length;
+  
   el.innerHTML = `
     <div class="section-label">Active Items &mdash; ${active.length}</div>
-    ${active.map(item => `<div class="menu-row"><div class="menu-item-name">${item.name}</div><div class="menu-item-unit">${item.unit}</div><div class="price-field"><span class="price-symbol">$</span><input class="price-input" type="number" step="0.01" min="0" value="${Number(item.price || 0).toFixed(2)}" onblur="updatePrice('${item.id}',this.value)" onkeydown="if(event.key==='Enter')this.blur()"></div><div class="menu-actions"><button class="btn-hide" onclick="toggleItem('${item.id}',false)">Hide</button><button class="btn-delete" onclick="deleteItem('${item.id}')">Delete</button></div></div>`).join('')}
-    ${inactive.length ? `<div class="section-label" style="margin-top:12px">Hidden &mdash; ${inactive.length}</div>${inactive.map(item => `<div class="menu-row inactive"><div class="menu-item-name">${item.name}</div><div class="menu-item-unit">${item.unit}</div><div class="price-field"><span class="price-symbol">$</span><input class="price-input" type="number" step="0.01" min="0" value="${Number(item.price || 0).toFixed(2)}" onblur="updatePrice('${item.id}',this.value)" onkeydown="if(event.key==='Enter')this.blur()"></div><div class="menu-actions"><button class="btn-show" onclick="toggleItem('${item.id}',true)">Show</button><button class="btn-delete" onclick="deleteItem('${item.id}')">Delete</button></div></div>`).join('')}` : ''}
+    <div style="display:grid; grid-template-columns: 2fr 1fr 1fr 1fr 2fr; gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--border); font-weight: 600; font-size: 12px;">
+      <div>Item Name</div>
+      <div>Unit</div>
+      <div>Price</div>
+      <div>Category</div>
+      <div>Actions</div>
+    </div>
+    ${active.map(item => `
+      <div class="menu-row" style="display:grid; grid-template-columns: 2fr 1fr 1fr 1fr 2fr; gap: 8px; align-items: center;">
+        <div class="menu-item-name">${item.name}</div>
+        <div class="menu-item-unit">${item.unit}</div>
+        <div class="price-field">
+          <span class="price-symbol">$</span>
+          <input class="price-input" type="number" step="0.01" min="0" value="${Number(item.price || 0).toFixed(2)}" onblur="updatePrice('${item.id}',this.value)" onkeydown="if(event.key==='Enter')this.blur()">
+        </div>
+        <div>
+          <select class="category-select" data-id="${item.id}" onchange="updateCategory('${item.id}', this.value)" style="padding: 5px; font-size: 12px;">
+            <option value="Uncategorized" ${(item.category || 'Uncategorized') === 'Uncategorized' ? 'selected' : ''}>Uncategorized</option>
+            <option value="Breads" ${item.category === 'Breads' ? 'selected' : ''}>Breads</option>
+            <option value="Pastries" ${item.category === 'Pastries' ? 'selected' : ''}>Pastries</option>
+            <option value="Cookies" ${item.category === 'Cookies' ? 'selected' : ''}>Cookies</option>
+            <option value="Savory" ${item.category === 'Savory' ? 'selected' : ''}>Savory</option>
+            <option value="Other" ${item.category === 'Other' ? 'selected' : ''}>Other</option>
+          </select>
+        </div>
+        <div class="menu-actions">
+          <button class="btn-hide" onclick="toggleItem('${item.id}',false)">Hide</button>
+          <button class="btn-delete" onclick="deleteItem('${item.id}')">Delete</button>
+        </div>
+      </div>
+    `).join('')}
+    ${inactive.length ? `<div class="section-label" style="margin-top:12px">Hidden &mdash; ${inactive.length}</div>
+    <div style="display:grid; grid-template-columns: 2fr 1fr 1fr 1fr 2fr; gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--border); font-weight: 600; font-size: 12px;">
+      <div>Item Name</div><div>Unit</div><div>Price</div><div>Category</div><div>Actions</div>
+    </div>
+    ${inactive.map(item => `
+      <div class="menu-row inactive" style="display:grid; grid-template-columns: 2fr 1fr 1fr 1fr 2fr; gap: 8px; align-items: center;">
+        <div class="menu-item-name">${item.name}</div>
+        <div class="menu-item-unit">${item.unit}</div>
+        <div class="price-field">
+          <span class="price-symbol">$</span>
+          <input class="price-input" type="number" step="0.01" min="0" value="${Number(item.price || 0).toFixed(2)}" onblur="updatePrice('${item.id}',this.value)" onkeydown="if(event.key==='Enter')this.blur()">
+        </div>
+        <div>
+          <select class="category-select" data-id="${item.id}" onchange="updateCategory('${item.id}', this.value)" style="padding: 5px; font-size: 12px;">
+            <option value="Uncategorized" ${(item.category || 'Uncategorized') === 'Uncategorized' ? 'selected' : ''}>Uncategorized</option>
+            <option value="Breads" ${item.category === 'Breads' ? 'selected' : ''}>Breads</option>
+            <option value="Pastries" ${item.category === 'Pastries' ? 'selected' : ''}>Pastries</option>
+            <option value="Cookies" ${item.category === 'Cookies' ? 'selected' : ''}>Cookies</option>
+            <option value="Savory" ${item.category === 'Savory' ? 'selected' : ''}>Savory</option>
+            <option value="Other" ${item.category === 'Other' ? 'selected' : ''}>Other</option>
+          </select>
+        </div>
+        <div class="menu-actions">
+          <button class="btn-show" onclick="toggleItem('${item.id}',true)">Show</button>
+          <button class="btn-delete" onclick="deleteItem('${item.id}')">Delete</button>
+        </div>
+      </div>
+    `).join('')}` : ''}
     <div class="add-form">
-  <div class="add-form-title">Add New Item</div>
-  <div class="add-form-row">
-    <input class="add-input" id="new-name" type="text" placeholder="Item name">
-    <select class="add-select" id="new-unit">
-      <option value="each">each</option><option value="loaf">loaf</option><option value="tray">tray</option>
-      <option value="8-pack">8-pack</option><option value="dozen">dozen</option><option value="box">box</option>
-    </select>
-    <input class="add-input" id="new-price" type="number" step="0.01" min="0" placeholder="Price $" style="max-width:110px">
-    <select class="add-select" id="new-category">
-      <option value="Uncategorized">Uncategorized</option>
-      <option value="Breads">Breads</option>
-      <option value="Pastries">Pastries</option>
-      <option value="Cookies">Cookies</option>
-      <option value="Savory">Savory</option>
-      <option value="Other">Other</option>
-    </select>
-    <button class="btn-add" onclick="addItem()">Add</button>
-  </div>
-</div>`;
+      <div class="add-form-title">Add New Item</div>
+      <div class="add-form-row">
+        <input class="add-input" id="new-name" type="text" placeholder="Item name">
+        <select class="add-select" id="new-unit">
+          <option value="each">each</option><option value="loaf">loaf</option><option value="tray">tray</option>
+          <option value="8-pack">8-pack</option><option value="dozen">dozen</option><option value="box">box</option>
+        </select>
+        <input class="add-input" id="new-price" type="number" step="0.01" min="0" placeholder="Price $" style="max-width:110px">
+        <select class="add-select" id="new-category">
+          <option value="Uncategorized">Uncategorized</option>
+          <option value="Breads">Breads</option>
+          <option value="Pastries">Pastries</option>
+          <option value="Cookies">Cookies</option>
+          <option value="Savory">Savory</option>
+          <option value="Other">Other</option>
+        </select>
+        <button class="btn-add" onclick="addItem()">Add</button>
+      </div>
+    </div>
+  `;
+}
 
 function renderProduction() {
   const el = document.getElementById('production-content');
@@ -809,23 +879,82 @@ function renderProductionContent() {
   const el = document.getElementById('prod-body');
   if (!el) return;
   if (!orders.length) { el.innerHTML = '<div class="empty-state">No orders for this period.</div>'; return; }
+
+  // Group by date
   const byDate = {};
-  orders.forEach(o => { if (!byDate[o.delivery_date]) byDate[o.delivery_date] = []; byDate[o.delivery_date].push(o); });
+  orders.forEach(o => {
+    if (!byDate[o.delivery_date]) byDate[o.delivery_date] = [];
+    byDate[o.delivery_date].push(o);
+  });
+
+  // Overall stats
   const tI = new Set(orders.flatMap(o => (o.items || []).map(i => i.item_name))).size;
   const tU = orders.reduce((s, o) => s + (o.items || []).reduce((ss, i) => ss + i.quantity, 0), 0);
-  let html = `<div class="prod-summary"><div class="prod-stat"><div class="prod-stat-val">${Object.keys(byDate).length}</div><div class="prod-stat-lbl">Days</div></div><div class="prod-stat"><div class="prod-stat-val">${orders.length}</div><div class="prod-stat-lbl">Orders</div></div><div class="prod-stat"><div class="prod-stat-val">${tI}</div><div class="prod-stat-lbl">Products</div></div><div class="prod-stat"><div class="prod-stat-val">${tU}</div><div class="prod-stat-lbl">Total Units</div></div></div>`;
+  let html = `<div class="prod-summary">
+    <div class="prod-stat"><div class="prod-stat-val">${Object.keys(byDate).length}</div><div class="prod-stat-lbl">Days</div></div>
+    <div class="prod-stat"><div class="prod-stat-val">${orders.length}</div><div class="prod-stat-lbl">Orders</div></div>
+    <div class="prod-stat"><div class="prod-stat-val">${tI}</div><div class="prod-stat-lbl">Products</div></div>
+    <div class="prod-stat"><div class="prod-stat-val">${tU}</div><div class="prod-stat-lbl">Total Units</div></div>
+  </div>`;
+
+  // For each date
   Object.keys(byDate).sort().forEach(date => {
     const dO = byDate[date];
     const dU = dO.reduce((s, o) => s + (o.items || []).reduce((ss, i) => ss + i.quantity, 0), 0);
-    const iM = {};
+
+    // Aggregate items: item_name -> {qty, unit, vendors, category}
+    const itemMap = {};
     dO.forEach(o => {
       (o.items || []).forEach(i => {
-        if (!iM[i.item_name]) iM[i.item_name] = { qty: 0, unit: i.unit, vendors: [] };
-        iM[i.item_name].qty += i.quantity;
-        if (!iM[i.item_name].vendors.includes(o.vendor_name)) iM[i.item_name].vendors.push(o.vendor_name);
+        if (!itemMap[i.item_name]) {
+          // find category from menuItems (or use 'Uncategorized')
+          const menuItem = allMenu.find(m => m.name === i.item_name);
+          const category = menuItem?.category || 'Uncategorized';
+          itemMap[i.item_name] = { qty: 0, unit: i.unit, vendors: [], category };
+        }
+        itemMap[i.item_name].qty += i.quantity;
+        if (!itemMap[i.item_name].vendors.includes(o.vendor_name))
+          itemMap[i.item_name].vendors.push(o.vendor_name);
       });
     });
-    html += `<div class="prod-date-block"><div class="prod-date-heading"><span>${date === TODAY ? 'Today &mdash; ' : ''}${fmtDate(date)}</span><span class="prod-date-sub">${dO.length} order${dO.length !== 1 ? 's' : ''} &middot; ${dU} units</span></div>${Object.entries(iM).sort((a, b) => b[1].qty - a[1].qty).map(([name, data]) => `<div class="prod-item-row"><div><div class="prod-item-name">${name}</div><div class="prod-item-vendors">${data.vendors.join(', ')}</div></div><div style="text-align:right;flex-shrink:0"><span class="prod-item-qty">${data.qty}</span><span class="prod-item-unit">${data.unit === 'each' ? 'each' : (data.qty !== 1 ? data.unit + 's' : data.unit)}</span></div></div>`).join('')}</div>`;
+
+    // Group by category
+    const categoryGroups = {};
+    for (const [name, data] of Object.entries(itemMap)) {
+      const cat = data.category;
+      if (!categoryGroups[cat]) categoryGroups[cat] = [];
+      categoryGroups[cat].push({ name, ...data });
+    }
+    // Sort categories alphabetically (or custom order)
+    const sortedCategories = Object.keys(categoryGroups).sort();
+
+    html += `<div class="prod-date-block">
+      <div class="prod-date-heading">
+        <span>${date === TODAY ? 'Today — ' : ''}${fmtDate(date)}</span>
+        <span class="prod-date-sub">${dO.length} order${dO.length !== 1 ? 's' : ''} · ${dU} units</span>
+      </div>`;
+
+    // Render each category
+    for (const category of sortedCategories) {
+      const items = categoryGroups[category];
+      // sort items by quantity descending within category
+      items.sort((a, b) => b.qty - a.qty);
+      html += `<div style="margin-top: 16px;"><div style="font-weight: 700; letter-spacing: .1em; color: var(--accent); margin-bottom: 8px;">${category}</div>`;
+      items.forEach(data => {
+        html += `<div class="prod-item-row">
+          <div>
+            <div class="prod-item-name">${data.name}</div>
+            <div class="prod-item-vendors">${data.vendors.join(', ')}</div>
+          </div>
+          <div style="text-align:right;flex-shrink:0">
+            <span class="prod-item-qty">${data.qty}</span>
+            <span class="prod-item-unit">${data.unit === 'each' ? 'each' : (data.qty !== 1 ? data.unit + 's' : data.unit)}</span>
+          </div>
+        </div>`;
+      });
+      html += `</div>`;
+    }
+    html += `</div>`;
   });
   el.innerHTML = html;
 }
@@ -1086,6 +1215,19 @@ function printTab(tab) {
   w.document.close();
   setTimeout(() => w.print(), 500);
 }
+
+async function updateCategory(itemId, category) {
+  try {
+    await db.collection('menu_items').doc(itemId).update({ category });
+    const item = allMenu.find(m => m.id === itemId);
+    if (item) item.category = category;
+    console.log(`Category updated for ${itemId} to ${category}`);
+  } catch (e) {
+    console.error("Error updating category:", e);
+    alert("Failed to update category: " + e.message);
+  }
+}
+window.updateCategory = updateCategory;
 
 // ---------- Auth and data initialization ----------
 async function initAuthAndData() {
