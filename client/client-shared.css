@@ -221,3 +221,19 @@ body{font-weight:500;color:var(--text);}
 .status-badge.seen{color:#1a5c8a;font-weight:700;}
 .status-badge.done{color:#2A5028;font-weight:700;}
 .empty-state{color:#5A3B1C;font-weight:500;}
+
+/* Weekly orders table: scrollable container with sticky date header */
+.weekly-table-container {
+  overflow-x: auto;
+  overflow-y: auto;
+  max-height: 70vh;
+  position: relative;
+}
+.weekly-table thead tr th {
+  position: sticky;
+  top: 0;
+  background: var(--surface);
+  z-index: 10;
+  border-bottom: 3px solid var(--accent);
+}
+/* Optional: keep category rows sticky? Not implemented due to complexity */

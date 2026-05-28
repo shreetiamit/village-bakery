@@ -193,6 +193,7 @@ function buildCreateOrderForm() {
   coWeekOffset = 0;
   coOrderType = 'single';
   switchOrderType('single');
+  
   const sel = document.getElementById('co-vendor-select');
   if (!sel) return;
   sel.innerHTML = '<option value="">Select client...</option>';
@@ -206,52 +207,52 @@ function buildCreateOrderForm() {
   mo.value = '__manual__';
   mo.textContent = '─ Other / Type name ─';
   sel.appendChild(mo);
-  const manualField = document.getElementById('co-manual-field');
-  if (manualField) manualField.style.display = 'none';
-  const manualName = document.getElementById('co-manual-name');
-  if (manualName) manualName.value = '';
+  
+  document.getElementById('co-manual-field').style.display = 'none';
+  document.getElementById('co-manual-name').value = '';
   const coDate = document.getElementById('co-date');
   if (coDate) coDate.value = TODAY;
   const coTime = document.getElementById('co-time');
   if (coTime) coTime.value = '08:00';
-  const coNotes = document.getElementById('co-notes');
-  if (coNotes) coNotes.value = '';
-  const coError = document.getElementById('co-error');
-  if (coError) coError.style.display = 'none';
-  const coWeeklyError = document.getElementById('co-weekly-error');
-  if (coWeeklyError) coWeeklyError.style.display = 'none';
+  document.getElementById('co-notes').value = '';
+  document.getElementById('co-error').style.display = 'none';
+  document.getElementById('co-weekly-error').style.display = 'none';
+  
   const itemsGrid = document.getElementById('co-items-grid');
-  if (itemsGrid) {
-    // Group active menu items by category
-    const activeItems = allMenu.filter(m => m.active);
-    const grouped = {};
-    activeItems.forEach(item => {
-      const cat = item.category || 'Uncategorized';
-      if (!grouped[cat]) grouped[cat] = [];
-      grouped[cat].push(item);
-    });
-    // Sort categories alphabetically
-    const sortedCategories = Object.keys(grouped).sort();
-    let html = '';
-    for (const category of sortedCategories) {
-      html += `<div style="margin-top: 20px;"><div style="font-weight: 700; letter-spacing: .1em; color: var(--accent); margin-bottom: 8px;">${category}</div>`;
-      for (const item of grouped[category]) {
-        html += `
-          <div class="co-item-row">
-            <div class="co-item-name">${item.name}</div>
-            <div class="co-item-unit">${item.unit}</div>
-            <div class="co-qty-ctrl">
-              <button class="co-qty-btn" onclick="coChangeQty('${item.id}',-1)">−</button>
-              <input class="co-qty-input" type="number" id="co-qty-${item.id}" value="" min="0" max="999" placeholder="0" oninput="coSetQty('${item.id}',this.value)">
-              <button class="co-qty-btn" onclick="coChangeQty('${item.id}',1)">+</button>
-            </div>
-          </div>`;
-      }
-      html += `</div>`;
+  if (!itemsGrid) return;
+  
+  // Group active items by category
+  const activeItems = allMenu.filter(m => m.active);
+  const grouped = {};
+  activeItems.forEach(item => {
+    const cat = item.category || 'Uncategorized';
+    if (!grouped[cat]) grouped[cat] = [];
+    grouped[cat].push(item);
+  });
+  const sortedCategories = Object.keys(grouped).sort();
+  
+  let html = '';
+  for (const category of sortedCategories) {
+    html += `<div style="margin-top: 20px;"><div style="font-weight: 700; letter-spacing: .1em; color: var(--accent); margin-bottom: 8px;">${category}</div>`;
+    // Sort items alphabetically within category
+    const sortedItems = grouped[category].sort((a, b) => a.name.localeCompare(b.name));
+    for (const item of sortedItems) {
+      html += `
+        <div class="co-item-row">
+          <div class="co-item-name">${item.name}</div>
+          <div class="co-item-unit">${item.unit}</div>
+          <div class="co-qty-ctrl">
+            <button class="co-qty-btn" onclick="coChangeQty('${item.id}',-1)">−</button>
+            <input class="co-qty-input" type="number" id="co-qty-${item.id}" value="" min="0" max="999" placeholder="0" oninput="coSetQty('${item.id}',this.value)">
+            <button class="co-qty-btn" onclick="coChangeQty('${item.id}',1)">+</button>
+          </div>
+        </div>`;
     }
-    itemsGrid.innerHTML = html;
+    html += `</div>`;
   }
+  itemsGrid.innerHTML = html;
 }
+
 function onCoVendorChange() {
   const val = document.getElementById('co-vendor-select')?.value;
   const manualField = document.getElementById('co-manual-field');
@@ -295,6 +296,7 @@ function coChangeWeek(delta) {
   coWeekOffset = next;
   coRenderWeeklyGrid();
 }
+
 function coRenderWeeklyGrid() {
   const dates = coGetWeekDates(coWeekOffset);
   const weekLabel = document.getElementById('co-week-label');
@@ -304,7 +306,6 @@ function coRenderWeeklyGrid() {
   
   const headers = dates.map(d => `<th>${d.dayName}<br><span style="font-weight:400;font-size:11px;opacity:.7">${d.label}</span></th>`).join('');
   
-  // Group active menu items by category
   const activeItems = allMenu.filter(m => m.active);
   const grouped = {};
   activeItems.forEach(item => {
@@ -316,8 +317,9 @@ function coRenderWeeklyGrid() {
   
   let rows = '';
   for (const category of sortedCategories) {
-    rows += `<tr><td colspan="${dates.length + 1}" style="background: var(--bg); font-weight: 700; letter-spacing: .1em; color: var(--accent); padding: 12px 0 6px;">${category}</td></tr>`;
-    for (const item of grouped[category]) {
+    rows += `<tr style="background: var(--bg);"><td colspan="${dates.length + 1}" style="font-weight: 700; letter-spacing: .1em; color: var(--accent); padding: 12px 0 6px;">${category}</td></tr>`;
+    const sortedItems = grouped[category].sort((a, b) => a.name.localeCompare(b.name));
+    for (const item of sortedItems) {
       const cells = dates.map(d => {
         const qty = coWeeklyQtys[d.dateStr]?.[item.id] || '';
         return `<td><input class="weekly-qty${qty > 0 ? ' has-val' : ''}" type="number" min="0" max="999" value="${qty || ''}" placeholder="—" oninput="coSetWeeklyQty('${d.dateStr}','${item.id}',this.value)"></td>`;
@@ -327,9 +329,12 @@ function coRenderWeeklyGrid() {
   }
   
   const gridDiv = document.getElementById('co-weekly-grid');
-  if (gridDiv) gridDiv.innerHTML = `<table class="weekly-table"><thead><tr><th class="item-col">Item</th>${headers}</tr></thead><tbody>${rows}</tbody></table>`;
+  if (gridDiv) {
+    gridDiv.innerHTML = `<div class="weekly-table-container" style="overflow-x: auto; max-height: 70vh; overflow-y: auto;"><table class="weekly-table"><thead><tr><th class="item-col">Item</th>${headers}</tr></thead><tbody>${rows}</tbody></table></div>`;
+  }
   coUpdateWeeklyPreview();
 }
+
 function coSetWeeklyQty(dateStr, itemId, val) {
   const qty = Math.max(0, parseInt(val) || 0);
   if (!coWeeklyQtys[dateStr]) coWeeklyQtys[dateStr] = {};

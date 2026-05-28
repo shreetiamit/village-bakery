@@ -199,7 +199,6 @@ function buildOrderForm() {
   if (!grid) return;
   quantities = {};
   
-  // Group active menu items by category
   const grouped = {};
   menuItems.forEach(item => {
     const cat = item.category || 'Uncategorized';
@@ -211,7 +210,8 @@ function buildOrderForm() {
   let html = '';
   for (const category of sortedCategories) {
     html += `<div style="margin-top: 20px;"><div style="font-weight: 700; letter-spacing: .1em; color: var(--accent); margin-bottom: 8px;">${category}</div>`;
-    for (const item of grouped[category]) {
+    const sortedItems = grouped[category].sort((a, b) => a.name.localeCompare(b.name));
+    for (const item of sortedItems) {
       html += `
         <div class="product-row" id="row-${item.id}">
           <div class="product-info">
@@ -478,7 +478,6 @@ function renderWeeklyGrid() {
   
   const headers = dates.map(d => `<th>${d.dayName}<br><span style="font-weight:400;font-size:11px;opacity:.7">${d.label}</span></th>`).join('');
   
-  // Group menu items by category
   const grouped = {};
   menuItems.forEach(item => {
     const cat = item.category || 'Uncategorized';
@@ -489,8 +488,9 @@ function renderWeeklyGrid() {
   
   let rows = '';
   for (const category of sortedCategories) {
-    rows += `<tr><td colspan="${dates.length + 1}" style="background: var(--bg); font-weight: 700; letter-spacing: .1em; color: var(--accent); padding: 12px 0 6px;">${category}</td></tr>`;
-    for (const item of grouped[category]) {
+    rows += `<tr style="background: var(--bg);"><td colspan="${dates.length + 1}" style="font-weight: 700; letter-spacing: .1em; color: var(--accent); padding: 12px 0 6px;">${category}</td></tr>`;
+    const sortedItems = grouped[category].sort((a, b) => a.name.localeCompare(b.name));
+    for (const item of sortedItems) {
       const cells = dates.map(d => {
         const qty = weeklyQuantities[d.dateStr]?.[item.id] || '';
         const hasVal = qty !== '' && qty > 0;
@@ -502,7 +502,7 @@ function renderWeeklyGrid() {
   
   const gridDiv = document.getElementById('weekly-grid');
   if (gridDiv) {
-    gridDiv.innerHTML = `<table class="weekly-table"><thead><tr><th class="item-col">Item</th>${headers}</tr></thead><tbody>${rows}</tbody></table>`;
+    gridDiv.innerHTML = `<div class="weekly-table-container" style="overflow-x: auto; max-height: 70vh; overflow-y: auto;"><table class="weekly-table"><thead><tr><th class="item-col">Item</th>${headers}</tr></thead><tbody>${rows}</tbody></table></div>`;
   }
   updateWeeklySummary();
 }
