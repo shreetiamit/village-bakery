@@ -1348,7 +1348,15 @@ function printTab(tab) {
     }
   }
 
-  const fullHtml = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${title}</title><style>${printStyles}</style></head><body>
+  // ── FIX: for packing, allow page breaks inside .date-group since a full
+  //    day of many vendor cards far exceeds one page. Without this override,
+  //    the browser tries to honour page-break-inside:avoid on an oversized
+  //    block and pushes it entirely to page 2, leaving page 1 blank.
+  const tabSpecificStyles = tab === 'packing'
+    ? '\n.date-group { page-break-inside: auto !important; }'
+    : '';
+
+  const fullHtml = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${title}</title><style>${printStyles}${tabSpecificStyles}</style></head><body>
     <div class="no-print"><button class="print-btn" onclick="window.print()">Print / Save PDF</button></div>
     <div class="header-section">
       <div><div style="font-size:9px;letter-spacing:.2em;">VILLAGE BAKERY + PROVISIONS</div><div class="title">${title}</div></div>
