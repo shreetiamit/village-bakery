@@ -1160,7 +1160,6 @@ function renderInvoicingContent() {
 
 // ---------- Print function ----------
 function printTab(tab) {
-  // Single, unified print CSS with no extra margins
   const printStyles = `
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -1171,80 +1170,26 @@ function printTab(tab) {
       margin: 0;
     }
     @media print {
-      body {
-        margin: 0;
-        padding: 0;
-      }
-      .no-print {
-        display: none !important;
-      }
-      @page {
-        margin: 8mm;
-      }
+      body { margin: 0; padding: 0; }
+      .no-print { display: none !important; }
+      @page { margin: 8mm; }
     }
-    .no-print {
-      text-align: center;
-      margin-bottom: 10px;
-    }
-    .print-btn {
-      background: #1a1916;
-      color: white;
-      border: none;
-      padding: 6px 16px;
-      font-size: 10px;
-      cursor: pointer;
-    }
-    .header-section {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      margin-bottom: 16px;
-      padding-bottom: 6px;
-      border-bottom: 1px solid #ccc;
-    }
+    .no-print { text-align: center; margin-bottom: 10px; }
+    .print-btn { background: #1a1916; color: white; border: none; padding: 6px 16px; font-size: 10px; cursor: pointer; }
+    .header-section { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 16px; padding-bottom: 6px; border-bottom: 1px solid #ccc; }
     .title { font-size: 18px; font-weight: 700; text-transform: uppercase; }
     .range { font-size: 10px; color: #6b6860; }
     .date-group { margin-bottom: 24px; page-break-inside: avoid; }
-    .date-header {
-      display: flex;
-      justify-content: space-between;
-      padding: 4px 0;
-      border-bottom: 1.5px solid #000;
-      margin-bottom: 10px;
-      font-weight: 600;
-    }
+    .date-header { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1.5px solid #000; margin-bottom: 10px; font-weight: 600; }
     .date-header-left { font-size: 12px; text-transform: uppercase; }
     .date-header-right { font-size: 9px; color: #6b6860; }
-    .category-header {
-      font-size: 11px;
-      font-weight: 700;
-      color: #C4852A;
-      margin: 10px 0 5px;
-    }
-    .item-row {
-      display: flex;
-      justify-content: space-between;
-      padding: 4px 0;
-      border-bottom: 1px solid #f0ece6;
-    }
-    .item-name { font-weight: 600; font-size: 11px; }
-    .item-clients { font-size: 9px; color: #6b6860; margin-top: 2px; }
-    .item-qty { font-size: 12px; font-weight: 700; text-align: right; white-space: nowrap; }
-    .item-unit { font-size: 9px; font-weight: 400; }
-    .client-card { border: 1px solid #ccc; margin-bottom: 10px; page-break-inside: avoid; }
-    .client-header {
-      background: #f5f5f5;
-      padding: 5px 8px;
-      display: flex;
-      justify-content: space-between;
-      border-bottom: 1px solid #ccc;
-      font-size: 10px;
-      font-weight: 600;
-    }
-    .client-name { font-size: 11px; }
-    .client-meta { font-size: 9px; }
-    .client-items-table td { padding: 4px 8px; font-size: 10px; border-bottom: 1px solid #f0ece6; }
-    .client-items-table td:last-child { text-align: right; font-weight: 600; }
+    .client-card { border: 1px solid #ccc; margin-bottom: 12px; page-break-inside: avoid; }
+    .client-header { background: #f5f5f5; padding: 6px 10px; display: flex; justify-content: space-between; border-bottom: 1px solid #ccc; font-weight: 600; font-size: 11px; }
+    .client-name { font-size: 12px; }
+    .client-meta { font-size: 9px; color: #6b6860; }
+    .client-items { width: 100%; border-collapse: collapse; }
+    .client-items td { padding: 5px 10px; font-size: 10px; border-bottom: 1px solid #f0ece6; }
+    .client-items td:last-child { text-align: right; font-weight: 600; }
     .invoice-client-card { margin-bottom: 16px; border: 1px solid #ccc; page-break-inside: avoid; }
     .invoice-client-header { background: #f5efdf; padding: 6px 10px; border-bottom: 1px solid #ccc; }
     .invoice-client-name { font-size: 13px; font-weight: 700; }
@@ -1320,6 +1265,7 @@ function printTab(tab) {
   if (!orders.length) {
     body = '<p>No orders for this period.</p>';
   } else if (tab === 'production') {
+    // Production – categorized items (works)
     const sortedDates = Object.keys(byDate).sort();
     for (const date of sortedDates) {
       const dayOrders = byDate[date];
@@ -1350,18 +1296,18 @@ function printTab(tab) {
       }
       const sortedCats = Object.keys(categoryGroups).sort();
       for (const cat of sortedCats) {
-        body += `<div class="category-header">${cat}</div>`;
+        body += `<div class="category-header" style="font-size:11px; font-weight:700; color:#C4852A; margin:10px 0 5px;">${cat}</div>`;
         for (const data of categoryGroups[cat]) {
-          body += `<div class="item-row">
-            <div><div class="item-name">${data.name}</div><div class="item-clients">${data.vendors.join(', ')}</div></div>
-            <div class="item-qty">${data.qty} <span class="item-unit">${data.unit === 'each' ? 'each' : (data.qty !== 1 ? data.unit + 's' : data.unit)}</span></div>
+          body += `<div class="item-row" style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid #f0ece6;">
+            <div><div style="font-weight:600; font-size:11px;">${data.name}</div><div style="font-size:9px; color:#6b6860;">${data.vendors.join(', ')}</div></div>
+            <div style="font-size:12px; font-weight:700; text-align:right;">${data.qty} <span style="font-size:9px; font-weight:400;">${data.unit === 'each' ? 'each' : (data.qty !== 1 ? data.unit + 's' : data.unit)}</span></div>
           </div>`;
         }
       }
       body += `</div>`;
     }
   } else {
-    // Packing
+    // Packing – clean, simple layout
     const sortedDates = Object.keys(byDate).sort();
     for (const date of sortedDates) {
       const dayOrders = byDate[date];
@@ -1370,30 +1316,32 @@ function printTab(tab) {
           <div class="date-header-left">${fmtDate(date)}</div>
           <div class="date-header-right">${dayOrders.length} order${dayOrders.length !== 1 ? 's' : ''}</div>
         </div>`;
-      const clientMap = {};
-      dayOrders.forEach(o => {
-        if (!clientMap[o.vendor_name]) {
-          clientMap[o.vendor_name] = { items: [], time: o.delivery_time, notes: o.notes, total: 0 };
+      // Group by vendor
+      const vendorMap = {};
+      dayOrders.forEach(order => {
+        const vendor = order.vendor_name;
+        if (!vendorMap[vendor]) {
+          vendorMap[vendor] = { items: [], time: order.delivery_time, notes: order.notes, total: 0 };
         }
-        (o.items || []).forEach(i => {
-          const existing = clientMap[o.vendor_name].items.find(x => x.item_name === i.item_name);
-          if (existing) existing.quantity += i.quantity;
-          else clientMap[o.vendor_name].items.push({ ...i });
-          clientMap[o.vendor_name].total += i.quantity;
+        (order.items || []).forEach(item => {
+          const existing = vendorMap[vendor].items.find(i => i.name === item.item_name);
+          if (existing) existing.qty += item.quantity;
+          else vendorMap[vendor].items.push({ name: item.item_name, qty: item.quantity, unit: item.unit });
+          vendorMap[vendor].total += item.quantity;
         });
       });
-      const sortedVendors = Object.keys(clientMap).sort((a,b)=> (clientMap[a].time||'').localeCompare(clientMap[b].time||''));
+      const sortedVendors = Object.keys(vendorMap).sort((a,b) => (vendorMap[a].time||'').localeCompare(vendorMap[b].time||''));
       for (const vendor of sortedVendors) {
-        const data = clientMap[vendor];
+        const data = vendorMap[vendor];
         body += `<div class="client-card">
           <div class="client-header">
             <span class="client-name">${escapeHtml(vendor)}</span>
             <div class="client-meta">${data.time ? `Delivery: ${data.time.slice(0,5)}` : ''} · ${data.total} unit${data.total !== 1 ? 's' : ''}</div>
           </div>
-          <table class="client-items-table">
-            ${data.items.map(i => `<tr><td>${i.item_name}</td><td style="text-align:right">${i.quantity} ${i.unit === 'each' ? 'each' : (i.quantity !== 1 ? i.unit+'s' : i.unit)}</td></tr>`).join('')}
+          <table class="client-items">
+            ${data.items.map(item => `<tr><td>${escapeHtml(item.name)}</td><td>${item.qty} ${item.unit === 'each' ? 'each' : (item.qty !== 1 ? item.unit + 's' : item.unit)}</td></tr>`).join('')}
           </table>
-          ${data.notes ? `<div style="padding: 4px 8px; font-size: 9px; font-style: italic; border-top: 1px dashed #ccc;">Note: ${escapeHtml(data.notes)}</div>` : ''}
+          ${data.notes ? `<div style="padding: 5px 10px; font-size: 9px; font-style: italic; border-top: 1px dashed #ccc;">Note: ${escapeHtml(data.notes)}</div>` : ''}
         </div>`;
       }
       body += `</div>`;
