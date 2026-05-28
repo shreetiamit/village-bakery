@@ -1357,9 +1357,12 @@ function printTab(tab) {
     ${body}
   </body></html>`;
   const w = window.open('', '_blank');
-  w.document.write(fullHtml);
-  w.document.close();
-  setTimeout(() => w.print(), 800);
+    w.document.write(fullHtml);
+    w.document.close();
+// Wait for the window's content to be fully loaded before printing
+    w.addEventListener('load', () => {
+    w.print();
+  });
 }
 
 // ---------- Category update function ----------
