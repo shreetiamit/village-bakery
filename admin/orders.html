@@ -44,11 +44,10 @@
       <div class="header-sep"></div>
       <span class="header-label">Admin</span>
     </div>
-    <button class="btn-signout" onclick="handleLogout()">Sign Out</button>
     <div class="header-right">
-  <span class="header-user-name" id="user-name"></span>
-  <button class="btn-signout" onclick="handleLogout()">Sign Out</button>
-</div>
+      <span class="header-user-name" id="user-name"></span>
+      <button class="btn-signout" onclick="handleLogout()">Sign Out</button>
+    </div>
   </div>
   <div class="tabs">
     <a href="orders.html" class="tab" data-tab="orders">Orders <span class="tab-badge" id="badge-orders">0</span></a>
@@ -59,7 +58,6 @@
     <a href="invoicing.html" class="tab" data-tab="invoicing">Invoicing</a>
   </div>
   <div class="content">
-    <!-- Orders panel content -->
     <div id="panel-orders">
       <div class="stats-row">
         <div class="stat-card"><div class="stat-val rust" id="stat-new">0</div><div class="stat-lbl">New orders</div></div>
@@ -86,56 +84,13 @@
             <input class="admin-form-input" type="text" id="co-manual-name" placeholder="Business name">
           </div>
         </div>
-        <div id="co-single-section">
-          <div style="font-size:var(--fs-xs);font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--text2);margin:20px 0 10px;padding-top:14px;border-top:1px solid var(--border)">Items</div>
-          <div id="co-items-grid"></div>
-          <div class="co-date-row" style="margin-top:20px">
-            <div class="field"><label>Delivery Date</label><input class="admin-form-input" type="date" id="co-date"></div>
-            <div class="field"><label>Delivery Time</label><input class="admin-form-input" type="time" id="co-time" value="08:00"></div>
-          </div>
-          <div class="field"><label>Notes (optional)</label><input class="admin-form-input" type="text" id="co-notes" placeholder="Special requests..."></div>
-          <p class="error-msg" id="co-error" style="margin-bottom:0"></p>
-          <div class="form-actions">
-            <button class="btn-action" onclick="submitCreateOrder()">Place Order</button>
-            <button class="btn-action-cancel" onclick="toggleCreateOrder()">Cancel</button>
-          </div>
-        </div>
-        <div id="co-weekly-section" style="display:none">
-          <div style="padding-top:14px;margin-top:4px;border-top:1px solid var(--border)">
-            <div class="week-nav">
-              <button class="week-arrow" id="co-week-prev" onclick="coChangeWeek(-1)">&#8592;</button>
-              <div class="week-nav-center">
-                <div class="week-nav-label">Week</div>
-                <div class="week-nav-dates" id="co-week-label">Loading...</div>
-              </div>
-              <button class="week-arrow" id="co-week-next" onclick="coChangeWeek(1)">&#8594;</button>
-            </div>
-            <div class="weekly-table-wrap"><div id="co-weekly-grid"></div></div>
-            <div id="co-weekly-preview"></div>
-            <div class="co-date-row" style="margin-top:20px">
-              <div class="field"><label>Delivery Time (all days)</label><input class="admin-form-input" type="time" id="co-weekly-time" value="08:00"></div>
-              <div class="field"><label>Notes (optional)</label><input class="admin-form-input" type="text" id="co-weekly-notes" placeholder="Special requests..."></div>
-            </div>
-            <p class="error-msg" id="co-weekly-error" style="margin-bottom:0"></p>
-            <div class="form-actions">
-              <button class="btn-action" onclick="submitCreateWeeklyOrders()">Place Weekly Orders</button>
-              <button class="btn-action-cancel" onclick="toggleCreateOrder()">Cancel</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div id="orders-list"><div class="empty-state">No orders yet.</div></div>
-    </div>
   </div>
 </div>
 
 <script src="admin-common.js"></script>
 <script>
-  // Save current page filename to localStorage for return redirect
   const page = window.location.pathname.split('/').pop();
-  if (page && page !== 'index.html') {
-    localStorage.setItem('lastAdminPage', page);
-  }
+  if (page && page !== 'index.html') localStorage.setItem('lastAdminPage', page);
 </script>
 </body>
 </html>
