@@ -914,6 +914,8 @@ function renderInvoicingContent() {
     if (body) body.innerHTML = '<div class="empty-state">No orders in this period.</div>';
     return;
   }
+
+  // Group orders by client
   const clientMap = new Map();
   filtered.forEach(order => {
     const name = order.vendor_name;
@@ -924,30 +926,47 @@ function renderInvoicingContent() {
       if (qty > 0) itemMap.set(item.item_name, (itemMap.get(item.item_name) || 0) + qty);
     });
   });
+
+  const totalClients = clientMap.size;
+  const totalOrders = filtered.length;
   const totalUnits = Array.from(clientMap.values()).reduce((sum, map) => sum + Array.from(map.values()).reduce((a, b) => a + b, 0), 0);
-  let html = `<div class="invoice-stats-mini">
-    <div class="invoice-stat-badge"><div class="invoice-stat-number">${clientMap.size}</div><div class="invoice-stat-label">Clients</div></div>
-    <div class="invoice-stat-badge"><div class="invoice-stat-number">${filtered.length}</div><div class="invoice-stat-label">Orders</div></div>
-    <div class="invoice-stat-badge"><div class="invoice-stat-number">${totalUnits}</div><div class="invoice-stat-label">Total Units</div></div>
+
+  // Stats bar using production classes
+  let html = `<div class="prod-summary">
+    <div class="prod-stat"><div class="prod-stat-val">${totalClients}</div><div class="prod-stat-lbl">Clients</div></div>
+    <div class="prod-stat"><div class="prod-stat-val">${totalOrders}</div><div class="prod-stat-lbl">Orders</div></div>
+    <div class="prod-stat"><div class="prod-stat-val">${totalUnits}</div><div class="prod-stat-lbl">Total Units</div></div>
   </div>`;
+
+  // Client cards using production date-block style
   for (const [clientName, itemsMap] of clientMap.entries()) {
     const sortedItems = Array.from(itemsMap.entries()).sort((a, b) => a[0].localeCompare(b[0]));
     const totalClientUnits = sortedItems.reduce((s, i) => s + i[1], 0);
-    // Build rows correctly using template literal with backticks
-    const rowsHtml = sortedItems.map(([itemName, qty]) => {
-      return `<tr><td>${escapeHtml(itemName)}</td><td style="text-align:right;font-weight:600">${qty}</td></tr>`;
-    }).join('');
-    html += `<div class="invoice-client-card">
-      <div class="invoice-client-header">
-        <div class="invoice-client-name">${escapeHtml(clientName)}</div>
-        <div class="invoice-client-stats">${sortedItems.length} item(s) · ${totalClientUnits} units</div>
+    
+    html += `<div class="prod-date-block">
+      <div class="prod-date-heading">
+        <span>${escapeHtml(clientName)}</span>
+        <span class="prod-date-sub">${sortedItems.length} item(s) · ${totalClientUnits} units</span>
       </div>
-      <table class="invoice-items-table">
-        <thead><tr><th>Item</th><th style="text-align:right">Total Qty</th></tr></thead>
-        <tbody>${rowsHtml}</tbody>
+      <table class="invoice-items-table" style="width:100%; border-collapse: collapse;">
+        <thead>
+          <tr>
+            <th style="text-align:left; padding: 12px 20px; border-bottom: 2px solid var(--accent);">Item</th>
+            <th style="text-align:right; padding: 12px 20px; border-bottom: 2px solid var(--accent);">Total Qty</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${sortedItems.map(([itemName, qty]) => `
+            <tr>
+              <td style="padding: 12px 20px; border-bottom: 1px solid var(--border);">${escapeHtml(itemName)}</td>
+              <td style="padding: 12px 20px; text-align: right; font-weight: 600; border-bottom: 1px solid var(--border);">${qty}</td>
+            </tr>
+          `).join('')}
+        </tbody>
       </table>
     </div>`;
   }
+
   const bodyDiv = document.getElementById('invoicing-body');
   if (bodyDiv) bodyDiv.innerHTML = html;
 }
