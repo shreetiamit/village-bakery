@@ -1154,8 +1154,89 @@ function renderInvoicingContent() {
   if (bodyDiv) bodyDiv.innerHTML = html;
 }
 
-// ---------- Print function ----------
 function printTab(tab) {
+  const printStyles = `
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'DM Sans', 'Helvetica Neue', Arial, sans-serif;
+      color: #1a1916;
+      padding: 12mm;
+      margin: 0;
+      background: white;
+    }
+    @media print {
+      body { padding: 8mm; }
+      .no-print { display: none !important; }
+      @page { margin: 0; }
+    }
+    .no-print { text-align: center; margin-bottom: 20px; }
+    .print-btn { background: #1a1916; color: white; border: none; padding: 8px 20px; font-family: 'DM Sans', sans-serif; font-size: 11px; letter-spacing: .18em; text-transform: uppercase; cursor: pointer; }
+    .header-section {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 24px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid #dedad4;
+    }
+    .title { font-size: 22px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
+    .range { font-size: 12px; color: #6b6860; line-height: 1.8; text-align: right; }
+    .date-group { margin-bottom: 28px; page-break-inside: avoid; }
+    .date-header {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 2px solid #1a1916;
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+    .date-header-left { font-size: 13px; text-transform: uppercase; }
+    .date-header-right { font-size: 10px; color: #6b6860; }
+    .category-header {
+      font-size: 12px;
+      font-weight: 700;
+      color: #C4852A;
+      margin: 16px 0 8px;
+      letter-spacing: .1em;
+    }
+    .item-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      border-bottom: 1px solid #f0ece6;
+    }
+    .item-name { font-weight: 600; font-size: 13px; }
+    .item-clients { font-size: 11px; color: #6b6860; margin-top: 2px; }
+    .item-qty { font-size: 16px; font-weight: 700; text-align: right; white-space: nowrap; }
+    .item-unit { font-size: 10px; font-weight: 400; color: #6b6860; margin-left: 2px; }
+    .client-card {
+      border: 1px solid #dedad4;
+      margin-bottom: 12px;
+      page-break-inside: avoid;
+    }
+    .client-header {
+      background: #f8f6f2;
+      padding: 8px 12px;
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid #dedad4;
+      font-weight: 600;
+    }
+    .client-name { font-size: 13px; }
+    .client-meta { font-size: 10px; color: #6b6860; }
+    .client-items-table { width: 100%; border-collapse: collapse; }
+    .client-items-table td { padding: 6px 12px; font-size: 12px; border-bottom: 1px solid #f0ece6; }
+    .client-items-table td:last-child { text-align: right; font-weight: 600; }
+    .invoice-client-card { margin-bottom: 20px; border: 1px solid #dedad4; page-break-inside: avoid; }
+    .invoice-client-header { background: #f5efdf; padding: 10px 16px; border-bottom: 1px solid #dedad4; }
+    .invoice-client-name { font-size: 15px; font-weight: 700; }
+    .invoice-client-stats { font-size: 11px; color: #6b6860; margin-top: 4px; }
+    .invoice-items-table { width: 100%; border-collapse: collapse; }
+    .invoice-items-table th { text-align: left; padding: 8px 16px; font-size: 10px; background: #f8f6f2; border-bottom: 1px solid #dedad4; }
+    .invoice-items-table td { padding: 8px 16px; font-size: 12px; border-bottom: 1px solid #f0ece6; }
+    .invoice-items-table td:last-child { text-align: right; font-weight: 600; }
+  `;
+
   if (tab === 'invoicing') {
     const fs = filterState.invoicing;
     const range = fs.mode === 'custom' ? { from: fs.from, to: fs.to } : getDateRange(fs.mode);
@@ -1175,34 +1256,40 @@ function printTab(tab) {
     let bodyHtml = '';
     for (const [clientName, itemsMap] of clientMap.entries()) {
       const sortedItems = Array.from(itemsMap.entries()).sort((a, b) => a[0].localeCompare(b[0]));
-      bodyHtml += `<div style="border:1px solid #e2d5c0;margin-bottom:20px;page-break-inside:avoid;">
-        <div style="background:#f5efdf;padding:12px 18px;"><div style="font-size:16px;font-weight:700;">${escapeHtml(clientName)}</div></div>
-        <table style="width:100%;border-collapse:collapse;">
-          <thead><tr><th style="text-align:left;padding:10px 18px;">Item</th><th style="text-align:right;padding:10px 18px;">Total Qty</th></tr></thead>
-          <tbody>${sortedItems.map(([itemName, qty]) => `<tr><td style="padding:8px 18px;border-bottom:1px solid #e2d5c0;">${escapeHtml(itemName)}</td><td style="padding:8px 18px;text-align:right;font-weight:600;">${qty}</td></tr>`).join('')}</tbody>
+      bodyHtml += `<div class="invoice-client-card">
+        <div class="invoice-client-header">
+          <div class="invoice-client-name">${escapeHtml(clientName)}</div>
+          <div class="invoice-client-stats">${sortedItems.length} item(s) · ${sortedItems.reduce((s,i)=>s+i[1],0)} units</div>
+        </div>
+        <table class="invoice-items-table">
+          <thead><tr><th>Item</th><th style="text-align:right">Total Qty</th></tr></thead>
+          <tbody>${sortedItems.map(([itemName, qty]) => `<tr><td>${escapeHtml(itemName)}</td><td style="text-align:right;font-weight:600">${qty}</td></tr>`).join('')}</tbody>
         </table>
       </div>`;
     }
     const rangeLabel = range.from === range.to ? fmtDate(range.from) : fmtDate(range.from) + ' – ' + fmtDate(range.to);
     const totalUnits = filtered.reduce((sum, o) => sum + (o.items || []).reduce((s, i) => s + i.quantity, 0), 0);
+    const totalOrders = filtered.length;
+    const totalClients = clientMap.size;
     const win = window.open('', '_blank');
-    win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Invoicing Summary</title><style>
-      body{font-family:'DM Sans',sans-serif;padding:40px;max-width:1000px;margin:0 auto;color:#2C1A0E;}
-      h2{font-family:'Cormorant Garamond';border-bottom:2px solid #C4852A;padding-bottom:6px;}
-      @media print{.no-print{display:none;}}
-    </style></head><body>
-    <div class="no-print" style="margin-bottom:20px;"><button onclick="window.print()" style="padding:8px 20px;">Print / Save PDF</button></div>
-    <div style="margin-bottom:24px;">
-      <div style="font-size:12px;letter-spacing:.2em;">VILLAGE BAKERY + PROVISIONS</div>
-      <h2>Invoicing Summary – ${rangeLabel}</h2>
-      <div>${filtered.length} orders · ${clientMap.size} clients · ${totalUnits} total units</div>
-    </div>
-    ${bodyHtml}
+    win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Invoicing Summary</title><style>${printStyles}</style></head><body>
+      <div class="no-print"><button class="print-btn" onclick="window.print()">Print / Save PDF</button></div>
+      <div class="header-section">
+        <div><div style="font-size:10px;color:#6b6860;margin-bottom:5px;text-transform:uppercase;letter-spacing:.2em">Village Bakery + Provisions</div><div class="title">Invoicing Summary</div></div>
+        <div class="range"><div>${rangeLabel}</div><div>Printed ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</div></div>
+      </div>
+      <div style="display:flex; gap: 20px; margin-bottom: 28px; flex-wrap:wrap;">
+        <div style="background:#f8f6f2; padding: 12px 20px;"><div style="font-size:24px; font-weight:700;">${totalClients}</div><div style="font-size:11px;">Clients</div></div>
+        <div style="background:#f8f6f2; padding: 12px 20px;"><div style="font-size:24px; font-weight:700;">${totalOrders}</div><div style="font-size:11px;">Orders</div></div>
+        <div style="background:#f8f6f2; padding: 12px 20px;"><div style="font-size:24px; font-weight:700;">${totalUnits}</div><div style="font-size:11px;">Total Units</div></div>
+      </div>
+      ${bodyHtml}
     </body></html>`);
     win.document.close();
     setTimeout(() => win.print(), 300);
     return;
   }
+
   // Production or packing print
   const orders = filterOrders(tab);
   const fs = filterState[tab];
@@ -1211,59 +1298,107 @@ function printTab(tab) {
   const rangeLabel = range.from === range.to ? fmtDate(range.from) : fmtDate(range.from) + ' – ' + fmtDate(range.to);
   const byDate = {};
   orders.forEach(o => { if (!byDate[o.delivery_date]) byDate[o.delivery_date] = []; byDate[o.delivery_date].push(o); });
+  
   let body = '';
   if (!orders.length) {
     body = '<p style="color:#6b6860;font-size:14px">No orders for this period.</p>';
   } else if (tab === 'production') {
-    Object.keys(byDate).sort().forEach(date => {
-      const dO = byDate[date];
-      const dU = dO.reduce((s, o) => s + (o.items || []).reduce((ss, i) => ss + i.quantity, 0), 0);
-      const iM = {};
-      dO.forEach(o => {
-        (o.items || []).forEach(i => {
-          if (!iM[i.item_name]) iM[i.item_name] = { qty: 0, unit: i.unit, vendors: [] };
-          iM[i.item_name].qty += i.quantity;
-          if (!iM[i.item_name].vendors.includes(o.vendor_name)) iM[i.item_name].vendors.push(o.vendor_name);
+    const sortedDates = Object.keys(byDate).sort();
+    for (const date of sortedDates) {
+      const dayOrders = byDate[date];
+      const dayUnits = dayOrders.reduce((sum, o) => sum + (o.items || []).reduce((s, i) => s + i.quantity, 0), 0);
+      body += `<div class="date-group">
+        <div class="date-header">
+          <div class="date-header-left">${fmtDate(date)}</div>
+          <div class="date-header-right">${dayOrders.length} order${dayOrders.length !== 1 ? 's' : ''} · ${dayUnits} units</div>
+        </div>`;
+      
+      const itemMap = {};
+      dayOrders.forEach(order => {
+        (order.items || []).forEach(item => {
+          if (!itemMap[item.item_name]) {
+            const menuItem = allMenu.find(m => m.name === item.item_name);
+            const category = menuItem?.category || 'Uncategorized';
+            itemMap[item.item_name] = { qty: 0, unit: item.unit, vendors: [], category };
+          }
+          itemMap[item.item_name].qty += item.quantity;
+          if (!itemMap[item.item_name].vendors.includes(order.vendor_name)) {
+            itemMap[item.item_name].vendors.push(order.vendor_name);
+          }
         });
       });
-      body += `<div style="margin-bottom:32px;page-break-inside:avoid"><div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:2px solid #1a1916"><span style="font-size:13px;font-weight:600;text-transform:uppercase">${fmtDate(date)}</span><span style="font-size:10px;color:#6b6860">${dO.length} order${dO.length !== 1 ? 's' : ''} &middot; ${dU} units</span></div><table style="width:100%;border-collapse:collapse"><thead><tr><th style="padding:8px 0;text-align:left;font-size:10px;color:#6b6860;border-bottom:1px solid #dedad4">Item</th><th style="padding:8px 0;text-align:left;font-size:10px;color:#6b6860;border-bottom:1px solid #dedad4">Clients</th><th style="padding:8px 0;text-align:right;font-size:10px;color:#6b6860;border-bottom:1px solid #dedad4">Qty</th></tr></thead><tbody>${Object.entries(iM).sort((a, b) => b[1].qty - a[1].qty).map(([name, data]) => `<tr style="border-bottom:1px solid #f0ece6"><td style="padding:10px 0;font-size:14px">${name}</td><td style="padding:10px 0;font-size:12px;color:#6b6860">${data.vendors.join(', ')}</td><td style="padding:10px 0;text-align:right;font-size:22px;font-weight:700">${data.qty} <span style="font-size:10px;font-weight:400;color:#6b6860">${data.unit === 'each' ? 'each' : (data.qty !== 1 ? data.unit + 's' : data.unit)}</span></td></tr>`).join('')}</tbody></table></div>`;
-    });
+      // Group by category
+      const categoryGroups = {};
+      for (const [name, data] of Object.entries(itemMap)) {
+        const cat = data.category;
+        if (!categoryGroups[cat]) categoryGroups[cat] = [];
+        categoryGroups[cat].push({ name, ...data });
+      }
+      const sortedCats = Object.keys(categoryGroups).sort();
+      for (const cat of sortedCats) {
+        body += `<div class="category-header">${cat}</div>`;
+        for (const data of categoryGroups[cat]) {
+          body += `<div class="item-row">
+            <div><div class="item-name">${data.name}</div><div class="item-clients">${data.vendors.join(', ')}</div></div>
+            <div class="item-qty">${data.qty} <span class="item-unit">${data.unit === 'each' ? 'each' : (data.qty !== 1 ? data.unit + 's' : data.unit)}</span></div>
+          </div>`;
+        }
+      }
+      body += `</div>`;
+    }
   } else {
-    Object.keys(byDate).sort().forEach(date => {
-      const dO = byDate[date];
-      const bV = {};
-      dO.forEach(o => {
-        if (!bV[o.vendor_name]) bV[o.vendor_name] = { items: [], time: o.delivery_time, notes: o.notes, total: 0 };
+    // Packing: group by date then by client
+    const sortedDates = Object.keys(byDate).sort();
+    for (const date of sortedDates) {
+      const dayOrders = byDate[date];
+      body += `<div class="date-group">
+        <div class="date-header">
+          <div class="date-header-left">${fmtDate(date)}</div>
+          <div class="date-header-right">${dayOrders.length} order${dayOrders.length !== 1 ? 's' : ''}</div>
+        </div>`;
+      const clientMap = {};
+      dayOrders.forEach(o => {
+        if (!clientMap[o.vendor_name]) {
+          clientMap[o.vendor_name] = { items: [], time: o.delivery_time, notes: o.notes, total: 0 };
+        }
         (o.items || []).forEach(i => {
-          const ex = bV[o.vendor_name].items.find(x => x.item_name === i.item_name);
-          if (ex) ex.quantity += i.quantity;
-          else bV[o.vendor_name].items.push({ ...i });
-          bV[o.vendor_name].total += i.quantity;
+          const existing = clientMap[o.vendor_name].items.find(x => x.item_name === i.item_name);
+          if (existing) existing.quantity += i.quantity;
+          else clientMap[o.vendor_name].items.push({ ...i });
+          clientMap[o.vendor_name].total += i.quantity;
         });
       });
-      const sV = Object.entries(bV).sort((a, b) => (a[1].time || '').localeCompare(b[1].time || ''));
-      body += `<div style="margin-bottom:32px"><div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:2px solid #1a1916;margin-bottom:16px"><span style="font-size:13px;font-weight:600">${fmtDate(date)}</span><span style="font-size:10px;color:#6b6860">${sV.length} client${sV.length !== 1 ? 's' : ''}</span></div>${sV.map(([vendor, data]) => `<div style="border:1px solid #dedad4;margin-bottom:10px;page-break-inside:avoid"><div style="background:#f8f6f2;padding:10px 14px;display:flex;justify-content:space-between;border-bottom:1px solid #dedad4"><span style="font-size:14px;font-weight:600">${vendor}</span><div>${data.time ? `<span style="font-size:11px;color:#6b6860">Delivery ${data.time.slice(0, 5)}</span>&ensp;` : ''}<span style="font-size:10px;color:#6b6860">${data.total} unit${data.total !== 1 ? 's' : ''}</span></div></div><table style="width:100%;border-collapse:collapse">${data.items.map(i => `<tr style="border-bottom:1px solid #f0ece6"><td style="padding:8px 14px;font-size:13px">${i.item_name}</td><td style="padding:8px 14px;font-size:13px;font-weight:600;text-align:right">${i.quantity} ${i.unit === 'each' ? 'each' : (i.quantity !== 1 ? i.unit + 's' : i.unit)}</td></tr>`).join('')}</table>${data.notes ? `<div style="padding:7px 14px;font-size:11px;color:#6b6860;font-style:italic;border-top:1px dashed #dedad4">Note: ${data.notes}</div>` : ''}</div>`).join('')}</div>`;
-    });
+      const sortedVendors = Object.keys(clientMap).sort((a,b)=> (clientMap[a].time||'').localeCompare(clientMap[b].time||''));
+      for (const vendor of sortedVendors) {
+        const data = clientMap[vendor];
+        body += `<div class="client-card">
+          <div class="client-header">
+            <span class="client-name">${escapeHtml(vendor)}</span>
+            <div class="client-meta">${data.time ? `Delivery: ${data.time.slice(0,5)}` : ''} · ${data.total} unit${data.total !== 1 ? 's' : ''}</div>
+          </div>
+          <table class="client-items-table">
+            ${data.items.map(i => `</td><td>${i.item_name}</td><td style="text-align:right">${i.quantity} ${i.unit === 'each' ? 'each' : (i.quantity !== 1 ? i.unit+'s' : i.unit)}</td></tr>`).join('')}
+          </table>
+          ${data.notes ? `<div style="padding: 6px 12px; font-size: 11px; font-style: italic; border-top: 1px dashed #dedad4;">Note: ${escapeHtml(data.notes)}</div>` : ''}
+        </div>`;
+      }
+      body += `</div>`;
+    }
   }
-  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${title}</title><style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:'Helvetica Neue',Arial,sans-serif;color:#1a1916;padding:44px;max-width:800px;margin:0 auto;}@media print{body{padding:20px;}.no-print{display:none!important;}}.no-print{text-align:center;margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid #dedad4;}.print-btn{background:#1a1916;color:white;border:none;padding:9px 22px;font-size:11px;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;}</style></head><body><div class="no-print"><button class="print-btn" onclick="window.print()">Print / Save PDF</button></div><div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:28px;padding-bottom:14px;border-bottom:1px solid #dedad4"><div><div style="font-size:10px;color:#6b6860;margin-bottom:5px;text-transform:uppercase;letter-spacing:.2em">Village Bakery + Provisions</div><div style="font-size:22px;font-weight:700;text-transform:uppercase;letter-spacing:.04em">${title}</div></div><div style="text-align:right;font-size:12px;color:#6b6860;line-height:1.8"><div>${rangeLabel}</div><div>Printed ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</div></div></div>${body}</body></html>`;
+
+  const totalHtml = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${title}</title><style>${printStyles}</style></head><body>
+    <div class="no-print"><button class="print-btn" onclick="window.print()">Print / Save PDF</button></div>
+    <div class="header-section">
+      <div><div style="font-size:10px;color:#6b6860;margin-bottom:5px;text-transform:uppercase;letter-spacing:.2em">Village Bakery + Provisions</div><div class="title">${title}</div></div>
+      <div class="range"><div>${rangeLabel}</div><div>Printed ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</div></div>
+    </div>
+    ${body}
+  </body></html>`;
   const w = window.open('', '_blank');
-  w.document.write(html);
+  w.document.write(totalHtml);
   w.document.close();
   setTimeout(() => w.print(), 500);
 }
-
-async function updateCategory(itemId, category) {
-  try {
-    await db.collection('menu_items').doc(itemId).update({ category });
-    const item = allMenu.find(m => m.id === itemId);
-    if (item) item.category = category;
-    console.log(`Category updated for ${itemId} to ${category}`);
-  } catch (e) {
-    console.error("Error updating category:", e);
-    alert("Failed to update category: " + e.message);
-  }
-}
-window.updateCategory = updateCategory;
 
 // ---------- Auth and data initialization ----------
 async function initAuthAndData() {
