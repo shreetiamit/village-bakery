@@ -310,6 +310,7 @@ body{font-family:'DM Sans',sans-serif;font-size:var(--fs-base);background:var(--
   .header, .tabs, .filter-bar, .print-btn, .stats-row, .pricing-panel, .admin-form-box {
     display: none !important;
   }
+  
   .content {
     padding: 0 !important;
     max-width: 100% !important;
@@ -339,7 +340,14 @@ body{font-family:'DM Sans',sans-serif;font-size:var(--fs-base);background:var(--
   .no-print + * {
     page-break-before: avoid !important;
   }
+  embed, object, iframe, video, audio {
+    display: none !important;
+  }
 }
+embed, object, iframe {
+  display: none !important;
+}
+
 /* ── Proportion rebalance ── */
 .header{height:54px;}
 .header-wordmark{font-size:12px;}
