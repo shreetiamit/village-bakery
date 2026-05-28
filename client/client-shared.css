@@ -236,4 +236,60 @@ body{font-weight:500;color:var(--text);}
   z-index: 10;
   border-bottom: 3px solid var(--accent);
 }
-/* Optional: keep category rows sticky? Not implemented due to complexity */
+/* ── History tab buttons ─────────────────────────────────── */
+.history-tab-btn {
+  padding: 9px 18px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text2);
+  cursor: pointer;
+  transition: all .15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.history-tab-btn:hover {
+  border-color: var(--border2);
+  color: var(--text);
+}
+.history-tab-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+}
+.history-tab-count {
+  background: rgba(255,255,255,.25);
+  border-radius: 2px;
+  padding: 1px 6px;
+  font-size: 10px;
+  font-weight: 700;
+}
+.history-tab-btn:not(.active) .history-tab-count {
+  background: var(--bg);
+  color: var(--text2);
+  border: 1px solid var(--border);
+}
+
+/* ── Edit order button (alongside cancel) ────────────────── */
+.btn-edit-order {
+  background: none;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  padding: 8px 16px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all .15s;
+}
+.btn-edit-order:hover {
+  background: var(--accent);
+  color: white;
+}
