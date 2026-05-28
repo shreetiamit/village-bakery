@@ -638,45 +638,69 @@ body{font-weight:500;color:var(--text);}
 .invoice-items-table td{padding:14px 20px;font-size:15px;font-weight:500;color:var(--text);border-bottom:1px solid var(--border);}
 .invoice-items-table td:last-child{text-align:right;font-weight:700;}
 
-/* Make Packing tab match Production fonts and spacing */
-.pack-date-heading {
-  font-size: var(--fs-lg);
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  font-family: 'DM Sans', sans-serif;
-  border-bottom: 3px solid var(--accent);
-  padding: 14px 0;
-  margin-bottom: 20px;
-}
-.pack-vendor-card {
-  border: 1px solid var(--border);
-  margin-bottom: 16px;
-  font-family: 'DM Sans', sans-serif;
-}
-.pack-vendor-header {
-  background: var(--bg);
-  padding: 16px 20px;
-  font-weight: 600;
-}
-.pack-vendor-name {
-  font-size: var(--fs-md);
-  font-weight: 700;
-}
-.pack-vendor-time, .pack-vendor-total {
-  font-size: var(--fs-sm);
-  font-weight: 500;
-  letter-spacing: 0.08em;
-}
-.pack-item-name {
-  font-size: var(--fs-base);
-  font-weight: 500;
-}
-.pack-item-qty {
-  font-size: var(--fs-base);
-  font-weight: 700;
-}
+/* Force Packing to match Production styles (override all pack-* classes) */
+.pack-date-heading,
+.pack-vendor-header,
+.pack-vendor-name,
+.pack-vendor-time,
+.pack-vendor-total,
+.pack-item-name,
+.pack-item-qty,
 .pack-notes {
-  font-size: var(--fs-sm);
-  font-style: italic;
-  color: var(--text3);
+  font-family: 'DM Sans', sans-serif;
+}
+
+.pack-date-heading {
+  font-size: var(--fs-lg) !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.04em !important;
+  padding: 14px 0 !important;
+  border-bottom: 3px solid var(--accent) !important;
+  margin-bottom: 20px !important;
+}
+
+.pack-vendor-card {
+  border: 1px solid var(--border) !important;
+  margin-bottom: 16px !important;
+}
+
+.pack-vendor-header {
+  background: var(--bg) !important;
+  padding: 16px 20px !important;
+  font-weight: 600 !important;
+  border-bottom: 1px solid var(--border) !important;
+}
+
+.pack-vendor-name {
+  font-size: var(--fs-md) !important;
+  font-weight: 700 !important;
+}
+
+.pack-vendor-time,
+.pack-vendor-total {
+  font-size: var(--fs-sm) !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.08em !important;
+}
+
+.pack-item-name {
+  font-size: var(--fs-base) !important;
+  font-weight: 500 !important;
+}
+
+.pack-item-qty {
+  font-size: var(--fs-base) !important;
+  font-weight: 700 !important;
+}
+
+.pack-notes {
+  font-size: var(--fs-sm) !important;
+  font-style: italic !important;
+  color: var(--text3) !important;
+}
+
+/* Match production table row spacing */
+.pack-item-row {
+  padding: 12px 20px !important;
+  border-bottom: 1px solid var(--border) !important;
 }
