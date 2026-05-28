@@ -234,7 +234,6 @@ function buildCreateOrderForm() {
   let html = '';
   for (const category of sortedCategories) {
     html += `<div style="margin-top: 20px;"><div style="font-weight: 700; letter-spacing: .1em; color: var(--accent); margin-bottom: 8px;">${category}</div>`;
-    // Sort items alphabetically within category
     const sortedItems = grouped[category].sort((a, b) => a.name.localeCompare(b.name));
     for (const item of sortedItems) {
       html += `
@@ -591,7 +590,7 @@ function generateInvoiceHtml(order) {
     const sub = (i.price || 0) * i.quantity;
     return `<tr><td style="padding:10px 0;border-bottom:1px solid #e8e4de;font-size:14px">${i.item_name}</td><td style="padding:10px 0;border-bottom:1px solid #e8e4de;text-align:center;font-size:14px">${i.quantity}</td><td style="padding:10px 0;border-bottom:1px solid #e8e4de;text-align:center;font-size:13px;color:#6b6860">${i.unit}</td><td style="padding:10px 0;border-bottom:1px solid #e8e4de;text-align:right;font-size:14px">${i.price ? '$' + Number(i.price).toFixed(2) : '&mdash;'}</td><td style="padding:10px 0;border-bottom:1px solid #e8e4de;text-align:right;font-size:14px;font-weight:500">${sub > 0 ? '$' + sub.toFixed(2) : '&mdash;'}</td></tr>`;
   }).join('');
-  return `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Invoice &mdash; ${order.id.slice(0, 8).toUpperCase()}</title><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"><style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:'DM Sans',sans-serif;background:white;color:#1a1916;padding:56px;max-width:760px;margin:0 auto;}@media print{body{padding:32px;}.no-print{display:none!important;}}.no-print{text-align:center;margin-bottom:32px;padding-bottom:32px;border-bottom:1px solid #e8e4de;}.print-btn{background:#1a1916;color:white;border:none;padding:10px 24px;font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;}.wordmark{font-family:'Cormorant Garamond',serif;font-size:13px;font-weight:600;letter-spacing:.25em;text-transform:uppercase;}.invoice-label{font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:600;}</style></head><body><div class="no-print"><button class="print-btn" onclick="window.print()">Download / Print PDF</button></div><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:48px"><div><div class="wordmark">Village Bakery + Provisions</div><div style="font-size:12px;color:#6b6860;margin-top:8px;line-height:2">212 Thompson Lane, Nashville, TN 37211<br>orders@villagebakeryandprovisions.com<br>(615) 498-5385</div></div><div style="text-align:right"><div class="invoice-label">Invoice</div><div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#6b6860;margin-top:6px">#${order.id.slice(0, 8).toUpperCase()}</div><div style="font-size:12px;color:#6b6860;margin-top:4px">Issued ${issued}</div></div></div><div style="display:flex;justify-content:space-between;margin-bottom:40px;padding-bottom:24px;border-bottom:2px solid #1a1916"><div><div style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#6b6860;margin-bottom:8px">Bill To</div><div style="font-size:16px;font-weight:500">${order.vendor_name}</div></div><div style="text-align:right"><div style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#6b6860;margin-bottom:8px">Delivery</div><div style="font-size:14px;font-weight:500">${deliveryStr}</div><div style="font-size:13px;color:#6b6860;margin-top:3px">at ${(order.delivery_time || '').slice(0, 5)}</div></div></div>${order.notes ? `<div style="font-size:13px;color:#6b6860;margin-bottom:24px;font-style:italic">${order.notes}</div>` : ''}<table style="width:100%;border-collapse:collapse"><thead><tr style="border-bottom:2px solid #1a1916"><th style="padding:8px 0;text-align:left;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#6b6860;font-weight:500">Item</th><th style="padding:8px 0;text-align:center;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#6b6860;font-weight:500">Qty</th><th style="padding:8px 0;text-align:center;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#6b6860;font-weight:500">Unit</th><th style="padding:8px 0;text-align:right;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#6b6860;font-weight:500">Price</th><th style="padding:8px 0;text-align:right;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#6b6860;font-weight:500">Subtotal</th></tr></thead><tbody>${rows}</tbody><tfoot><tr><td colspan="3" style="padding:14px 0;font-size:11px;letter-spacing:.15em;text-transform:uppercase;font-weight:500">Total</td><td style="padding:14px 0;text-align:right;font-size:13px;color:#6b6860">${totalUnits} units</td><td style="padding:14px 0;text-align:right;font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600">${totalPrice > 0 ? '$' + totalPrice.toFixed(2) : '&mdash;'}</td></tr></tfoot></table><div style="margin-top:48px;padding-top:20px;border-top:1px solid #e8e4de;font-size:12px;color:#6b6860;text-align:center;line-height:2">Thank you for your business.<br>Village Bakery + Provisions &nbsp;&middot;&nbsp; orders@villagebakeryandprovisions.com &nbsp;&middot;&nbsp; (615) 498-5385</div></body></html>`;
+  return `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Invoice &mdash; ${order.id.slice(0, 8).toUpperCase()}</title><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"><style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:'DM Sans',sans-serif;background:white;color:#1a1916;padding:56px;max-width:760px;margin:0 auto;}@media print{body{padding:32px;}.no-print{display:none!important;}}.no-print{text-align:center;margin-bottom:32px;padding-bottom:32px;border-bottom:1px solid #e8e4de;}.print-btn{background:#1a1916;color:white;border:none;padding:10px 24px;font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;}.wordmark{font-family:'Cormorant Garamond',serif;font-size:13px;font-weight:600;letter-spacing:.25em;text-transform:uppercase;}.invoice-label{font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:600;}</style></head><body><div class="no-print"><button class="print-btn" onclick="window.print()">Download / Print PDF</button></div><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:48px"><div><div class="wordmark">Village Bakery + Provisions</div><div style="font-size:12px;color:#6b6860;margin-top:8px;line-height:2">212 Thompson Lane, Nashville, TN 37211<br>orders@villagebakeryandprovisions.com<br>(615) 498-5385</div></div><div style="text-align:right"><div class="invoice-label">Invoice</div><div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#6b6860;margin-top:6px">#${order.id.slice(0, 8).toUpperCase()}</div><div style="font-size:12px;color:#6b6860;margin-top:4px">Issued ${issued}</div></div></div><div style="display:flex;justify-content:space-between;margin-bottom:40px;padding-bottom:24px;border-bottom:2px solid #1a1916"><div><div style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#6b6860;margin-bottom:8px">Bill To</div><div style="font-size:16px;font-weight:500">${order.vendor_name}</div></div><div style="text-align:right"><div style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#6b6860;margin-bottom:8px">Delivery</div><div style="font-size:14px;font-weight:500">${deliveryStr}</div><div style="font-size:13px;color:#6b6860;margin-top:3px">at ${(order.delivery_time || '').slice(0, 5)}</div></div></div>${order.notes ? `<div style="font-size:13px;color:#6b6860;margin-bottom:24px;font-style:italic">${order.notes}</div>` : ''}<table style="width:100%;border-collapse:collapse"><thead><tr style="border-bottom:2px solid #1a1916"><th style="padding:8px 0;text-align:left;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#6b6860;font-weight:500">Item</th><th style="padding:8px 0;text-align:center;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#6b6860;font-weight:500">Qty</th><th style="padding:8px 0;text-align:center;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#6b6860;font-weight:500">Unit</th><th style="padding:8px 0;text-align:right;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#6b6860;font-weight:500">Price</th><th style="padding:8px 0;text-align:right;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#6b6860;font-weight:500">Subtotal</th></tr></thead><tbody>${rows}</tbody><tfoot><tr><td colspan="3" style="padding:14px 0;font-size:11px;letter-spacing:.15em;text-transform:uppercase;font-weight:500">Total</th><td style="padding:14px 0;text-align:right;font-size:13px;color:#6b6860">${totalUnits} units</th><td style="padding:14px 0;text-align:right;font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600">${totalPrice > 0 ? '$' + totalPrice.toFixed(2) : '&mdash;'}</th></tr></tfoot></table><div style="margin-top:48px;padding-top:20px;border-top:1px solid #e8e4de;font-size:12px;color:#6b6860;text-align:center;line-height:2">Thank you for your business.<br>Village Bakery + Provisions &nbsp;&middot;&nbsp; orders@villagebakeryandprovisions.com &nbsp;&middot;&nbsp; (615) 498-5385</div></body></html>`;
 }
 
 // ---------- Order status update ----------
@@ -1060,7 +1059,7 @@ function renderPackingContent() {
     html += `<div class="prod-date-block">
       <div class="prod-date-heading">
         <span>${date === TODAY ? 'Today — ' : ''}${fmtDate(date)}</span>
-        <span class="prod-date-sub">${dayOrders.length} order${dayOrders.length !== 1 ? 's' : ''} &middot; ${dayUnits} units</span>
+        <span class="prod-date-sub">${dayOrders.length} order${dayOrders.length !== 1 ? 's' : ''} · ${dayUnits} units</span>
       </div>`;
     
     sortedItems.forEach(([name, data]) => {
@@ -1159,6 +1158,7 @@ function renderInvoicingContent() {
   if (bodyDiv) bodyDiv.innerHTML = html;
 }
 
+// ---------- Print function ----------
 function printTab(tab) {
   const printStyles = `
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1268,7 +1268,7 @@ function printTab(tab) {
         </div>
         <table class="invoice-items-table">
           <thead><tr><th>Item</th><th style="text-align:right">Total Qty</th></tr></thead>
-          <tbody>${sortedItems.map(([itemName, qty]) => `<tr><td>${escapeHtml(itemName)}</td><td style="text-align:right;font-weight:600">${qty}</td></tr>`).join('')}</tbody>
+          <tbody>${sortedItems.map(([itemName, qty]) => `<tr><td>${escapeHtml(itemName)}<td><td style="text-align:right;font-weight:600">${qty}</tr>`).join('')}</tbody>
         </table>
       </div>`;
     }
@@ -1382,7 +1382,7 @@ function printTab(tab) {
             <div class="client-meta">${data.time ? `Delivery: ${data.time.slice(0,5)}` : ''} · ${data.total} unit${data.total !== 1 ? 's' : ''}</div>
           </div>
           <table class="client-items-table">
-            ${data.items.map(i => `</td><td>${i.item_name}</td><td style="text-align:right">${i.quantity} ${i.unit === 'each' ? 'each' : (i.quantity !== 1 ? i.unit+'s' : i.unit)}</td></tr>`).join('')}
+            ${data.items.map(i => `<tr><td>${i.item_name}</td><td style="text-align:right">${i.quantity} ${i.unit === 'each' ? 'each' : (i.quantity !== 1 ? i.unit+'s' : i.unit)}</td></tr>`).join('')}
           </table>
           ${data.notes ? `<div style="padding: 6px 12px; font-size: 11px; font-style: italic; border-top: 1px dashed #dedad4;">Note: ${escapeHtml(data.notes)}</div>` : ''}
         </div>`;
@@ -1404,6 +1404,20 @@ function printTab(tab) {
   w.document.close();
   setTimeout(() => w.print(), 500);
 }
+
+// ---------- Category update function ----------
+async function updateCategory(itemId, category) {
+  try {
+    await db.collection('menu_items').doc(itemId).update({ category });
+    const item = allMenu.find(m => m.id === itemId);
+    if (item) item.category = category;
+    console.log(`Category updated for ${itemId} to ${category}`);
+  } catch (e) {
+    console.error("Error updating category:", e);
+    alert("Failed to update category: " + e.message);
+  }
+}
+window.updateCategory = updateCategory;
 
 // ---------- Auth and data initialization ----------
 async function initAuthAndData() {

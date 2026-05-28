@@ -669,11 +669,29 @@ body{font-weight:500;color:var(--text);}
   max-height: 70vh;
   position: relative;
 }
-.weekly-table thead tr th {
+.weekly-table thead th {
   position: sticky;
   top: 0;
   background: var(--surface);
   z-index: 10;
-  border-bottom: 3px solid var(--accent);
 }
-/* Optional: keep category rows sticky? Not implemented due to complexity */
+.category-select {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text);
+  outline: none;
+  border-radius: 0;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.category-select:hover {
+  border-color: var(--border2);
+}
+.category-select:focus {
+  border-color: var(--accent);
+}
