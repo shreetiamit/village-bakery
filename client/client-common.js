@@ -198,18 +198,37 @@ function buildOrderForm() {
   const grid = document.getElementById('products-grid');
   if (!grid) return;
   quantities = {};
-  grid.innerHTML = menuItems.map(item => `
-    <div class="product-row" id="row-${item.id}">
-      <div class="product-info">
-        <div class="product-name">${item.name}</div>
-        <div class="product-unit">per ${item.unit}</div>
-      </div>
-      <div class="qty-ctrl">
-        <button class="qty-btn" onclick="changeQty('${item.id}',-1)">−</button>
-        <input class="qty-input" type="number" id="qty-${item.id}" value="0" min="0" max="999" oninput="setQty('${item.id}',this.value)">
-        <button class="qty-btn" onclick="changeQty('${item.id}',1)">+</button>
-      </div>
-    </div>`).join('');
+  
+  // Group active menu items by category
+  const grouped = {};
+  menuItems.forEach(item => {
+    const cat = item.category || 'Uncategorized';
+    if (!grouped[cat]) grouped[cat] = [];
+    grouped[cat].push(item);
+  });
+  const sortedCategories = Object.keys(grouped).sort();
+  
+  let html = '';
+  for (const category of sortedCategories) {
+    html += `<div style="margin-top: 20px;"><div style="font-weight: 700; letter-spacing: .1em; color: var(--accent); margin-bottom: 8px;">${category}</div>`;
+    for (const item of grouped[category]) {
+      html += `
+        <div class="product-row" id="row-${item.id}">
+          <div class="product-info">
+            <div class="product-name">${item.name}</div>
+            <div class="product-unit">per ${item.unit}</div>
+          </div>
+          <div class="qty-ctrl">
+            <button class="qty-btn" onclick="changeQty('${item.id}',-1)">−</button>
+            <input class="qty-input" type="number" id="qty-${item.id}" value="0" min="0" max="999" oninput="setQty('${item.id}',this.value)">
+            <button class="qty-btn" onclick="changeQty('${item.id}',1)">+</button>
+          </div>
+        </div>`;
+    }
+    html += `</div>`;
+  }
+  grid.innerHTML = html;
+  
   const today = new Date();
   const dateInput = document.getElementById('delivery-date');
   if (dateInput) dateInput.value = localDateStr(today);
@@ -456,18 +475,34 @@ function renderWeeklyGrid() {
   if (weekLabel) weekLabel.textContent = getWeekLabel(weekOffset);
   const prevBtn = document.getElementById('week-prev');
   if (prevBtn) prevBtn.disabled = weekOffset <= 0;
+  
   const headers = dates.map(d => `<th>${d.dayName}<br><span style="font-weight:400;font-size:11px;opacity:.7">${d.label}</span></th>`).join('');
-  const rows = menuItems.map(item => {
-    const cells = dates.map(d => {
-      const qty = weeklyQuantities[d.dateStr]?.[item.id] || '';
-      const hasVal = qty !== '' && qty > 0;
-      return `<td><input class="weekly-qty${hasVal ? ' has-val' : ''}" type="number" min="0" max="999" value="${qty || ''}" placeholder="—" oninput="setWeeklyQty('${d.dateStr}','${item.id}',this.value)"></td>`;
-    }).join('');
-    return `<tr><td class="item-col"><div class="weekly-item-name">${item.name}</div><div class="weekly-item-unit">per ${item.unit}</div></td>${cells}</tr>`;
-  }).join('');
+  
+  // Group menu items by category
+  const grouped = {};
+  menuItems.forEach(item => {
+    const cat = item.category || 'Uncategorized';
+    if (!grouped[cat]) grouped[cat] = [];
+    grouped[cat].push(item);
+  });
+  const sortedCategories = Object.keys(grouped).sort();
+  
+  let rows = '';
+  for (const category of sortedCategories) {
+    rows += `<tr><td colspan="${dates.length + 1}" style="background: var(--bg); font-weight: 700; letter-spacing: .1em; color: var(--accent); padding: 12px 0 6px;">${category}</td></tr>`;
+    for (const item of grouped[category]) {
+      const cells = dates.map(d => {
+        const qty = weeklyQuantities[d.dateStr]?.[item.id] || '';
+        const hasVal = qty !== '' && qty > 0;
+        return `<td><input class="weekly-qty${hasVal ? ' has-val' : ''}" type="number" min="0" max="999" value="${qty || ''}" placeholder="—" oninput="setWeeklyQty('${d.dateStr}','${item.id}',this.value)"></td>`;
+      }).join('');
+      rows += `<tr><td class="item-col"><div class="weekly-item-name">${item.name}</div><div class="weekly-item-unit">per ${item.unit}</div></td>${cells}</tr>`;
+    }
+  }
+  
   const gridDiv = document.getElementById('weekly-grid');
   if (gridDiv) {
-    gridDiv.innerHTML = `<table class="weekly-table"><thead><tr><th class="item-col">Item</th>${headers}</tr></thead><tbody>${rows}</tbody></tr>`;
+    gridDiv.innerHTML = `<table class="weekly-table"><thead><tr><th class="item-col">Item</th>${headers}</tr></thead><tbody>${rows}</tbody></table>`;
   }
   updateWeeklySummary();
 }
