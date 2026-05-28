@@ -1166,40 +1166,89 @@ function printTab(tab) {
       font-family: 'DM Sans', 'Helvetica Neue', Arial, sans-serif;
       color: #1a1916;
       background: white;
-      padding: 0;
       margin: 0;
+      padding: 2mm;
     }
     @media print {
-      body { margin: 0; padding: 0; }
-      .no-print { display: none !important; }
-      @page { margin: 8mm; }
+      body {
+        padding: 2mm;
+      }
+      .no-print {
+        display: none !important;
+      }
+      @page {
+        margin: 0;
+      }
     }
-    .no-print { text-align: center; margin-bottom: 10px; }
-    .print-btn { background: #1a1916; color: white; border: none; padding: 6px 16px; font-size: 10px; cursor: pointer; }
-    .header-section { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 16px; padding-bottom: 6px; border-bottom: 1px solid #ccc; }
-    .title { font-size: 18px; font-weight: 700; text-transform: uppercase; }
-    .range { font-size: 10px; color: #6b6860; }
-    .date-group { margin-bottom: 24px; page-break-inside: avoid; }
-    .date-header { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1.5px solid #000; margin-bottom: 10px; font-weight: 600; }
-    .date-header-left { font-size: 12px; text-transform: uppercase; }
+    .no-print {
+      text-align: center;
+      margin-bottom: 8px;
+    }
+    .print-btn {
+      background: #1a1916;
+      color: white;
+      border: none;
+      padding: 4px 12px;
+      font-size: 9px;
+      cursor: pointer;
+    }
+    .header-section {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 12px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid #ccc;
+    }
+    .title { font-size: 16px; font-weight: 700; text-transform: uppercase; }
+    .range { font-size: 9px; color: #6b6860; }
+    .date-group { margin-bottom: 20px; page-break-inside: avoid; }
+    .date-header {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 0;
+      border-bottom: 1.5px solid #000;
+      margin-bottom: 8px;
+    }
+    .date-header-left { font-size: 11px; font-weight: 600; text-transform: uppercase; }
     .date-header-right { font-size: 9px; color: #6b6860; }
-    .client-card { border: 1px solid #ccc; margin-bottom: 12px; page-break-inside: avoid; }
-    .client-header { background: #f5f5f5; padding: 6px 10px; display: flex; justify-content: space-between; border-bottom: 1px solid #ccc; font-weight: 600; font-size: 11px; }
-    .client-name { font-size: 12px; }
+    .client-card {
+      border: 1px solid #ccc;
+      margin-bottom: 12px;
+      page-break-inside: avoid;
+    }
+    .client-header {
+      background: #f5f5f5;
+      padding: 5px 8px;
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid #ccc;
+      font-weight: 600;
+      font-size: 10px;
+    }
+    .client-name { font-size: 11px; }
     .client-meta { font-size: 9px; color: #6b6860; }
     .client-items { width: 100%; border-collapse: collapse; }
-    .client-items td { padding: 5px 10px; font-size: 10px; border-bottom: 1px solid #f0ece6; }
+    .client-items td { padding: 4px 8px; font-size: 10px; border-bottom: 1px solid #f0ece6; }
     .client-items td:last-child { text-align: right; font-weight: 600; }
+    .note-text { padding: 5px 8px; font-size: 9px; font-style: italic; border-top: 1px dashed #ccc; }
+    .category-header { font-size: 11px; font-weight: 700; color: #C4852A; margin: 10px 0 5px; }
+    .item-row { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #f0ece6; }
+    .item-name { font-weight: 600; font-size: 11px; }
+    .item-clients { font-size: 9px; color: #6b6860; margin-top: 2px; }
+    .item-qty { font-size: 12px; font-weight: 700; text-align: right; }
+    .item-unit { font-size: 9px; font-weight: 400; }
     .invoice-client-card { margin-bottom: 16px; border: 1px solid #ccc; page-break-inside: avoid; }
-    .invoice-client-header { background: #f5efdf; padding: 6px 10px; border-bottom: 1px solid #ccc; }
-    .invoice-client-name { font-size: 13px; font-weight: 700; }
+    .invoice-client-header { background: #f5efdf; padding: 5px 8px; border-bottom: 1px solid #ccc; }
+    .invoice-client-name { font-size: 12px; font-weight: 700; }
     .invoice-client-stats { font-size: 9px; color: #6b6860; }
     .invoice-items-table { width: 100%; border-collapse: collapse; }
-    .invoice-items-table th { text-align: left; padding: 4px 10px; font-size: 9px; background: #f5f5f5; }
-    .invoice-items-table td { padding: 4px 10px; font-size: 10px; border-bottom: 1px solid #f0ece6; }
+    .invoice-items-table th { text-align: left; padding: 4px 8px; font-size: 9px; background: #f5f5f5; }
+    .invoice-items-table td { padding: 4px 8px; font-size: 10px; border-bottom: 1px solid #f0ece6; }
     .invoice-items-table td:last-child { text-align: right; font-weight: 600; }
   `;
 
+  // Invoicing branch (unchanged, but ensure it uses the same style)
   if (tab === 'invoicing') {
     const fs = filterState.invoicing;
     const range = fs.mode === 'custom' ? { from: fs.from, to: fs.to } : getDateRange(fs.mode);
@@ -1241,7 +1290,7 @@ function printTab(tab) {
         <div><div style="font-size:9px;letter-spacing:.2em;">VILLAGE BAKERY + PROVISIONS</div><div class="title">Invoicing Summary</div></div>
         <div class="range"><div>${rangeLabel}</div><div>Printed ${new Date().toLocaleDateString()}</div></div>
       </div>
-      <div style="display:flex; gap: 16px; margin-bottom: 20px; flex-wrap:wrap;">
+      <div style="display:flex; gap: 16px; margin-bottom: 20px;">
         <div><strong>${totalClients}</strong> Clients</div>
         <div><strong>${totalOrders}</strong> Orders</div>
         <div><strong>${totalUnits}</strong> Total Units</div>
@@ -1265,7 +1314,7 @@ function printTab(tab) {
   if (!orders.length) {
     body = '<p>No orders for this period.</p>';
   } else if (tab === 'production') {
-    // Production – categorized items (works)
+    // Production – categorized by category (already working)
     const sortedDates = Object.keys(byDate).sort();
     for (const date of sortedDates) {
       const dayOrders = byDate[date];
@@ -1296,18 +1345,18 @@ function printTab(tab) {
       }
       const sortedCats = Object.keys(categoryGroups).sort();
       for (const cat of sortedCats) {
-        body += `<div class="category-header" style="font-size:11px; font-weight:700; color:#C4852A; margin:10px 0 5px;">${cat}</div>`;
+        body += `<div class="category-header">${cat}</div>`;
         for (const data of categoryGroups[cat]) {
-          body += `<div class="item-row" style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid #f0ece6;">
-            <div><div style="font-weight:600; font-size:11px;">${data.name}</div><div style="font-size:9px; color:#6b6860;">${data.vendors.join(', ')}</div></div>
-            <div style="font-size:12px; font-weight:700; text-align:right;">${data.qty} <span style="font-size:9px; font-weight:400;">${data.unit === 'each' ? 'each' : (data.qty !== 1 ? data.unit + 's' : data.unit)}</span></div>
+          body += `<div class="item-row">
+            <div><div class="item-name">${data.name}</div><div class="item-clients">${data.vendors.join(', ')}</div></div>
+            <div class="item-qty">${data.qty} <span class="item-unit">${data.unit === 'each' ? 'each' : (data.qty !== 1 ? data.unit + 's' : data.unit)}</span></div>
           </div>`;
         }
       }
       body += `</div>`;
     }
   } else {
-    // Packing – clean, simple layout
+    // Packing – vendor-grouped, simplified to avoid blank page
     const sortedDates = Object.keys(byDate).sort();
     for (const date of sortedDates) {
       const dayOrders = byDate[date];
@@ -1316,7 +1365,6 @@ function printTab(tab) {
           <div class="date-header-left">${fmtDate(date)}</div>
           <div class="date-header-right">${dayOrders.length} order${dayOrders.length !== 1 ? 's' : ''}</div>
         </div>`;
-      // Group by vendor
       const vendorMap = {};
       dayOrders.forEach(order => {
         const vendor = order.vendor_name;
@@ -1341,7 +1389,7 @@ function printTab(tab) {
           <table class="client-items">
             ${data.items.map(item => `<tr><td>${escapeHtml(item.name)}</td><td>${item.qty} ${item.unit === 'each' ? 'each' : (item.qty !== 1 ? item.unit + 's' : item.unit)}</td></tr>`).join('')}
           </table>
-          ${data.notes ? `<div style="padding: 5px 10px; font-size: 9px; font-style: italic; border-top: 1px dashed #ccc;">Note: ${escapeHtml(data.notes)}</div>` : ''}
+          ${data.notes ? `<div class="note-text">Note: ${escapeHtml(data.notes)}</div>` : ''}
         </div>`;
       }
       body += `</div>`;
