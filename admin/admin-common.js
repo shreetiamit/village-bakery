@@ -915,7 +915,6 @@ function printTab(tab) {
     return;
   }
   // Production or packing print
-  // Production or packing print
   const orders = filterOrders(tab);
   const fs = filterState[tab];
   const range = fs.mode === 'custom' ? { from: fs.from, to: fs.to } : getDateRange(fs.mode);
@@ -957,152 +956,12 @@ function printTab(tab) {
       body += `<div style="margin-bottom:32px"><div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:2px solid #1a1916;margin-bottom:16px"><span style="font-size:13px;font-weight:600">${fmtDate(date)}</span><span style="font-size:10px;color:#6b6860">${sV.length} client${sV.length !== 1 ? 's' : ''}</span></div>${sV.map(([vendor, data]) => `<div style="border:1px solid #dedad4;margin-bottom:10px;page-break-inside:avoid"><div style="background:#f8f6f2;padding:10px 14px;display:flex;justify-content:space-between;border-bottom:1px solid #dedad4"><span style="font-size:14px;font-weight:600">${vendor}</span><div>${data.time ? `<span style="font-size:11px;color:#6b6860">Delivery ${data.time.slice(0, 5)}</span>&ensp;` : ''}<span style="font-size:10px;color:#6b6860">${data.total} unit${data.total !== 1 ? 's' : ''}</span></div></div><table style="width:100%;border-collapse:collapse">${data.items.map(i => `<tr style="border-bottom:1px solid #f0ece6"><td style="padding:8px 14px;font-size:13px">${i.item_name}</td><td style="padding:8px 14px;font-size:13px;font-weight:600;text-align:right">${i.quantity} ${i.unit === 'each' ? 'each' : (i.quantity !== 1 ? i.unit + 's' : i.unit)}</td></tr>`).join('')}</table>${data.notes ? `<div style="padding:7px 14px;font-size:11px;color:#6b6860;font-style:italic;border-top:1px dashed #dedad4">Note: ${data.notes}</div>` : ''}</div>`).join('')}</div>`;
     });
   }
-  const html = `<!DOCTYPE html>
-  <html>
-  <head>
-    <meta charset="UTF-8">
-    <title>${title}</title>
-    <style>
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
-      body {
-        font-family: 'DM Sans', 'Helvetica Neue', Arial, sans-serif;
-        color: #1a1916;
-        padding: 10mm;
-        margin: 0;
-      }
-      @media print {
-        body {
-          padding: 5mm;
-        }
-        .no-print {
-          display: none !important;
-        }
-        @page {
-          margin: 0;
-        }
-      }
-      .no-print {
-        text-align: center;
-        margin-bottom: 20px;
-        padding-bottom: 12px;
-        border-bottom: 1px solid #dedad4;
-      }
-      .print-btn {
-        background: #1a1916;
-        color: white;
-        border: none;
-        padding: 8px 20px;
-        font-family: 'DM Sans', sans-serif;
-        font-size: 11px;
-        letter-spacing: .18em;
-        text-transform: uppercase;
-        cursor: pointer;
-      }
-      .header-section {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-end;
-        margin-bottom: 24px;
-        padding-bottom: 14px;
-        border-bottom: 1px solid #dedad4;
-      }
-      .title {
-        font-size: 22px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: .04em;
-      }
-      .range {
-        font-size: 12px;
-        color: #6b6860;
-        line-height: 1.8;
-        text-align: right;
-      }
-      .production-table, .packing-table {
-        width: 100%;
-        border-collapse: collapse;
-      }
-      .production-table th, .packing-table th {
-        text-align: left;
-        padding: 10px 6px 8px 0;
-        font-size: 10px;
-        font-weight: 600;
-        color: #6b6860;
-        border-bottom: 1px solid #dedad4;
-        letter-spacing: .1em;
-      }
-      .production-table td, .packing-table td {
-        padding: 10px 6px 10px 0;
-        border-bottom: 1px solid #f0ece6;
-        font-size: 13px;
-        vertical-align: top;
-      }
-      .item-name {
-        font-weight: 600;
-      }
-      .clients-list {
-        font-size: 12px;
-        color: #6b6860;
-      }
-      .qty-cell {
-        text-align: right;
-        font-weight: 700;
-        font-size: 18px;
-        white-space: nowrap;
-      }
-      .unit-small {
-        font-size: 10px;
-        font-weight: 400;
-        color: #6b6860;
-        margin-left: 3px;
-      }
-      .date-group {
-        margin-bottom: 28px;
-        page-break-inside: avoid;
-      }
-      .date-heading {
-        display: flex;
-        justify-content: space-between;
-        padding: 8px 0;
-        border-bottom: 2px solid #1a1916;
-        margin-bottom: 12px;
-        font-weight: 600;
-      }
-      .date-heading-left {
-        font-size: 13px;
-        text-transform: uppercase;
-      }
-      .date-heading-right {
-        font-size: 10px;
-        color: #6b6860;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="no-print">
-      <button class="print-btn" onclick="window.print()">Print / Save PDF</button>
-    </div>
-    <div class="header-section">
-      <div>
-        <div style="font-size:10px;color:#6b6860;margin-bottom:5px;text-transform:uppercase;letter-spacing:.2em">Village Bakery + Provisions</div>
-        <div class="title">${title}</div>
-      </div>
-      <div class="range">
-        <div>${rangeLabel}</div>
-        <div>Printed ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</div>
-      </div>
-    </div>
-    ${body}
-  </body>
-  </html>`;
+  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${title}</title><style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:'Helvetica Neue',Arial,sans-serif;color:#1a1916;padding:44px;max-width:800px;margin:0 auto;}@media print{body{padding:20px;}.no-print{display:none!important;}}.no-print{text-align:center;margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid #dedad4;}.print-btn{background:#1a1916;color:white;border:none;padding:9px 22px;font-size:11px;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;}</style></head><body><div class="no-print"><button class="print-btn" onclick="window.print()">Print / Save PDF</button></div><div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:28px;padding-bottom:14px;border-bottom:1px solid #dedad4"><div><div style="font-size:10px;color:#6b6860;margin-bottom:5px;text-transform:uppercase;letter-spacing:.2em">Village Bakery + Provisions</div><div style="font-size:22px;font-weight:700;text-transform:uppercase;letter-spacing:.04em">${title}</div></div><div style="text-align:right;font-size:12px;color:#6b6860;line-height:1.8"><div>${rangeLabel}</div><div>Printed ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</div></div></div>${body}</body></html>`;
   const w = window.open('', '_blank');
   w.document.write(html);
   w.document.close();
   setTimeout(() => w.print(), 500);
+}
 
 // ---------- Auth and data initialization ----------
 async function initAuthAndData() {
