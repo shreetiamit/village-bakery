@@ -857,7 +857,7 @@ function renderInvoicingContent() {
       </div>
       <table class="invoice-items-table">
         <thead><tr><th>Item</th><th style="text-align:right">Total Qty</th></tr></thead>
-        <tbody>${sortedItems.map(([itemName, qty]) => `<tr><td>${escapeHtml(itemName)}</td><td style="text-align:right;font-weight:600">${qty}</td>`).join('')}</tbody>
+        <tbody>${sortedItems.map(([itemName, qty]) => '<tr><td>${escapeHtml(itemName)}</td><td style="text-align:right;font-weight:600">${qty}</td>').join('')}</tbody>
       </table>
     </div>`;
   }
