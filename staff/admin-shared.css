@@ -304,7 +304,42 @@ body{font-family:'DM Sans',sans-serif;font-size:var(--fs-base);background:var(--
 .pack-vendor-total{font-size:var(--fs-xs);font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--text2);}
 
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-@media print{.header,.tabs,.filter-bar,.print-btn,.stats-row,.pricing-panel,.admin-form-box{display:none!important;}.content{padding:0!important;max-width:100%!important;}.panel{display:block!important;}.prod-date-block,.pack-date-block{page-break-inside:avoid;}}
+
+/* ========== PRINT FIXES (added to prevent blank first page) ========== */
+@media print {
+  .header, .tabs, .filter-bar, .print-btn, .stats-row, .pricing-panel, .admin-form-box {
+    display: none !important;
+  }
+  .content {
+    padding: 0 !important;
+    max-width: 100% !important;
+  }
+  .panel {
+    display: block !important;
+  }
+  .prod-date-block, .pack-date-block {
+    page-break-inside: avoid;
+  }
+  /* CRITICAL FIXES */
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  .header-section {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+  .date-group:first-of-type,
+  .client-card:first-of-type,
+  .invoice-client-card:first-of-type {
+    page-break-before: avoid !important;
+    margin-top: 0 !important;
+  }
+  /* Remove any hidden or empty elements that might cause a break */
+  .no-print + * {
+    page-break-before: avoid !important;
+  }
+}
 /* ── Proportion rebalance ── */
 .header{height:54px;}
 .header-wordmark{font-size:12px;}
