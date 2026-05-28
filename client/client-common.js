@@ -368,13 +368,10 @@ function clearWeeklyQuantities() {
   updateWeeklySummary();
 }
 
-// Repopulate from the previous week (7 days before the current week's Monday)
 async function repopulateFromPreviousWeek() {
-  // Get current week's Monday date
   const currentDates = getWeekDates(weekOffset);
   if (!currentDates.length) return;
   const currentMonday = new Date(currentDates[0].dateStr + 'T12:00:00');
-  // Previous week's Monday is 7 days earlier
   const prevMonday = new Date(currentMonday);
   prevMonday.setDate(prevMonday.getDate() - 7);
   const prevSunday = new Date(prevMonday);
@@ -384,20 +381,21 @@ async function repopulateFromPreviousWeek() {
   const to = localDateStr(prevSunday);
   
   try {
-    // Fetch orders from previous week for this vendor
+    // Fetch all orders for this vendor (no date filter to avoid composite index)
     const snap = await db.collection('orders')
       .where('vendor_id', '==', currentUser.uid)
-      .where('delivery_date', '>=', from)
-      .where('delivery_date', '<=', to)
       .get();
     
-    const orders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    // Filter by date range in JavaScript
+    const orders = snap.docs
+      .map(d => ({ id: d.id, ...d.data() }))
+      .filter(o => o.delivery_date >= from && o.delivery_date <= to);
+    
     if (!orders.length) {
       alert('No orders found for the previous week.');
       return;
     }
     
-    // Aggregate quantities per date and per item
     const newWeeklyQtys = {};
     orders.forEach(order => {
       const date = order.delivery_date;
@@ -410,12 +408,10 @@ async function repopulateFromPreviousWeek() {
       });
     });
     
-    // Now map these to the current week's dates (same weekday alignment)
-    // We need to match the previous week's day-of-week to the same day-of-week in current week
     const currentDatesMap = {};
     currentDates.forEach(d => {
       const dateObj = new Date(d.dateStr + 'T12:00:00');
-      const weekday = dateObj.getDay(); // 0-6
+      const weekday = dateObj.getDay();
       currentDatesMap[weekday] = d.dateStr;
     });
     
@@ -438,6 +434,8 @@ async function repopulateFromPreviousWeek() {
     alert('Failed to load previous week orders: ' + e.message);
   }
 }
+
+window.repopulateFromPreviousWeek = repopulateFromPreviousWeek;
 
 // Expose functions globally
 window.clearWeeklyQuantities = clearWeeklyQuantities;
