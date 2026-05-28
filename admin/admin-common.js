@@ -822,25 +822,75 @@ function renderPackingContent() {
   const orders = filterOrders('packing');
   const el = document.getElementById('pack-body');
   if (!el) return;
-  if (!orders.length) { el.innerHTML = '<div class="empty-state">No orders for this period.</div>'; return; }
+  
+  if (!orders.length) {
+    el.innerHTML = '<div class="empty-state">No orders for this period.</div>';
+    return;
+  }
+
+  // Group by delivery date
   const byDate = {};
-  orders.forEach(o => { if (!byDate[o.delivery_date]) byDate[o.delivery_date] = []; byDate[o.delivery_date].push(o); });
-  let html = '';
+  orders.forEach(o => {
+    if (!byDate[o.delivery_date]) byDate[o.delivery_date] = [];
+    byDate[o.delivery_date].push(o);
+  });
+
+  // Total stats (same as production)
+  const totalDays = Object.keys(byDate).length;
+  const totalOrders = orders.length;
+  const uniqueItems = new Set(orders.flatMap(o => (o.items || []).map(i => i.item_name))).size;
+  const totalUnits = orders.reduce((sum, o) => sum + (o.items || []).reduce((s, i) => s + i.quantity, 0), 0);
+
+  let html = `<div class="prod-summary">
+    <div class="prod-stat"><div class="prod-stat-val">${totalDays}</div><div class="prod-stat-lbl">Days</div></div>
+    <div class="prod-stat"><div class="prod-stat-val">${totalOrders}</div><div class="prod-stat-lbl">Orders</div></div>
+    <div class="prod-stat"><div class="prod-stat-val">${uniqueItems}</div><div class="prod-stat-lbl">Products</div></div>
+    <div class="prod-stat"><div class="prod-stat-val">${totalUnits}</div><div class="prod-stat-lbl">Total Units</div></div>
+  </div>`;
+
+  // Iterate dates in order
   Object.keys(byDate).sort().forEach(date => {
-    const dO = byDate[date];
-    const dU = dO.reduce((s, o) => s + (o.items || []).reduce((ss, i) => ss + i.quantity, 0), 0);
-    const bV = {};
-    dO.forEach(o => {
-      if (!bV[o.vendor_name]) bV[o.vendor_name] = { items: [], time: o.delivery_time, notes: o.notes, total: 0 };
-      (o.items || []).forEach(i => {
-        const ex = bV[o.vendor_name].items.find(x => x.item_name === i.item_name);
-        if (ex) ex.quantity += i.quantity;
-        else bV[o.vendor_name].items.push({ ...i });
-        bV[o.vendor_name].total += i.quantity;
+    const dayOrders = byDate[date];
+    const dayUnits = dayOrders.reduce((sum, o) => sum + (o.items || []).reduce((s, i) => s + i.quantity, 0), 0);
+    
+    // Aggregate items across all vendors for this date
+    const itemMap = {};
+    dayOrders.forEach(order => {
+      (order.items || []).forEach(item => {
+        if (!itemMap[item.item_name]) {
+          itemMap[item.item_name] = { qty: 0, unit: item.unit, vendors: [] };
+        }
+        itemMap[item.item_name].qty += item.quantity;
+        if (!itemMap[item.item_name].vendors.includes(order.vendor_name)) {
+          itemMap[item.item_name].vendors.push(order.vendor_name);
+        }
       });
     });
-    html += `<div class="pack-date-block"><div class="pack-date-heading"><span>${date === TODAY ? 'Today &mdash; ' : ''}${fmtDate(date)}</span><span class="prod-date-sub">${Object.keys(bV).length} client${Object.keys(bV).length !== 1 ? 's' : ''} &middot; ${dU} units</span></div>${Object.entries(bV).sort((a, b) => (a[1].time || '').localeCompare(b[1].time || '')).map(([vendor, data]) => `<div class="pack-vendor-card"><div class="pack-vendor-header"><span class="pack-vendor-name">${vendor}</span><div style="display:flex;align-items:center;gap:16px">${data.time ? `<span class="pack-vendor-time">Delivery: ${data.time.slice(0, 5)}</span>` : ''}<span class="pack-vendor-total">${data.total} unit${data.total !== 1 ? 's' : ''}</span></div></div>${data.items.map(i => `<div class="pack-item-row"><span class="pack-item-name">${i.item_name}</span><span class="pack-item-qty">${i.quantity} ${i.unit === 'each' ? 'each' : (i.quantity !== 1 ? i.unit + 's' : i.unit)}</span></div>`).join('')}${data.notes ? `<div class="pack-notes">Note: ${data.notes}</div>` : ''}</div>`).join('')}</div>`;
+
+    const sortedItems = Object.entries(itemMap).sort((a, b) => b[1].qty - a[1].qty);
+    
+    html += `<div class="prod-date-block">
+      <div class="prod-date-heading">
+        <span>${date === TODAY ? 'Today — ' : ''}${fmtDate(date)}</span>
+        <span class="prod-date-sub">${dayOrders.length} order${dayOrders.length !== 1 ? 's' : ''} &middot; ${dayUnits} units</span>
+      </div>`;
+    
+    sortedItems.forEach(([name, data]) => {
+      html += `<div class="prod-item-row">
+        <div>
+          <div class="prod-item-name">${name}</div>
+          <div class="prod-item-vendors">${data.vendors.join(', ')}</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0">
+          <span class="prod-item-qty">${data.qty}</span>
+          <span class="prod-item-unit">${data.unit === 'each' ? 'each' : (data.qty !== 1 ? data.unit + 's' : data.unit)}</span>
+        </div>
+      </div>`;
+    });
+    
+    html += `</div>`;
   });
+
   el.innerHTML = html;
 }
 
