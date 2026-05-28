@@ -1,3 +1,6 @@
+console.log("admin-common.js loading...");
+
+// Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyDpzmw5NGHagj1fv4L2v74Wfj1E2_KmmdY",
   authDomain: "village-bakery-6885a.firebaseapp.com",
@@ -6,9 +9,20 @@ const firebaseConfig = {
   messagingSenderId: "735648711607",
   appId: "1:735648711607:web:423ff3ca56572d9e7d9e32"
 };
-firebase.initializeApp(firebaseConfig);
+
+// Initialize Firebase only if not already initialized
+if (!firebase.apps || !firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+  console.log("Firebase initialized");
+} else {
+  console.log("Firebase already initialized");
+}
+
 const auth = firebase.auth();
 const db = firebase.firestore();
+
+console.log("auth object:", auth);
+
 let currentUser = null, profile = null, allOrders = [], allVendors = [], allMenu = [];
 const now0 = new Date();
 const TODAY = `${now0.getFullYear()}-${String(now0.getMonth() + 1).padStart(2, '0')}-${String(now0.getDate()).padStart(2, '0')}`;
@@ -24,7 +38,10 @@ function localDateStr(d) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
 function show(id) {
-  ['v-loading', 'v-auth', 'v-unauthorized', 'v-app'].forEach(v => document.getElementById(v).classList.toggle('hidden', v !== id));
+  ['v-loading', 'v-auth', 'v-unauthorized', 'v-app'].forEach(v => {
+    const el = document.getElementById(v);
+    if (el) el.classList.toggle('hidden', v !== id);
+  });
 }
 
 // ==================== INVOICING HELPER ====================
@@ -291,7 +308,7 @@ function coRenderWeeklyGrid() {
     return `<tr><td class="item-col"><div class="weekly-item-name">${item.name}</div><div class="weekly-item-unit">per ${item.unit}</div></td>${cells}</tr>`;
   }).join('');
   const gridDiv = document.getElementById('co-weekly-grid');
-  if (gridDiv) gridDiv.innerHTML = `<table class="weekly-table"><thead><tr><th class="item-col">Item</th>${headers}</tr></thead><tbody>${rows}</tbody><table>`;
+  if (gridDiv) gridDiv.innerHTML = `<table class="weekly-table"><thead><tr><th class="item-col">Item</th>${headers}<tr></thead><tbody>${rows}</tbody></table>`;
   coUpdateWeeklyPreview();
 }
 function coSetWeeklyQty(dateStr, itemId, val) {
@@ -991,7 +1008,9 @@ function printTab(tab) {
 
 // ---------- Auth and data initialization ----------
 async function initAuthAndData() {
+  console.log("initAuthAndData called, auth =", auth);
   auth.onAuthStateChanged(async (user) => {
+    console.log("onAuthStateChanged user =", user);
     if (!user) { show('v-auth'); return; }
     currentUser = user;
     try {
@@ -1035,6 +1054,7 @@ window.handleLogout = async function() { await auth.signOut(); show('v-auth'); }
 
 // ---------- DOMContentLoaded ----------
 document.addEventListener('DOMContentLoaded', () => {
+  console.log("DOMContentLoaded fired");
   const currentFile = window.location.pathname.split('/').pop();
   let activeTab = 'orders';
   if (currentFile === 'clients.html') activeTab = 'vendors';
