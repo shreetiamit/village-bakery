@@ -915,9 +915,48 @@ function printTab(tab) {
     return;
   }
   // Production or packing print
+  // Production or packing print
   const orders = filterOrders(tab);
   const fs = filterState[tab];
   const range = fs.mode === 'custom' ? { from: fs.from, to: fs.to } : getDateRange(fs.mode);
+  const title = tab === 'production' ? 'Production List' : 'Packing + Delivery';
+  const rangeLabel = range.from === range.to ? fmtDate(range.from) : fmtDate(range.from) + ' – ' + fmtDate(range.to);
+  const byDate = {};
+  orders.forEach(o => { if (!byDate[o.delivery_date]) byDate[o.delivery_date] = []; byDate[o.delivery_date].push(o); });
+  let body = '';
+  if (!orders.length) {
+    body = '<p style="color:#6b6860;font-size:14px">No orders for this period.</p>';
+  } else if (tab === 'production') {
+    Object.keys(byDate).sort().forEach(date => {
+      const dO = byDate[date];
+      const dU = dO.reduce((s, o) => s + (o.items || []).reduce((ss, i) => ss + i.quantity, 0), 0);
+      const iM = {};
+      dO.forEach(o => {
+        (o.items || []).forEach(i => {
+          if (!iM[i.item_name]) iM[i.item_name] = { qty: 0, unit: i.unit, vendors: [] };
+          iM[i.item_name].qty += i.quantity;
+          if (!iM[i.item_name].vendors.includes(o.vendor_name)) iM[i.item_name].vendors.push(o.vendor_name);
+        });
+      });
+      body += `<div style="margin-bottom:32px;page-break-inside:avoid"><div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:2px solid #1a1916"><span style="font-size:13px;font-weight:600;text-transform:uppercase">${fmtDate(date)}</span><span style="font-size:10px;color:#6b6860">${dO.length} order${dO.length !== 1 ? 's' : ''} &middot; ${dU} units</span></div><table style="width:100%;border-collapse:collapse"><thead><tr><th style="padding:8px 0;text-align:left;font-size:10px;color:#6b6860;border-bottom:1px solid #dedad4">Item</th><th style="padding:8px 0;text-align:left;font-size:10px;color:#6b6860;border-bottom:1px solid #dedad4">Clients</th><th style="padding:8px 0;text-align:right;font-size:10px;color:#6b6860;border-bottom:1px solid #dedad4">Qty</th></tr></thead><tbody>${Object.entries(iM).sort((a, b) => b[1].qty - a[1].qty).map(([name, data]) => `<tr style="border-bottom:1px solid #f0ece6"><td style="padding:10px 0;font-size:14px">${name}</td><td style="padding:10px 0;font-size:12px;color:#6b6860">${data.vendors.join(', ')}</td><td style="padding:10px 0;text-align:right;font-size:22px;font-weight:700">${data.qty} <span style="font-size:10px;font-weight:400;color:#6b6860">${data.unit === 'each' ? 'each' : (data.qty !== 1 ? data.unit + 's' : data.unit)}</span></td></tr>`).join('')}</tbody></table></div>`;
+    });
+  } else {
+    Object.keys(byDate).sort().forEach(date => {
+      const dO = byDate[date];
+      const bV = {};
+      dO.forEach(o => {
+        if (!bV[o.vendor_name]) bV[o.vendor_name] = { items: [], time: o.delivery_time, notes: o.notes, total: 0 };
+        (o.items || []).forEach(i => {
+          const ex = bV[o.vendor_name].items.find(x => x.item_name === i.item_name);
+          if (ex) ex.quantity += i.quantity;
+          else bV[o.vendor_name].items.push({ ...i });
+          bV[o.vendor_name].total += i.quantity;
+        });
+      });
+      const sV = Object.entries(bV).sort((a, b) => (a[1].time || '').localeCompare(b[1].time || ''));
+      body += `<div style="margin-bottom:32px"><div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:2px solid #1a1916;margin-bottom:16px"><span style="font-size:13px;font-weight:600">${fmtDate(date)}</span><span style="font-size:10px;color:#6b6860">${sV.length} client${sV.length !== 1 ? 's' : ''}</span></div>${sV.map(([vendor, data]) => `<div style="border:1px solid #dedad4;margin-bottom:10px;page-break-inside:avoid"><div style="background:#f8f6f2;padding:10px 14px;display:flex;justify-content:space-between;border-bottom:1px solid #dedad4"><span style="font-size:14px;font-weight:600">${vendor}</span><div>${data.time ? `<span style="font-size:11px;color:#6b6860">Delivery ${data.time.slice(0, 5)}</span>&ensp;` : ''}<span style="font-size:10px;color:#6b6860">${data.total} unit${data.total !== 1 ? 's' : ''}</span></div></div><table style="width:100%;border-collapse:collapse">${data.items.map(i => `<tr style="border-bottom:1px solid #f0ece6"><td style="padding:8px 14px;font-size:13px">${i.item_name}</td><td style="padding:8px 14px;font-size:13px;font-weight:600;text-align:right">${i.quantity} ${i.unit === 'each' ? 'each' : (i.quantity !== 1 ? i.unit + 's' : i.unit)}</td></tr>`).join('')}</table>${data.notes ? `<div style="padding:7px 14px;font-size:11px;color:#6b6860;font-style:italic;border-top:1px dashed #dedad4">Note: ${data.notes}</div>` : ''}</div>`).join('')}</div>`;
+    });
+  }
   const html = `<!DOCTYPE html>
   <html>
   <head>
@@ -932,23 +971,18 @@ function printTab(tab) {
       body {
         font-family: 'DM Sans', 'Helvetica Neue', Arial, sans-serif;
         color: #1a1916;
-        padding: 15mm 12mm;
+        padding: 10mm;
         margin: 0;
       }
       @media print {
         body {
-          padding: 10mm;
+          padding: 5mm;
         }
         .no-print {
           display: none !important;
         }
-        .page-break {
-          page-break-before: avoid;
-          page-break-inside: avoid;
-        }
         @page {
-          size: auto;
-          margin: 10mm;
+          margin: 0;
         }
       }
       .no-print {
@@ -973,7 +1007,7 @@ function printTab(tab) {
         justify-content: space-between;
         align-items: flex-end;
         margin-bottom: 24px;
-        padding-bottom: 12px;
+        padding-bottom: 14px;
         border-bottom: 1px solid #dedad4;
       }
       .title {
@@ -988,12 +1022,11 @@ function printTab(tab) {
         line-height: 1.8;
         text-align: right;
       }
-      .production-table {
+      .production-table, .packing-table {
         width: 100%;
         border-collapse: collapse;
-        margin-top: 8px;
       }
-      .production-table th {
+      .production-table th, .packing-table th {
         text-align: left;
         padding: 10px 6px 8px 0;
         font-size: 10px;
@@ -1002,7 +1035,7 @@ function printTab(tab) {
         border-bottom: 1px solid #dedad4;
         letter-spacing: .1em;
       }
-      .production-table td {
+      .production-table td, .packing-table td {
         padding: 10px 6px 10px 0;
         border-bottom: 1px solid #f0ece6;
         font-size: 13px;
@@ -1065,49 +1098,11 @@ function printTab(tab) {
     </div>
     ${body}
   </body>
-  </html>`;  const rangeLabel = range.from === range.to ? fmtDate(range.from) : fmtDate(range.from) + ' – ' + fmtDate(range.to);
-  const byDate = {};
-  orders.forEach(o => { if (!byDate[o.delivery_date]) byDate[o.delivery_date] = []; byDate[o.delivery_date].push(o); });
-  let body = '';
-  if (!orders.length) {
-    body = '<p style="color:#6b6860;font-size:14px">No orders for this period.</p>';
-  } else if (tab === 'production') {
-    Object.keys(byDate).sort().forEach(date => {
-      const dO = byDate[date];
-      const dU = dO.reduce((s, o) => s + (o.items || []).reduce((ss, i) => ss + i.quantity, 0), 0);
-      const iM = {};
-      dO.forEach(o => {
-        (o.items || []).forEach(i => {
-          if (!iM[i.item_name]) iM[i.item_name] = { qty: 0, unit: i.unit, vendors: [] };
-          iM[i.item_name].qty += i.quantity;
-          if (!iM[i.item_name].vendors.includes(o.vendor_name)) iM[i.item_name].vendors.push(o.vendor_name);
-        });
-      });
-      body += `<div style="margin-bottom:32px;page-break-inside:avoid"><div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:2px solid #1a1916"><span style="font-size:13px;font-weight:600;text-transform:uppercase">${fmtDate(date)}</span><span style="font-size:10px;color:#6b6860">${dO.length} order${dO.length !== 1 ? 's' : ''} &middot; ${dU} units</span></div><table style="width:100%;border-collapse:collapse"><thead><tr><th style="padding:8px 0;text-align:left;font-size:10px;color:#6b6860;border-bottom:1px solid #dedad4">Item</th><th style="padding:8px 0;text-align:left;font-size:10px;color:#6b6860;border-bottom:1px solid #dedad4">Clients</th><th style="padding:8px 0;text-align:right;font-size:10px;color:#6b6860;border-bottom:1px solid #dedad4">Qty</th></tr></thead><tbody>${Object.entries(iM).sort((a, b) => b[1].qty - a[1].qty).map(([name, data]) => `<tr style="border-bottom:1px solid #f0ece6"><td style="padding:10px 0;font-size:14px">${name}</td><td style="padding:10px 0;font-size:12px;color:#6b6860">${data.vendors.join(', ')}</td><td style="padding:10px 0;text-align:right;font-size:22px;font-weight:700">${data.qty} <span style="font-size:10px;font-weight:400;color:#6b6860">${data.unit === 'each' ? 'each' : (data.qty !== 1 ? data.unit + 's' : data.unit)}</span></td></tr>`).join('')}</tbody></table></div>`;
-    });
-  } else {
-    Object.keys(byDate).sort().forEach(date => {
-      const dO = byDate[date];
-      const bV = {};
-      dO.forEach(o => {
-        if (!bV[o.vendor_name]) bV[o.vendor_name] = { items: [], time: o.delivery_time, notes: o.notes, total: 0 };
-        (o.items || []).forEach(i => {
-          const ex = bV[o.vendor_name].items.find(x => x.item_name === i.item_name);
-          if (ex) ex.quantity += i.quantity;
-          else bV[o.vendor_name].items.push({ ...i });
-          bV[o.vendor_name].total += i.quantity;
-        });
-      });
-      const sV = Object.entries(bV).sort((a, b) => (a[1].time || '').localeCompare(b[1].time || ''));
-      body += `<div style="margin-bottom:32px"><div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:2px solid #1a1916;margin-bottom:16px"><span style="font-size:13px;font-weight:600">${fmtDate(date)}</span><span style="font-size:10px;color:#6b6860">${sV.length} client${sV.length !== 1 ? 's' : ''}</span></div>${sV.map(([vendor, data]) => `<div style="border:1px solid #dedad4;margin-bottom:10px;page-break-inside:avoid"><div style="background:#f8f6f2;padding:10px 14px;display:flex;justify-content:space-between;border-bottom:1px solid #dedad4"><span style="font-size:14px;font-weight:600">${vendor}</span><div>${data.time ? `<span style="font-size:11px;color:#6b6860">Delivery ${data.time.slice(0, 5)}</span>&ensp;` : ''}<span style="font-size:10px;color:#6b6860">${data.total} unit${data.total !== 1 ? 's' : ''}</span></div></div><table style="width:100%;border-collapse:collapse">${data.items.map(i => `<tr style="border-bottom:1px solid #f0ece6"><td style="padding:8px 14px;font-size:13px">${i.item_name}</td><td style="padding:8px 14px;font-size:13px;font-weight:600;text-align:right">${i.quantity} ${i.unit === 'each' ? 'each' : (i.quantity !== 1 ? i.unit + 's' : i.unit)}</td></tr>`).join('')}</table>${data.notes ? `<div style="padding:7px 14px;font-size:11px;color:#6b6860;font-style:italic;border-top:1px dashed #dedad4">Note: ${data.notes}</div>` : ''}</div>`).join('')}</div>`;
-    });
-  }
-  const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${title}</title><style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:'Helvetica Neue',Arial,sans-serif;color:#1a1916;padding:44px;max-width:800px;margin:0 auto;}@media print{body{padding:20px;}.no-print{display:none!important;}}.no-print{text-align:center;margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid #dedad4;}.print-btn{background:#1a1916;color:white;border:none;padding:9px 22px;font-size:11px;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;}</style></head><body><div class="no-print"><button class="print-btn" onclick="window.print()">Print / Save PDF</button></div><div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:28px;padding-bottom:14px;border-bottom:1px solid #dedad4"><div><div style="font-size:10px;color:#6b6860;margin-bottom:5px;text-transform:uppercase;letter-spacing:.2em">Village Bakery + Provisions</div><div style="font-size:22px;font-weight:700;text-transform:uppercase;letter-spacing:.04em">${title}</div></div><div style="text-align:right;font-size:12px;color:#6b6860;line-height:1.8"><div>${rangeLabel}</div><div>Printed ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</div></div></div>${body}</body></html>`;
+  </html>`;
   const w = window.open('', '_blank');
   w.document.write(html);
   w.document.close();
   setTimeout(() => w.print(), 500);
-}
 
 // ---------- Auth and data initialization ----------
 async function initAuthAndData() {
@@ -1168,4 +1163,4 @@ document.addEventListener('DOMContentLoaded', () => {
     else btn.classList.remove('active');
   });
   initAuthAndData();
-});
+});}
