@@ -680,45 +680,78 @@ async function clearPricing(vendorId) {
 // ---------- Render functions ----------
 function renderOrders() {
   const el = document.getElementById('orders-list');
-  if (!el) return;
-  if (!allOrders.length) { el.innerHTML = '<div class="empty-state">No orders yet.</div>'; return; }
+  if (!el) {
+    console.error("orders-list element not found");
+    return;
+  }
+  
+  if (!allOrders || allOrders.length === 0) {
+    el.innerHTML = '<div class="empty-state">No orders yet.</div>';
+    return;
+  }
+  
+  // Group orders by delivery date
   const byDate = {};
-  allOrders.forEach(o => { if (!byDate[o.delivery_date]) byDate[o.delivery_date] = []; byDate[o.delivery_date].push(o); });
-  el.innerHTML = Object.entries(byDate).sort(([a], [b]) => a.localeCompare(b)).map(([date, orders]) => {
+  allOrders.forEach(order => {
+    const date = order.delivery_date;
+    if (!date) return;
+    if (!byDate[date]) byDate[date] = [];
+    byDate[date].push(order);
+  });
+  
+  const sortedDates = Object.keys(byDate).sort();
+  if (sortedDates.length === 0) {
+    el.innerHTML = '<div class="empty-state">No orders with valid delivery dates.</div>';
+    return;
+  }
+  
+  let html = '';
+  
+  for (const date of sortedDates) {
+    const orders = byDate[date];
     const d = new Date(date + 'T12:00:00');
     const label = d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
-    const units = orders.reduce((s, o) => s + (o.items || []).reduce((ss, i) => ss + i.quantity, 0), 0);
-    return `<div class="date-group">
+    const units = orders.reduce((sum, order) => {
+      const orderItems = order.items || [];
+      return sum + orderItems.reduce((itemSum, item) => itemSum + (item.quantity || 0), 0);
+    }, 0);
+    
+    html += `<div class="date-group">
       <div class="date-header">
         <div class="date-header-label">${date === TODAY ? 'Today — ' : ''}${label}</div>
-        <div class="date-header-stats">${orders.length} order${orders.length !== 1 ? 's' : ''}&ensp;&middot;&ensp;${units} units</div>
-      </div>
-      ${orders.map(order => {
-        const oI = order.items || [];
-        const total = oI.reduce((s, i) => s + i.quantity, 0);
-        const items = oI.map(i => `${i.item_name} &times; ${i.quantity}`).join(', ');
-        const st = (order.status || 'new').toLowerCase();
-        return `<div class="order-row">
-          <div style="flex:1">
-            <div class="order-vendor">${order.vendor_name}${order.created_by_admin ? '<span style="font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-left:10px;border:1px solid var(--border);padding:2px 7px">Phone</span>' : ''}</div>
-            <div class="order-items-text">${items}</div>
-            ${order.notes ? `<div class="order-notes-text">${order.notes}</div>` : ''}
-          </div>
-          <div class="order-row-right">
-            <div class="order-time">${(order.delivery_time || '').slice(0, 5)}</div>
-            <div class="order-units">${total} units</div>
-            <select class="status-select ${st}" onchange="updateStatus('${order.id}',this)">
-              <option value="New" ${order.status === 'New' ? 'selected' : ''}>New</option>
-              <option value="Seen" ${order.status === 'Seen' ? 'selected' : ''}>Seen</option>
-              <option value="Done" ${order.status === 'Done' ? 'selected' : ''}>Done</option>
-            </select>
-            <button class="btn-invoice" onclick="openInvoice('${order.id}')">Invoice</button>
-            <button class="btn-invoice" style="color:var(--err);border-color:var(--err)" onclick="deleteOrderAdmin('${order.id}')">Delete</button>
-          </div>
-        </div>`;
-      }).join('')}
-    </div>`;
-  }).join('');
+        <div class="date-header-stats">${orders.length} order${orders.length !== 1 ? 's' : ''} &middot; ${units} units</div>
+      </div>`;
+    
+    for (const order of orders) {
+      const items = order.items || [];
+      const totalUnits = items.reduce((sum, item) => sum + (item.quantity || 0), 0);
+      const itemsText = items.map(item => `${item.item_name || 'Unknown'} &times; ${item.quantity || 0}`).join(', ');
+      const statusClass = (order.status || 'new').toLowerCase();
+      
+      html += `<div class="order-row">
+        <div style="flex:1">
+          <div class="order-vendor">${escapeHtml(order.vendor_name || 'Unknown Vendor')}${order.created_by_admin ? '<span style="font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-left:10px;border:1px solid var(--border);padding:2px 7px">Phone</span>' : ''}</div>
+          <div class="order-items-text">${itemsText || 'No items'}</div>
+          ${order.notes ? `<div class="order-notes-text">${escapeHtml(order.notes)}</div>` : ''}
+        </div>
+        <div class="order-row-right">
+          <div class="order-time">${(order.delivery_time || '').slice(0,5) || '--:--'}</div>
+          <div class="order-units">${totalUnits} units</div>
+          <select class="status-select ${statusClass}" onchange="updateStatus('${order.id}',this)">
+            <option value="New" ${order.status === 'New' ? 'selected' : ''}>New</option>
+            <option value="Seen" ${order.status === 'Seen' ? 'selected' : ''}>Seen</option>
+            <option value="Done" ${order.status === 'Done' ? 'selected' : ''}>Done</option>
+          </select>
+          <button class="btn-invoice" onclick="openInvoice('${order.id}')">Invoice</button>
+          <button class="btn-invoice" style="color:var(--err);border-color:var(--err)" onclick="deleteOrderAdmin('${order.id}')">Delete</button>
+        </div>
+      </div>`;
+    }
+    
+    html += `</div>`;
+  }
+  
+  el.innerHTML = html;
 }
 
 function renderVendors() {
