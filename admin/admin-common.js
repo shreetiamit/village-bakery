@@ -918,8 +918,154 @@ function printTab(tab) {
   const orders = filterOrders(tab);
   const fs = filterState[tab];
   const range = fs.mode === 'custom' ? { from: fs.from, to: fs.to } : getDateRange(fs.mode);
-  const title = tab === 'production' ? 'Production List' : 'Packing + Delivery';
-  const rangeLabel = range.from === range.to ? fmtDate(range.from) : fmtDate(range.from) + ' – ' + fmtDate(range.to);
+  const html = `<!DOCTYPE html>
+  <html>
+  <head>
+    <meta charset="UTF-8">
+    <title>${title}</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: 'DM Sans', 'Helvetica Neue', Arial, sans-serif;
+        color: #1a1916;
+        padding: 15mm 12mm;
+        margin: 0;
+      }
+      @media print {
+        body {
+          padding: 10mm;
+        }
+        .no-print {
+          display: none !important;
+        }
+        .page-break {
+          page-break-before: avoid;
+          page-break-inside: avoid;
+        }
+        @page {
+          size: auto;
+          margin: 10mm;
+        }
+      }
+      .no-print {
+        text-align: center;
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #dedad4;
+      }
+      .print-btn {
+        background: #1a1916;
+        color: white;
+        border: none;
+        padding: 8px 20px;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 11px;
+        letter-spacing: .18em;
+        text-transform: uppercase;
+        cursor: pointer;
+      }
+      .header-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 24px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #dedad4;
+      }
+      .title {
+        font-size: 22px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+      }
+      .range {
+        font-size: 12px;
+        color: #6b6860;
+        line-height: 1.8;
+        text-align: right;
+      }
+      .production-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 8px;
+      }
+      .production-table th {
+        text-align: left;
+        padding: 10px 6px 8px 0;
+        font-size: 10px;
+        font-weight: 600;
+        color: #6b6860;
+        border-bottom: 1px solid #dedad4;
+        letter-spacing: .1em;
+      }
+      .production-table td {
+        padding: 10px 6px 10px 0;
+        border-bottom: 1px solid #f0ece6;
+        font-size: 13px;
+        vertical-align: top;
+      }
+      .item-name {
+        font-weight: 600;
+      }
+      .clients-list {
+        font-size: 12px;
+        color: #6b6860;
+      }
+      .qty-cell {
+        text-align: right;
+        font-weight: 700;
+        font-size: 18px;
+        white-space: nowrap;
+      }
+      .unit-small {
+        font-size: 10px;
+        font-weight: 400;
+        color: #6b6860;
+        margin-left: 3px;
+      }
+      .date-group {
+        margin-bottom: 28px;
+        page-break-inside: avoid;
+      }
+      .date-heading {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 2px solid #1a1916;
+        margin-bottom: 12px;
+        font-weight: 600;
+      }
+      .date-heading-left {
+        font-size: 13px;
+        text-transform: uppercase;
+      }
+      .date-heading-right {
+        font-size: 10px;
+        color: #6b6860;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="no-print">
+      <button class="print-btn" onclick="window.print()">Print / Save PDF</button>
+    </div>
+    <div class="header-section">
+      <div>
+        <div style="font-size:10px;color:#6b6860;margin-bottom:5px;text-transform:uppercase;letter-spacing:.2em">Village Bakery + Provisions</div>
+        <div class="title">${title}</div>
+      </div>
+      <div class="range">
+        <div>${rangeLabel}</div>
+        <div>Printed ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</div>
+      </div>
+    </div>
+    ${body}
+  </body>
+  </html>`;  const rangeLabel = range.from === range.to ? fmtDate(range.from) : fmtDate(range.from) + ' – ' + fmtDate(range.to);
   const byDate = {};
   orders.forEach(o => { if (!byDate[o.delivery_date]) byDate[o.delivery_date] = []; byDate[o.delivery_date].push(o); });
   let body = '';
