@@ -4,10 +4,11 @@
   <meta charset="UTF-8">
   <title>Village Bakery Staff</title>
   <script>
-    // Get last visited page from localStorage, default to 'orders.html'
-    const lastPage = localStorage.getItem('lastAdminPage') || 'production.html';
-    // Redirect to that page
-    window.location.href = lastPage;
+   const VALID_STAFF_PAGES = ['packing.html', 'production.html'];
+const lastPage = localStorage.getItem('lastStaffPage');
+if (lastPage && VALID_STAFF_PAGES.includes(lastPage)) {
+  window.location.replace(lastPage);
+}
   </script>
 </head>
 <body>
