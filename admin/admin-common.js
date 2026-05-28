@@ -850,6 +850,10 @@ function renderInvoicingContent() {
   for (const [clientName, itemsMap] of clientMap.entries()) {
     const sortedItems = Array.from(itemsMap.entries()).sort((a, b) => a[0].localeCompare(b[0]));
     const totalClientUnits = sortedItems.reduce((s, i) => s + i[1], 0);
+    // Build rows correctly using template literal with backticks
+    const rowsHtml = sortedItems.map(([itemName, qty]) => {
+      return `<tr><td>${escapeHtml(itemName)}</td><td style="text-align:right;font-weight:600">${qty}</td></tr>`;
+    }).join('');
     html += `<div class="invoice-client-card">
       <div class="invoice-client-header">
         <div class="invoice-client-name">${escapeHtml(clientName)}</div>
@@ -857,7 +861,7 @@ function renderInvoicingContent() {
       </div>
       <table class="invoice-items-table">
         <thead><tr><th>Item</th><th style="text-align:right">Total Qty</th></tr></thead>
-        <tbody>${sortedItems.map(([itemName, qty]) => '<tr><td>${escapeHtml(itemName)}</td><td style="text-align:right;font-weight:600">${qty}</td>').join('')}</tbody>
+        <tbody>${rowsHtml}</tbody>
       </table>
     </div>`;
   }
