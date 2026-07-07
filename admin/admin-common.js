@@ -18,7 +18,7 @@ const filterState = {
   invoicing: { mode: 'thisweek', from: '', to: '' },
   orders: { mode: 'upcoming', from: '', to: '' }
 };
-let orderStatusFilter = 'all';
+let orderStatusFilter = 'all'; // 'all' | 'New' | 'Seen' | 'Done'
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -92,6 +92,7 @@ function setOrdersStatusFilter(status, btn) {
   renderOrders();
 }
 
+// ==================== INVOICING HELPER ====================
 function escapeHtml(str) {
   return str.replace(/[&<>]/g, function(m) {
     if (m === '&') return '&amp;';
@@ -197,6 +198,7 @@ function setCustomRange(tab) {
   if (tab === 'invoicing') renderInvoicingContent();
 }
 
+// ---------- Data loading functions ----------
 async function loadOrders() {
   const snap = await db.collection('orders').orderBy('delivery_date').get();
   allOrders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -229,6 +231,7 @@ async function loadMenu() {
   if (badgeMenu) badgeMenu.textContent = allMenu.filter(m => m.active).length;
 }
 
+// ---------- Create order globals ----------
 let coQtys = {}, coWeeklyQtys = {}, coWeekOffset = 0, coOrderType = 'single';
 
 function toggleCreateOrder() {
@@ -269,7 +272,7 @@ function buildCreateOrderForm() {
   });
   const mo = document.createElement('option');
   mo.value = '__manual__';
-  mo.textContent = 'Other / Type name';
+  mo.textContent = '─ Other / Type name ─';
   sel.appendChild(mo);
   
   document.getElementById('co-manual-field').style.display = 'none';
@@ -285,6 +288,7 @@ function buildCreateOrderForm() {
   const itemsGrid = document.getElementById('co-items-grid');
   if (!itemsGrid) return;
   
+  // Group active items by category
   const activeItems = allMenu.filter(m => m.active);
   const grouped = {};
   activeItems.forEach(item => {
@@ -296,7 +300,7 @@ function buildCreateOrderForm() {
   
   let html = '';
   for (const category of sortedCategories) {
-    html += `<div style="margin-top: 20px;"><div style="font-weight: 700;">${category}</div>`;
+    html += `<div style="margin-top: 20px;"><div style="font-weight: 700; letter-spacing: .1em; color: var(--accent); margin-bottom: 8px;">${category}</div>`;
     const sortedItems = grouped[category].sort((a, b) => a.name.localeCompare(b.name));
     for (const item of sortedItems) {
       html += `
@@ -304,7 +308,7 @@ function buildCreateOrderForm() {
           <div class="co-item-name">${item.name}</div>
           <div class="co-item-unit">${item.unit}</div>
           <div class="co-qty-ctrl">
-            <button class="co-qty-btn" onclick="coChangeQty('${item.id}',-1)">-</button>
+            <button class="co-qty-btn" onclick="coChangeQty('${item.id}',-1)">−</button>
             <input class="co-qty-input" type="number" id="co-qty-${item.id}" value="" min="0" max="999" placeholder="0" oninput="coSetQty('${item.id}',this.value)">
             <button class="co-qty-btn" onclick="coChangeQty('${item.id}',1)">+</button>
           </div>
@@ -350,7 +354,7 @@ function coGetWeekLabel(offset) {
   const dates = coGetWeekDates(offset);
   const [, fm, fd] = dates[0].dateStr.split('-');
   const [, lm, ld] = dates[6].dateStr.split('-');
-  return fm === lm ? `${MONTHS[parseInt(fm) - 1]} ${parseInt(fd)} - ${parseInt(ld)}` : `${MONTHS[parseInt(fm) - 1]} ${parseInt(fd)} - ${MONTHS[parseInt(lm) - 1]} ${parseInt(ld)}`;
+  return fm === lm ? `${MONTHS[parseInt(fm) - 1]} ${parseInt(fd)} – ${parseInt(ld)}` : `${MONTHS[parseInt(fm) - 1]} ${parseInt(fd)} – ${MONTHS[parseInt(lm) - 1]} ${parseInt(ld)}`;
 }
 function coChangeWeek(delta) {
   const next = coWeekOffset + delta;
@@ -366,7 +370,7 @@ function coRenderWeeklyGrid() {
   const prevBtn = document.getElementById('co-week-prev');
   if (prevBtn) prevBtn.disabled = coWeekOffset <= 0;
   
-  const headers = dates.map(d => `<th>${d.dayName}<br><span>${d.label}</span></th>`).join('');
+  const headers = dates.map(d => `<th>${d.dayName}<br><span style="font-weight:400;font-size:11px;opacity:.7">${d.label}</span></th>`).join('');
   
   const activeItems = allMenu.filter(m => m.active);
   const grouped = {};
@@ -379,12 +383,12 @@ function coRenderWeeklyGrid() {
   
   let rows = '';
   for (const category of sortedCategories) {
-    rows += `<tr><td colspan="${dates.length + 1}">${category}</td></tr>`;
+    rows += `<tr style="background: var(--bg);"><td colspan="${dates.length + 1}" style="font-weight: 700; letter-spacing: .1em; color: var(--accent); padding: 12px 0 6px;">${category}</td></tr>`;
     const sortedItems = grouped[category].sort((a, b) => a.name.localeCompare(b.name));
     for (const item of sortedItems) {
       const cells = dates.map(d => {
         const qty = coWeeklyQtys[d.dateStr]?.[item.id] || '';
-        return `<td><input class="weekly-qty${qty > 0 ? ' has-val' : ''}" type="number" min="0" max="999" value="${qty || ''}" oninput="coSetWeeklyQty('${d.dateStr}','${item.id}',this.value)"></td>`;
+        return `<td><input class="weekly-qty${qty > 0 ? ' has-val' : ''}" type="number" min="0" max="999" value="${qty || ''}" placeholder="—" oninput="coSetWeeklyQty('${d.dateStr}','${item.id}',this.value)"></td>`;
       }).join('');
       rows += `<tr><td class="item-col"><div class="weekly-item-name">${item.name}</div><div class="weekly-item-unit">per ${item.unit}</div></td>${cells}</tr>`;
     }
@@ -392,7 +396,7 @@ function coRenderWeeklyGrid() {
   
   const gridDiv = document.getElementById('co-weekly-grid');
   if (gridDiv) {
-    gridDiv.innerHTML = `<div class="weekly-table-container"><table class="weekly-table"><thead><tr><th class="item-col">Item</th>${headers}</tr></thead><tbody>${rows}</tbody></table></div>`;
+    gridDiv.innerHTML = `<div class="weekly-table-container" style="overflow-x: auto; max-height: 70vh; overflow-y: auto;"><table class="weekly-table"><thead><tr><th class="item-col">Item</th>${headers}</tr></thead><tbody>${rows}</tbody></table></div>`;
   }
   coUpdateWeeklyPreview();
 }
@@ -419,9 +423,9 @@ function coUpdateWeeklyPreview() {
     const date = new Date(d + 'T12:00:00');
     const units = Object.values(coWeeklyQtys[d]).reduce((s, q) => s + q, 0);
     const ic = Object.keys(coWeeklyQtys[d]).length;
-    return `<div>${DAY_NAMES[date.getDay()]} ${date.getMonth() + 1}/${date.getDate()} - ${ic} items - ${units} units</div>`;
+    return `<div class="weekly-preview-row"><span>${DAY_NAMES[date.getDay()]} ${date.getMonth() + 1}/${date.getDate()}</span><span>${ic} item${ic !== 1 ? 's' : ''} · ${units} unit${units !== 1 ? 's' : ''}</span></div>`;
   }).join('');
-  el.innerHTML = `<div>${allDates.length} Orders - ${totalUnits} Total Units${rows}</div>`;
+  el.innerHTML = `<div class="weekly-preview"><div style="font-size:var(--fs-sm);font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--text2);margin-bottom:10px">${allDates.length} Order${allDates.length !== 1 ? 's' : ''} · ${totalUnits} Total Units</div>${rows}</div>`;
 }
 function resolveVendor() {
   const vendorId = document.getElementById('co-vendor-select')?.value;
@@ -518,6 +522,7 @@ async function submitCreateWeeklyOrders() {
     coWeeklyQtys = {};
   } catch (e) { if (errEl) { errEl.textContent = e.message; errEl.style.display = 'block'; } }
 }
+// ---------- Repeat order ----------
 function toggleRepeatOrder() {
   const form = document.getElementById('repeat-order-form');
   if (!form) return;
@@ -531,6 +536,7 @@ function buildRepeatOrderForm() {
   if (!sel) return;
   sel.innerHTML = '<option value="">Select client...</option>';
 
+  // Only list vendors that actually have order history
   const vendorIds = [...new Set(allOrders.map(o => o.vendor_id))];
   const vendorsWithOrders = vendorIds.map(id => {
     const v = allVendors.find(v => v.id === id);
@@ -545,7 +551,7 @@ function buildRepeatOrderForm() {
     sel.appendChild(opt);
   });
 
-  document.getElementById('ro-past-orders').innerHTML = '<div class="empty-state">Select a client to see their past orders.</div>';
+  document.getElementById('ro-past-orders').innerHTML = '<div class="empty-state" style="padding:24px 0">Select a client to see their past orders.</div>';
   const errEl = document.getElementById('ro-error');
   if (errEl) errEl.style.display = 'none';
 }
@@ -555,31 +561,32 @@ function onRoVendorChange() {
   const container = document.getElementById('ro-past-orders');
   if (!container) return;
   if (!vendorId) {
-    container.innerHTML = '<div class="empty-state">Select a client to see their past orders.</div>';
+    container.innerHTML = '<div class="empty-state" style="padding:24px 0">Select a client to see their past orders.</div>';
     return;
   }
+  // Most recent 10 orders for this client, regardless of past/future
   const pastOrders = allOrders
     .filter(o => o.vendor_id === vendorId)
     .sort((a, b) => b.delivery_date.localeCompare(a.delivery_date))
     .slice(0, 10);
 
   if (!pastOrders.length) {
-    container.innerHTML = '<div class="empty-state">No past orders for this client.</div>';
+    container.innerHTML = '<div class="empty-state" style="padding:24px 0">No past orders for this client.</div>';
     return;
   }
 
   container.innerHTML = pastOrders.map(o => {
     const items = o.items || [];
     const units = items.reduce((s, i) => s + i.quantity, 0);
-    const itemsText = items.map(i => `${i.item_name} x ${i.quantity}`).join(', ');
+    const itemsText = items.map(i => `${i.item_name} × ${i.quantity}`).join(', ');
     const d = new Date(o.delivery_date + 'T12:00:00');
     const label = d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
     return `<div class="ro-order-row" id="ro-row-${o.id}">
         <div class="ro-order-info">
           <div class="ro-order-date">${label}</div>
-          <div class="ro-order-items">${escapeHtml(itemsText) || 'No items'} - ${units} units</div>
+          <div class="ro-order-items">${escapeHtml(itemsText) || 'No items'} &middot; ${units} units</div>
         </div>
-        <button class="btn-invoice" onclick="expandRepeatRow('${o.id}')">Repeat</button>
+        <button class="btn-invoice" onclick="expandRepeatRow('${o.id}')">Repeat&hellip;</button>
       </div>
       <div class="ro-repeat-panel hidden" id="ro-panel-${o.id}">
         <div class="co-date-row">
@@ -595,6 +602,7 @@ function onRoVendorChange() {
 }
 
 function suggestNextDate(pastDateStr) {
+  // Suggests the next occurrence of the same weekday, on/after today
   const past = new Date(pastDateStr + 'T12:00:00');
   const dow = past.getDay();
   const candidate = new Date();
@@ -644,6 +652,7 @@ async function confirmRepeatOrder(orderId) {
     if (errEl) { errEl.textContent = e.message; errEl.style.display = 'block'; }
   }
 }
+// ---------- Vendors / Clients functions ----------
 function toggleAddClient() {
   const form = document.getElementById('add-client-form');
   if (!form) return;
@@ -717,6 +726,7 @@ async function editVendorName(id) {
   renderVendors();
 }
 
+// ---------- Menu functions ----------
 async function updatePrice(id, price) {
   const p = parseFloat(price) || 0;
   await db.collection('menu_items').doc(id).update({ price: p });
@@ -756,6 +766,7 @@ async function addItem() {
   renderMenu();
 }
 
+// ---------- Invoice printing ----------
 function openInvoice(orderId) {
   const order = allOrders.find(o => o.id === orderId);
   if (!order) return;
@@ -773,11 +784,12 @@ function generateInvoiceHtml(order) {
   const deliveryStr = d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
   const rows = items.map(i => {
     const sub = (i.price || 0) * i.quantity;
-    return `<tr><td>${i.item_name}</td><td>${i.quantity}</td><td>${i.unit}</td><td>${i.price ? '$' + Number(i.price).toFixed(2) : '-'}</td><td>${sub > 0 ? '$' + sub.toFixed(2) : '-'}</td></tr>`;
+    return `<tr><td style="padding:10px 0;border-bottom:1px solid #e8e4de;font-size:14px">${i.item_name}</td><td style="padding:10px 0;border-bottom:1px solid #e8e4de;text-align:center;font-size:14px">${i.quantity}</td><td style="padding:10px 0;border-bottom:1px solid #e8e4de;text-align:center;font-size:13px;color:#6b6860">${i.unit}</td><td style="padding:10px 0;border-bottom:1px solid #e8e4de;text-align:right;font-size:14px">${i.price ? '$' + Number(i.price).toFixed(2) : '&mdash;'}</td><td style="padding:10px 0;border-bottom:1px solid #e8e4de;text-align:right;font-size:14px;font-weight:500">${sub > 0 ? '$' + sub.toFixed(2) : '&mdash;'}</td></tr>`;
   }).join('');
-  return `<html><body>${rows}</body></html>`;
+  return `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Invoice &mdash; ${order.id.slice(0, 8).toUpperCase()}</title><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"><style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:'DM Sans',sans-serif;background:white;color:#1a1916;padding:56px;max-width:760px;margin:0 auto;}@media print{body{padding:32px;}.no-print{display:none!important;}}.no-print{text-align:center;margin-bottom:32px;padding-bottom:32px;border-bottom:1px solid #e8e4de;}.print-btn{background:#1a1916;color:white;border:none;padding:10px 24px;font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;}.wordmark{font-family:'Cormorant Garamond',serif;font-size:13px;font-weight:600;letter-spacing:.25em;text-transform:uppercase;}.invoice-label{font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:600;}</style></head><body><div class="no-print"><button class="print-btn" onclick="window.print()">Download / Print PDF</button></div><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:48px"><div><div class="wordmark">Village Bakery + Provisions</div><div style="font-size:12px;color:#6b6860;margin-top:8px;line-height:2">212 Thompson Lane, Nashville, TN 37211<br>orders@villagebakeryandprovisions.com<br>(615) 498-5385</div></div><div style="text-align:right"><div class="invoice-label">Invoice</div><div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#6b6860;margin-top:6px">#${order.id.slice(0, 8).toUpperCase()}</div><div style="font-size:12px;color:#6b6860;margin-top:4px">Issued ${issued}</div></div></div><div style="display:flex;justify-content:space-between;margin-bottom:40px;padding-bottom:24px;border-bottom:2px solid #1a1916"><div><div style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#6b6860;margin-bottom:8px">Bill To</div><div style="font-size:16px;font-weight:500">${order.vendor_name}</div></div><div style="text-align:right"><div style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#6b6860;margin-bottom:8px">Delivery</div><div style="font-size:14px;font-weight:500">${deliveryStr}</div><div style="font-size:13px;color:#6b6860;margin-top:3px">at ${(order.delivery_time || '').slice(0, 5)}</div></div></div>${order.notes ? `<div style="font-size:13px;color:#6b6860;margin-bottom:24px;font-style:italic">${order.notes}</div>` : ''}<table style="width:100%;border-collapse:collapse"><thead><tr style="border-bottom:2px solid #1a1916"><th style="padding:8px 0;text-align:left;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#6b6860;font-weight:500">Item</th><th style="padding:8px 0;text-align:center;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#6b6860;font-weight:500">Qty</th><th style="padding:8px 0;text-align:center;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#6b6860;font-weight:500">Unit</th><th style="padding:8px 0;text-align:right;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#6b6860;font-weight:500">Price</th><th style="padding:8px 0;text-align:right;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#6b6860;font-weight:500">Subtotal</th></tr></thead><tbody>${rows}</tbody><tfoot><tr><td colspan="3" style="padding:14px 0;font-size:11px;letter-spacing:.15em;text-transform:uppercase;font-weight:500">Total</th><td style="padding:14px 0;text-align:right;font-size:13px;color:#6b6860">${totalUnits} units</th><td style="padding:14px 0;text-align:right;font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600">${totalPrice > 0 ? '$' + totalPrice.toFixed(2) : '&mdash;'}</th></tr></tfoot></table><div style="margin-top:48px;padding-top:20px;border-top:1px solid #e8e4de;font-size:12px;color:#6b6860;text-align:center;line-height:2">Thank you for your business.<br>Village Bakery + Provisions &nbsp;&middot;&nbsp; orders@villagebakeryandprovisions.com &nbsp;&middot;&nbsp; (615) 498-5385</div></body></html>`;
 }
 
+// ---------- Order status update ----------
 async function updateStatus(orderId, sel) {
   const status = sel.value;
   sel.className = 'status-select ' + status.toLowerCase();
@@ -841,6 +853,7 @@ function exportCSV() {
   URL.revokeObjectURL(url);
 }
 
+// ---------- Pricing overrides ----------
 let vendorPricingCache = {};
 async function togglePricing(vendorId) {
   const panel = document.getElementById('pricing-panel-' + vendorId);
@@ -872,7 +885,7 @@ function renderPricingRows(vendorId) {
   el.innerHTML = active.map(item => {
     const custom = prices[item.id];
     const defaultP = item.price || 0;
-    return `<div>${item.name} ${defaultP.toFixed(2)} <input value="${custom !== undefined ? custom.toFixed(2) : ''}"></div>`;
+    return `<div class="pricing-row"><div class="pricing-item-name">${item.name}</div><div class="pricing-default">Default: $${defaultP.toFixed(2)}</div><div class="pricing-override"><span>$</span><input class="price-override-input" type="number" step="0.01" min="0" id="vp-${vendorId}-${item.id}" value="${custom !== undefined ? custom.toFixed(2) : ''}" placeholder="${defaultP.toFixed(2)}"></div></div>`;
   }).join('');
 }
 async function savePricing(vendorId) {
@@ -910,6 +923,7 @@ async function clearPricing(vendorId) {
   renderPricingRows(vendorId);
 }
 
+// ---------- Render functions ----------
 function renderOrders() {
   const el = document.getElementById('orders-list');
   if (!el) return;
@@ -942,10 +956,11 @@ function renderOrders() {
 
     html += `<div class="date-group">
       <div class="date-header">
-        <div class="date-header-label">${date === TODAY ? 'Today - ' : ''}${label}</div>
-        <div class="date-header-stats">${dayOrders.length} orders - ${units} units</div>
+        <div class="date-header-label">${date === TODAY ? 'Today — ' : ''}${label}</div>
+        <div class="date-header-stats">${dayOrders.length} order${dayOrders.length !== 1 ? 's' : ''} &middot; ${units} units</div>
       </div>`;
 
+    // sort within a day by time
     dayOrders.sort((a, b) => (a.delivery_time || '').localeCompare(b.delivery_time || ''));
 
     for (const order of dayOrders) {
@@ -953,8 +968,8 @@ function renderOrders() {
       const totalUnits = items.reduce((s, i) => s + i.quantity, 0);
       const statusClass = (order.status || 'New').toLowerCase();
       const itemsHtml = items.length
-        ? items.map(i => `<div class="oc-item"><span>${escapeHtml(i.item_name)}</span><span class="oc-item-qty">${i.quantity} ${i.unit}</span></div>`).join('')
-        : '<div class="oc-item">No items</div>';
+        ? items.map(i => `<div class="oc-item"><span>${escapeHtml(i.item_name)}</span><span class="oc-item-qty">${i.quantity} ${i.unit === 'each' ? 'each' : (i.quantity !== 1 ? i.unit + 's' : i.unit)}</span></div>`).join('')
+        : '<div class="oc-item" style="color:var(--text3)">No items</div>';
 
       html += `<div class="order-card">
         <div class="oc-header">
@@ -977,7 +992,7 @@ function renderOrders() {
           <span class="oc-total">${totalUnits} total units</span>
           <div class="oc-actions">
             <button class="btn-invoice" onclick="openInvoice('${order.id}')">Invoice</button>
-            <button class="btn-invoice" onclick="deleteOrderAdmin('${order.id}')">Delete</button>
+            <button class="btn-invoice" style="color:var(--err);border-color:var(--err)" onclick="deleteOrderAdmin('${order.id}')">Delete</button>
           </div>
         </div>
       </div>`;
@@ -990,13 +1005,105 @@ function renderOrders() {
 function renderVendors() {
   const el = document.getElementById('vendors-list');
   if (!el) return;
-  el.innerHTML = 'x';
+  const pending = allVendors.filter(v => !v.approved);
+  const active = allVendors.filter(v => v.approved && v.active !== false);
+  const inactive = allVendors.filter(v => v.approved && v.active === false);
+  const pendingHtml = pending.length ? `<div class="vendors-section"><div class="section-heading" style="color:#7a6000">Pending Approval &mdash; ${pending.length}</div>${pending.map(v => `<div class="vendor-row"><div><div class="vendor-name">${v.business_name || 'No name'}</div><div class="vendor-email">${v.email}</div><div class="vendor-date">Signed up ${v.created_at ? new Date(v.created_at.seconds * 1000).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : ''}</div></div><div class="vendor-actions"><button class="btn-approve" onclick="approveVendor('${v.id}')">Approve</button></div></div>`).join('')}</div>` : '';
+  const activeHtml = `<div class="vendors-section"><div class="section-heading">Active Clients &mdash; ${active.length}</div>${active.length ? active.map(v => `<div class="vendor-row"><div style="flex:1"><div style="display:flex;align-items:center;gap:10px"><div class="vendor-name">${v.business_name || 'No name'}</div>${v.created_by_admin ? '<span style="font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);border:1px solid var(--border);padding:2px 7px">Phone</span>' : ''}<button onclick="editVendorName('${v.id}')" style="background:none;border:none;font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);cursor:pointer;padding:0;text-decoration:underline;text-underline-offset:2px">Edit</button></div>${v.email ? `<div class="vendor-email">${v.email}</div>` : ''}${v.phone ? `<div class="vendor-phone">${v.phone}</div>` : ''}</div><div class="vendor-actions"><button class="btn-pricing" id="pricing-btn-${v.id}" onclick="togglePricing('${v.id}')">Pricing</button><button class="btn-deactivate" onclick="toggleActive('${v.id}',false)">Deactivate</button></div></div><div class="pricing-panel" id="pricing-panel-${v.id}"><div class="pricing-panel-header"><span class="pricing-panel-title">Custom Prices — ${v.business_name || v.email || 'Client'}</span><span class="pricing-panel-note">Leave blank to use default</span></div><div id="pricing-rows-${v.id}"><div style="font-size:var(--fs-base);color:var(--text3);padding:10px 0">Loading...</div></div><div class="pricing-actions"><button class="btn-save-prices" onclick="savePricing('${v.id}')">Save Prices</button><button class="btn-clear-prices" onclick="clearPricing('${v.id}')">Clear All Custom</button></div></div>`).join('') : '<div class="empty-state" style="padding:24px 0;text-align:left">No active clients yet.</div>'}</div>`;
+  const inactiveHtml = inactive.length ? `<div class="vendors-section"><div class="section-heading">Inactive &mdash; ${inactive.length}</div>${inactive.map(v => `<div class="vendor-row inactive"><div><div class="vendor-name">${v.business_name || 'No name'}</div>${v.email ? `<div class="vendor-email">${v.email}</div>` : ''}</div><button class="btn-activate" onclick="toggleActive('${v.id}',true)">Reactivate</button></div>`).join('')}</div>` : '';
+  el.innerHTML = pendingHtml + activeHtml + inactiveHtml;
 }
 
 function renderMenu() {
   const el = document.getElementById('menu-card');
   if (!el) return;
-  el.innerHTML = 'x';
+  const active = allMenu.filter(m => m.active);
+  const inactive = allMenu.filter(m => !m.active);
+  const badgeMenu = document.getElementById('badge-menu');
+  if (badgeMenu) badgeMenu.textContent = active.length;
+  
+  el.innerHTML = `
+    <div class="section-label">Active Items &mdash; ${active.length}</div>
+    <div style="display:grid; grid-template-columns: 2fr 1fr 1fr 1fr 2fr; gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--border); font-weight: 600; font-size: 12px;">
+      <div>Item Name</div>
+      <div>Unit</div>
+      <div>Price</div>
+      <div>Category</div>
+      <div>Actions</div>
+    </div>
+    ${active.map(item => `
+      <div class="menu-row" style="display:grid; grid-template-columns: 2fr 1fr 1fr 1fr 2fr; gap: 8px; align-items: center;">
+        <div class="menu-item-name">${item.name}</div>
+        <div class="menu-item-unit">${item.unit}</div>
+        <div class="price-field">
+          <span class="price-symbol">$</span>
+          <input class="price-input" type="number" step="0.01" min="0" value="${Number(item.price || 0).toFixed(2)}" onblur="updatePrice('${item.id}',this.value)" onkeydown="if(event.key==='Enter')this.blur()">
+        </div>
+        <div>
+          <select class="category-select" data-id="${item.id}" onchange="updateCategory('${item.id}', this.value)" style="padding: 5px; font-size: 12px;">
+            <option value="Uncategorized" ${(item.category || 'Uncategorized') === 'Uncategorized' ? 'selected' : ''}>Uncategorized</option>
+            <option value="Breads" ${item.category === 'Breads' ? 'selected' : ''}>Breads</option>
+            <option value="Pastries" ${item.category === 'Pastries' ? 'selected' : ''}>Pastries</option>
+            <option value="Cookies" ${item.category === 'Cookies' ? 'selected' : ''}>Cookies</option>
+            <option value="Savory" ${item.category === 'Savory' ? 'selected' : ''}>Savory</option>
+            <option value="Other" ${item.category === 'Other' ? 'selected' : ''}>Other</option>
+          </select>
+        </div>
+        <div class="menu-actions">
+          <button class="btn-hide" onclick="toggleItem('${item.id}',false)">Hide</button>
+          <button class="btn-delete" onclick="deleteItem('${item.id}')">Delete</button>
+        </div>
+      </div>
+    `).join('')}
+    ${inactive.length ? `<div class="section-label" style="margin-top:12px">Hidden &mdash; ${inactive.length}</div>
+    <div style="display:grid; grid-template-columns: 2fr 1fr 1fr 1fr 2fr; gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--border); font-weight: 600; font-size: 12px;">
+      <div>Item Name</div><div>Unit</div><div>Price</div><div>Category</div><div>Actions</div>
+    </div>
+    ${inactive.map(item => `
+      <div class="menu-row inactive" style="display:grid; grid-template-columns: 2fr 1fr 1fr 1fr 2fr; gap: 8px; align-items: center;">
+        <div class="menu-item-name">${item.name}</div>
+        <div class="menu-item-unit">${item.unit}</div>
+        <div class="price-field">
+          <span class="price-symbol">$</span>
+          <input class="price-input" type="number" step="0.01" min="0" value="${Number(item.price || 0).toFixed(2)}" onblur="updatePrice('${item.id}',this.value)" onkeydown="if(event.key==='Enter')this.blur()">
+        </div>
+        <div>
+          <select class="category-select" data-id="${item.id}" onchange="updateCategory('${item.id}', this.value)" style="padding: 5px; font-size: 12px;">
+            <option value="Uncategorized" ${(item.category || 'Uncategorized') === 'Uncategorized' ? 'selected' : ''}>Uncategorized</option>
+            <option value="Breads" ${item.category === 'Breads' ? 'selected' : ''}>Breads</option>
+            <option value="Pastries" ${item.category === 'Pastries' ? 'selected' : ''}>Pastries</option>
+            <option value="Cookies" ${item.category === 'Cookies' ? 'selected' : ''}>Cookies</option>
+            <option value="Savory" ${item.category === 'Savory' ? 'selected' : ''}>Savory</option>
+            <option value="Other" ${item.category === 'Other' ? 'selected' : ''}>Other</option>
+          </select>
+        </div>
+        <div class="menu-actions">
+          <button class="btn-show" onclick="toggleItem('${item.id}',true)">Show</button>
+          <button class="btn-delete" onclick="deleteItem('${item.id}')">Delete</button>
+        </div>
+      </div>
+    `).join('')}` : ''}
+    <div class="add-form">
+      <div class="add-form-title">Add New Item</div>
+      <div class="add-form-row">
+        <input class="add-input" id="new-name" type="text" placeholder="Item name">
+        <select class="add-select" id="new-unit">
+          <option value="each">each</option><option value="loaf">loaf</option><option value="tray">tray</option>
+          <option value="8-pack">8-pack</option><option value="dozen">dozen</option><option value="box">box</option>
+        </select>
+        <input class="add-input" id="new-price" type="number" step="0.01" min="0" placeholder="Price $" style="max-width:110px">
+        <select class="add-select" id="new-category">
+          <option value="Uncategorized">Uncategorized</option>
+          <option value="Breads">Breads</option>
+          <option value="Pastries">Pastries</option>
+          <option value="Cookies">Cookies</option>
+          <option value="Savory">Savory</option>
+          <option value="Other">Other</option>
+        </select>
+        <button class="btn-add" onclick="addItem()">Add</button>
+      </div>
+    </div>
+  `;
 }
 
 function renderProduction() {
@@ -1011,24 +1118,34 @@ function renderProductionContent() {
   if (!el) return;
   if (!orders.length) { el.innerHTML = '<div class="empty-state">No orders for this period.</div>'; return; }
 
+  // Group by date
   const byDate = {};
   orders.forEach(o => {
     if (!byDate[o.delivery_date]) byDate[o.delivery_date] = [];
     byDate[o.delivery_date].push(o);
   });
 
+  // Overall stats
   const tI = new Set(orders.flatMap(o => (o.items || []).map(i => i.item_name))).size;
   const tU = orders.reduce((s, o) => s + (o.items || []).reduce((ss, i) => ss + i.quantity, 0), 0);
-  let html = `<div class="prod-summary"></div>`;
+  let html = `<div class="prod-summary">
+    <div class="prod-stat"><div class="prod-stat-val">${Object.keys(byDate).length}</div><div class="prod-stat-lbl">Days</div></div>
+    <div class="prod-stat"><div class="prod-stat-val">${orders.length}</div><div class="prod-stat-lbl">Orders</div></div>
+    <div class="prod-stat"><div class="prod-stat-val">${tI}</div><div class="prod-stat-lbl">Products</div></div>
+    <div class="prod-stat"><div class="prod-stat-val">${tU}</div><div class="prod-stat-lbl">Total Units</div></div>
+  </div>`;
 
+  // For each date
   Object.keys(byDate).sort().forEach(date => {
     const dO = byDate[date];
     const dU = dO.reduce((s, o) => s + (o.items || []).reduce((ss, i) => ss + i.quantity, 0), 0);
 
+    // Aggregate items: item_name -> {qty, unit, vendors, category}
     const itemMap = {};
     dO.forEach(o => {
       (o.items || []).forEach(i => {
         if (!itemMap[i.item_name]) {
+          // find category from menuItems (or use 'Uncategorized')
           const menuItem = allMenu.find(m => m.name === i.item_name);
           const category = menuItem?.category || 'Uncategorized';
           itemMap[i.item_name] = { qty: 0, unit: i.unit, vendors: [], category };
@@ -1039,24 +1156,28 @@ function renderProductionContent() {
       });
     });
 
+    // Group by category
     const categoryGroups = {};
     for (const [name, data] of Object.entries(itemMap)) {
       const cat = data.category;
       if (!categoryGroups[cat]) categoryGroups[cat] = [];
       categoryGroups[cat].push({ name, ...data });
     }
+    // Sort categories alphabetically (or custom order)
     const sortedCategories = Object.keys(categoryGroups).sort();
 
     html += `<div class="prod-date-block">
       <div class="prod-date-heading">
-        <span>${date === TODAY ? 'Today - ' : ''}${fmtDate(date)}</span>
-        <span class="prod-date-sub">${dO.length} orders - ${dU} units</span>
+        <span>${date === TODAY ? 'Today — ' : ''}${fmtDate(date)}</span>
+        <span class="prod-date-sub">${dO.length} order${dO.length !== 1 ? 's' : ''} · ${dU} units</span>
       </div>`;
 
+    // Render each category
     for (const category of sortedCategories) {
       const items = categoryGroups[category];
+      // sort items by quantity descending within category
       items.sort((a, b) => b.qty - a.qty);
-      html += `<div style="margin-top: 16px;"><div style="font-weight: 700;">${category}</div>`;
+      html += `<div style="margin-top: 16px;"><div style="font-weight: 700; letter-spacing: .1em; color: var(--accent); margin-bottom: 8px;">${category}</div>`;
       items.forEach(data => {
         html += `<div class="prod-item-row">
           <div>
@@ -1065,7 +1186,7 @@ function renderProductionContent() {
           </div>
           <div style="text-align:right;flex-shrink:0">
             <span class="prod-item-qty">${data.qty}</span>
-            <span class="prod-item-unit">${data.unit}</span>
+            <span class="prod-item-unit">${data.unit === 'each' ? 'each' : (data.qty !== 1 ? data.unit + 's' : data.unit)}</span>
           </div>
         </div>`;
       });
@@ -1092,18 +1213,32 @@ function renderPackingContent() {
     return;
   }
 
+  // Group by delivery date
   const byDate = {};
   orders.forEach(o => {
     if (!byDate[o.delivery_date]) byDate[o.delivery_date] = [];
     byDate[o.delivery_date].push(o);
   });
 
-  let html = `<div class="prod-summary"></div>`;
+  // Total stats (same as production)
+  const totalDays = Object.keys(byDate).length;
+  const totalOrders = orders.length;
+  const uniqueItems = new Set(orders.flatMap(o => (o.items || []).map(i => i.item_name))).size;
+  const totalUnits = orders.reduce((sum, o) => sum + (o.items || []).reduce((s, i) => s + i.quantity, 0), 0);
 
+  let html = `<div class="prod-summary">
+    <div class="prod-stat"><div class="prod-stat-val">${totalDays}</div><div class="prod-stat-lbl">Days</div></div>
+    <div class="prod-stat"><div class="prod-stat-val">${totalOrders}</div><div class="prod-stat-lbl">Orders</div></div>
+    <div class="prod-stat"><div class="prod-stat-val">${uniqueItems}</div><div class="prod-stat-lbl">Products</div></div>
+    <div class="prod-stat"><div class="prod-stat-val">${totalUnits}</div><div class="prod-stat-lbl">Total Units</div></div>
+  </div>`;
+
+  // Iterate dates in order
   Object.keys(byDate).sort().forEach(date => {
     const dayOrders = byDate[date];
     const dayUnits = dayOrders.reduce((sum, o) => sum + (o.items || []).reduce((s, i) => s + i.quantity, 0), 0);
     
+    // Aggregate items across all vendors for this date
     const itemMap = {};
     dayOrders.forEach(order => {
       (order.items || []).forEach(item => {
@@ -1121,8 +1256,8 @@ function renderPackingContent() {
     
     html += `<div class="prod-date-block">
       <div class="prod-date-heading">
-        <span>${date === TODAY ? 'Today - ' : ''}${fmtDate(date)}</span>
-        <span class="prod-date-sub">${dayOrders.length} orders - ${dayUnits} units</span>
+        <span>${date === TODAY ? 'Today — ' : ''}${fmtDate(date)}</span>
+        <span class="prod-date-sub">${dayOrders.length} order${dayOrders.length !== 1 ? 's' : ''} · ${dayUnits} units</span>
       </div>`;
     
     sortedItems.forEach(([name, data]) => {
@@ -1133,7 +1268,7 @@ function renderPackingContent() {
         </div>
         <div style="text-align:right;flex-shrink:0">
           <span class="prod-item-qty">${data.qty}</span>
-          <span class="prod-item-unit">${data.unit}</span>
+          <span class="prod-item-unit">${data.unit === 'each' ? 'each' : (data.qty !== 1 ? data.unit + 's' : data.unit)}</span>
         </div>
       </div>`;
     });
@@ -1165,6 +1300,7 @@ function renderInvoicingContent() {
     return;
   }
 
+  // Group orders by client
   const clientMap = new Map();
   filtered.forEach(order => {
     const name = order.vendor_name;
@@ -1176,8 +1312,18 @@ function renderInvoicingContent() {
     });
   });
 
-  let html = `<div class="prod-summary"></div>`;
+  const totalClients = clientMap.size;
+  const totalOrders = filtered.length;
+  const totalUnits = Array.from(clientMap.values()).reduce((sum, map) => sum + Array.from(map.values()).reduce((a, b) => a + b, 0), 0);
 
+  // Stats bar using production classes
+  let html = `<div class="prod-summary">
+    <div class="prod-stat"><div class="prod-stat-val">${totalClients}</div><div class="prod-stat-lbl">Clients</div></div>
+    <div class="prod-stat"><div class="prod-stat-val">${totalOrders}</div><div class="prod-stat-lbl">Orders</div></div>
+    <div class="prod-stat"><div class="prod-stat-val">${totalUnits}</div><div class="prod-stat-lbl">Total Units</div></div>
+  </div>`;
+
+  // Client cards using production date-block style
   for (const [clientName, itemsMap] of clientMap.entries()) {
     const sortedItems = Array.from(itemsMap.entries()).sort((a, b) => a[0].localeCompare(b[0]));
     const totalClientUnits = sortedItems.reduce((s, i) => s + i[1], 0);
@@ -1185,14 +1331,20 @@ function renderInvoicingContent() {
     html += `<div class="prod-date-block">
       <div class="prod-date-heading">
         <span>${escapeHtml(clientName)}</span>
-        <span class="prod-date-sub">${sortedItems.length} items - ${totalClientUnits} units</span>
+        <span class="prod-date-sub">${sortedItems.length} item(s) · ${totalClientUnits} units</span>
       </div>
-      <table class="invoice-items-table">
+      <table class="invoice-items-table" style="width:100%; border-collapse: collapse;">
+        <thead>
+          <tr>
+            <th style="text-align:left; padding: 12px 20px; border-bottom: 2px solid var(--accent);">Item</th>
+            <th style="text-align:right; padding: 12px 20px; border-bottom: 2px solid var(--accent);">Total Qty</th>
+          </tr>
+        </thead>
         <tbody>
           ${sortedItems.map(([itemName, qty]) => `
             <tr>
-              <td>${escapeHtml(itemName)}</td>
-              <td>${qty}</td>
+              <td style="padding: 12px 20px; border-bottom: 1px solid var(--border);">${escapeHtml(itemName)}</td>
+              <td style="padding: 12px 20px; text-align: right; font-weight: 600; border-bottom: 1px solid var(--border);">${qty}</td>
             </tr>
           `).join('')}
         </tbody>
@@ -1204,10 +1356,42 @@ function renderInvoicingContent() {
   if (bodyDiv) bodyDiv.innerHTML = html;
 }
 
+// ---------- Print function ----------
 function printTab(tab) {
   const printStyles = `
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: sans-serif; }
+    /* ── Date group: allow breaking BETWEEN items, never mid-item ── */
+    .date-group { page-break-inside: auto; margin-bottom: 34px; }
+    .date-header { page-break-after: avoid; display: flex; justify-content: space-between; align-items: baseline; padding: 10px 0; border-bottom: 4px solid #000; margin-bottom: 14px; }
+    .date-header-left { font-size: 24px; font-weight: 800; text-transform: uppercase; }
+    .date-header-right { font-size: 15px; font-weight: 700; color: #333; }
+
+    .category-header { page-break-after: avoid; font-size: 20px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; margin: 18px 0 8px; border-bottom: 2px solid #000; padding-bottom: 4px; }
+
+    .item-row { page-break-inside: avoid; break-inside: avoid; display: flex; align-items: center; gap: 16px; padding: 12px 0; border-bottom: 2px solid #ccc; }
+    .item-checkbox { width: 26px; height: 26px; border: 3px solid #000; flex-shrink: 0; }
+    .item-name { font-size: 20px; font-weight: 700; }
+    .item-vendors { font-size: 14px; color: #444; font-weight: 500; margin-top: 2px; }
+    .item-qty-block { text-align: right; flex-shrink: 0; }
+    .item-qty { font-size: 34px; font-weight: 800; }
+    .item-unit { font-size: 14px; font-weight: 700; text-transform: uppercase; color: #333; margin-left: 4px; }
+
+    /* ── Client cards: allow breaking BETWEEN rows, never mid-row ── */
+    .client-card { page-break-inside: auto; border: 3px solid #000; margin-bottom: 20px; }
+    .client-header { page-break-after: avoid; background: #eee; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #000; }
+    .client-name { font-size: 22px; font-weight: 800; }
+    .client-meta { font-size: 15px; font-weight: 700; color: #333; }
+    .client-items { width: 100%; border-collapse: collapse; }
+    .client-items tr { page-break-inside: avoid; break-inside: avoid; }
+    .client-items td { padding: 12px 16px; font-size: 18px; font-weight: 600; border-bottom: 2px solid #ddd; }
+    .client-items tr:last-child td { border-bottom: none; }
+    .client-items td:first-child { display: flex; align-items: center; gap: 14px; }
+    .client-items td:last-child { text-align: right; font-weight: 800; font-size: 20px; white-space: nowrap; }
+    .pack-checkbox { width: 22px; height: 22px; border: 3px solid #000; flex-shrink: 0; display: inline-block; }
+
+    /* ── Kill blank first page: never break before the very first block ── */
+    .date-group:first-of-type,
+    .client-card:first-of-type { page-break-before: avoid !important; margin-top: 0 !important; }
+    .header-section { page-break-after: avoid; page-break-before: avoid; }
   `;
 
   if (tab === 'invoicing') {
@@ -1229,27 +1413,53 @@ function printTab(tab) {
     let bodyHtml = '';
     for (const [clientName, itemsMap] of clientMap.entries()) {
       const sortedItems = Array.from(itemsMap.entries()).sort((a, b) => a[0].localeCompare(b[0]));
-      bodyHtml += `<div class="invoice-client-card">${sortedItems.map(([itemName, qty]) => `<tr><td>${escapeHtml(itemName)}</td><td>${qty}</td></tr>`).join('')}</div>`;
+      bodyHtml += `<div class="invoice-client-card">
+        <div class="invoice-client-header">
+          <div class="invoice-client-name">${escapeHtml(clientName)}</div>
+          <div class="invoice-client-stats">${sortedItems.length} item(s) · ${sortedItems.reduce((s,i)=>s+i[1],0)} units</div>
+        </div>
+        <table class="invoice-items-table">
+          <thead><tr><th>Item</th><th style="text-align:right">Total Qty</th></tr></thead>
+          <tbody>${sortedItems.map(([itemName, qty]) => `<tr><td>${escapeHtml(itemName)}</td><td style="text-align:right">${qty}</td></tr>`).join('')}</tbody>
+        </table>
+      </div>`;
     }
-    const rangeLabel = range.from === range.to ? fmtDate(range.from) : fmtDate(range.from) + ' - ' + fmtDate(range.to);
+    const rangeLabel = range.from === range.to ? fmtDate(range.from) : fmtDate(range.from) + ' – ' + fmtDate(range.to);
+    const totalUnits = filtered.reduce((sum, o) => sum + (o.items || []).reduce((s, i) => s + i.quantity, 0), 0);
+    const totalOrders = filtered.length;
+    const totalClients = clientMap.size;
     const win = window.open('', '_blank');
-    win.document.write(`<html><body>${bodyHtml}</body></html>`);
+    win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Invoicing Summary</title><style>${printStyles}</style></head><body>
+      <div class="no-print"><button class="print-btn" onclick="window.print()">Print / Save PDF</button></div>
+      <div class="header-section">
+        <div><div style="font-size:9px;letter-spacing:.2em;">VILLAGE BAKERY + PROVISIONS</div><div class="title">Invoicing Summary</div></div>
+        <div class="range"><div>${rangeLabel}</div><div>Printed ${new Date().toLocaleDateString()}</div></div>
+      </div>
+      <div style="display:flex; gap: 16px; margin-bottom: 20px; flex-wrap:wrap;">
+        <div><strong>${totalClients}</strong> Clients</div>
+        <div><strong>${totalOrders}</strong> Orders</div>
+        <div><strong>${totalUnits}</strong> Total Units</div>
+      </div>
+      ${bodyHtml}
+    </body></html>`);
     win.document.close();
     setTimeout(() => win.print(), 500);
     return;
   }
 
+  // Production or packing print
   const orders = filterOrders(tab);
   const fs = filterState[tab];
   const range = fs.mode === 'custom' ? { from: fs.from, to: fs.to } : getDateRange(fs.mode);
   const title = tab === 'production' ? 'Production List' : 'Packing + Delivery';
-  const rangeLabel = range.from === range.to ? fmtDate(range.from) : fmtDate(range.from) + ' - ' + fmtDate(range.to);
+  const rangeLabel = range.from === range.to ? fmtDate(range.from) : fmtDate(range.from) + ' – ' + fmtDate(range.to);
   const byDate = {};
   orders.forEach(o => { if (!byDate[o.delivery_date]) byDate[o.delivery_date] = []; byDate[o.delivery_date].push(o); });
   let body = '';
   if (!orders.length) {
     body = '<p>No orders for this period.</p>';
   } else if (tab === 'production') {
+    // Production – categorized items (works)
     const sortedDates = Object.keys(byDate).sort();
     for (const date of sortedDates) {
       const dayOrders = byDate[date];
@@ -1257,7 +1467,7 @@ function printTab(tab) {
       body += `<div class="date-group">
         <div class="date-header">
           <div class="date-header-left">${fmtDate(date)}</div>
-          <div class="date-header-right">${dayOrders.length} orders - ${dayUnits} units</div>
+          <div class="date-header-right">${dayOrders.length} order${dayOrders.length !== 1 ? 's' : ''} · ${dayUnits} units</div>
         </div>`;
       const itemMap = {};
       dayOrders.forEach(order => {
@@ -1289,7 +1499,7 @@ function printTab(tab) {
               <div class="item-vendors">${data.vendors.join(', ')}</div>
             </div>
             <div class="item-qty-block">
-              <span class="item-qty">${data.qty}</span><span class="item-unit">${data.unit}</span>
+              <span class="item-qty">${data.qty}</span><span class="item-unit">${data.unit === 'each' ? 'each' : (data.qty !== 1 ? data.unit + 's' : data.unit)}</span>
             </div>
           </div>`;
         }
@@ -1297,14 +1507,16 @@ function printTab(tab) {
       body += `</div>`;
     }
   } else {
+    // Packing – clean, simple layout
     const sortedDates = Object.keys(byDate).sort();
     for (const date of sortedDates) {
       const dayOrders = byDate[date];
       body += `<div class="date-group">
         <div class="date-header">
           <div class="date-header-left">${fmtDate(date)}</div>
-          <div class="date-header-right">${dayOrders.length} orders</div>
+          <div class="date-header-right">${dayOrders.length} order${dayOrders.length !== 1 ? 's' : ''}</div>
         </div>`;
+      // Group by vendor
       const vendorMap = {};
       dayOrders.forEach(order => {
         const vendor = order.vendor_name;
@@ -1324,47 +1536,62 @@ function printTab(tab) {
         body += `<div class="client-card">
           <div class="client-header">
             <span class="client-name">${escapeHtml(vendor)}</span>
-            <div class="client-meta">${data.time ? `Deliver by ${data.time.slice(0,5)}` : ''} - ${data.total} units</div>
+            <div class="client-meta">${data.time ? `Deliver by ${data.time.slice(0,5)}` : ''} &nbsp;·&nbsp; ${data.total} unit${data.total !== 1 ? 's' : ''}</div>
           </div>
           <table class="client-items">
-            ${data.items.map(item => `<tr><td><span class="pack-checkbox"></span>${escapeHtml(item.name)}</td><td>${item.qty} ${item.unit}</td></tr>`).join('')}
+            ${data.items.map(item => `<tr><td><span class="pack-checkbox"></span>${escapeHtml(item.name)}</td><td>${item.qty} ${item.unit === 'each' ? 'each' : (item.qty !== 1 ? item.unit + 's' : item.unit)}</td></tr>`).join('')}
           </table>
-          ${data.notes ? `<div>Note: ${escapeHtml(data.notes)}</div>` : ''}
+          ${data.notes ? `<div style="padding: 12px 16px; font-size: 15px; font-weight:600; font-style: italic; border-top: 2px dashed #000;">Note: ${escapeHtml(data.notes)}</div>` : ''}
         </div>`;
       }
       body += `</div>`;
     }
   }
 
+  // ── FIX: for packing, allow page breaks inside .date-group since a full
+  //    day of many vendor cards far exceeds one page. Without this override,
+  //    the browser tries to honour page-break-inside:avoid on an oversized
+  //    block and pushes it entirely to page 2, leaving page 1 blank.
   const tabSpecificStyles = tab === 'packing'
     ? '\n.date-group { page-break-inside: auto !important; }'
     : '';
 
-  const fullHtml = `<html><head><style>${printStyles}${tabSpecificStyles}</style></head><body>${body}</body></html>`;
+  const fullHtml = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${title}</title><style>${printStyles}${tabSpecificStyles}</style></head><body>
+    <div class="no-print"><button class="print-btn" onclick="window.print()">Print / Save PDF</button></div>
+    <div class="header-section">
+      <div><div style="font-size:9px;letter-spacing:.2em;">VILLAGE BAKERY + PROVISIONS</div><div class="title">${title}</div></div>
+      <div class="range"><div>${rangeLabel}</div><div>Printed ${new Date().toLocaleDateString()}</div></div>
+    </div>
+    ${body}
+  </body></html>`;
   const w = window.open('', '_blank');
-  w.document.write(fullHtml);
-  w.document.close();
+w.document.write(fullHtml);
+w.document.close();
 
-  w.addEventListener('load', () => {
+w.addEventListener('load', () => {
+  requestAnimationFrame(() => {
     requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        w.print();
-      });
+      w.print();
     });
   });
+});
 }
 
+// ---------- Category update function ----------
 async function updateCategory(itemId, category) {
   try {
     await db.collection('menu_items').doc(itemId).update({ category });
     const item = allMenu.find(m => m.id === itemId);
     if (item) item.category = category;
+    console.log(`Category updated for ${itemId} to ${category}`);
   } catch (e) {
+    console.error("Error updating category:", e);
     alert("Failed to update category: " + e.message);
   }
 }
 window.updateCategory = updateCategory;
 
+// ---------- Auth and data initialization ----------
 async function initAuthAndData() {
   auth.onAuthStateChanged(async (user) => {
     if (!user) { show('v-auth'); return; }
@@ -1376,7 +1603,7 @@ async function initAuthAndData() {
       await Promise.all([loadOrders(), loadVendors(), loadMenu()]);
       renderCurrentPage();
       show('v-app');
-    } catch (e) { show('v-auth'); }
+    } catch (e) { console.error(e); show('v-auth'); }
   });
 }
 
@@ -1408,6 +1635,7 @@ window.handleLogin = async function() {
 };
 window.handleLogout = async function() { await auth.signOut(); show('v-auth'); };
 
+// ---------- DOMContentLoaded ----------
 document.addEventListener('DOMContentLoaded', () => {
   const currentFile = window.location.pathname.split('/').pop();
   let activeTab = 'orders';
