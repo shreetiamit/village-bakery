@@ -1679,4 +1679,4 @@ document.addEventListener('DOMContentLoaded', () => {
     else btn.classList.remove('active');
   });
   initAuthAndData();
-});
+})};
