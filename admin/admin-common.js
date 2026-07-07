@@ -1605,6 +1605,7 @@ w.addEventListener('load', () => {
     });
   });
 });
+}
 
 // ---------- Category update function ----------
 async function updateCategory(itemId, category) {
@@ -1679,4 +1680,4 @@ document.addEventListener('DOMContentLoaded', () => {
     else btn.classList.remove('active');
   });
   initAuthAndData();
-})};
+});
