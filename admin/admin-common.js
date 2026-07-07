@@ -1432,16 +1432,19 @@ function printTab(tab) {
     .client-card {
       border: 2px solid #000;
       margin-bottom: 20px;
-      page-break-inside: avoid;
-      break-inside: avoid-page;
+      page-break-inside: avoid !important;
+      break-inside: avoid-page !important;
       page-break-after: avoid;
       break-after: avoid-page;
       display: block;
+      overflow: hidden; /* helps contain floats */
     }
     .client-card table,
     .client-card .client-items {
-      page-break-inside: avoid;
-      break-inside: avoid-page;
+      page-break-inside: avoid !important;
+      break-inside: avoid-page !important;
+      width: 100%;
+      border-collapse: collapse;
     }
     .client-header {
       background: #f0f0f0;
@@ -1460,10 +1463,6 @@ function printTab(tab) {
       font-size: 16px;
       font-weight: 600;
       color: #000;
-    }
-    .client-items {
-      width: 100%;
-      border-collapse: collapse;
     }
     .client-items td {
       padding: 12px 16px;
@@ -1513,8 +1512,8 @@ function printTab(tab) {
     .invoice-client-card {
       margin-bottom: 24px;
       border: 2px solid #000;
-      page-break-inside: avoid;
-      break-inside: avoid-page;
+      page-break-inside: avoid !important;
+      break-inside: avoid-page !important;
       page-break-after: avoid;
       break-after: avoid-page;
     }
@@ -1535,8 +1534,8 @@ function printTab(tab) {
     .invoice-items-table {
       width: 100%;
       border-collapse: collapse;
-      page-break-inside: avoid;
-      break-inside: avoid-page;
+      page-break-inside: avoid !important;
+      break-inside: avoid-page !important;
     }
     .invoice-items-table th {
       padding: 12px 16px;
@@ -1560,14 +1559,63 @@ function printTab(tab) {
     .date-group:first-of-type,
     .client-card:first-of-type,
     .invoice-client-card:first-of-type {
-      page-break-before: avoid;
-      break-before: avoid-page;
+      page-break-before: avoid !important;
+      break-before: avoid-page !important;
     }
   `;
 
-  // ----- INVOICING BRANCH (unchanged logic) -----
+  // ----- INVOICING BRANCH (unchanged) -----
   if (tab === 'invoicing') {
-    // ... (same as before, keep as is)
+    const fs = filterState.invoicing;
+    const range = fs.mode === 'custom' ? { from: fs.from, to: fs.to } : getDateRange(fs.mode);
+    if (!range) return;
+    const filtered = allOrders.filter(o => o.delivery_date >= range.from && o.delivery_date <= range.to);
+    if (!filtered.length) { alert('No orders in this period.'); return; }
+    const clientMap = new Map();
+    filtered.forEach(order => {
+      const name = order.vendor_name;
+      if (!clientMap.has(name)) clientMap.set(name, new Map());
+      const itemMap = clientMap.get(name);
+      (order.items || []).forEach(item => {
+        const qty = item.quantity || 0;
+        if (qty > 0) itemMap.set(item.item_name, (itemMap.get(item.item_name) || 0) + qty);
+      });
+    });
+    let bodyHtml = '';
+    for (const [clientName, itemsMap] of clientMap.entries()) {
+      const sortedItems = Array.from(itemsMap.entries()).sort((a, b) => a[0].localeCompare(b[0]));
+      bodyHtml += `<div class="invoice-client-card">
+        <div class="invoice-client-header">
+          <div class="invoice-client-name">${escapeHtml(clientName)}</div>
+          <div class="invoice-client-stats">${sortedItems.length} item(s) · ${sortedItems.reduce((s,i)=>s+i[1],0)} units</div>
+        </div>
+        <table class="invoice-items-table">
+          <thead><tr><th>Item</th><th style="text-align:right">Total Qty</th></tr></thead>
+          <tbody>${sortedItems.map(([itemName, qty]) => `<tr><td>${escapeHtml(itemName)}</td><td style="text-align:right">${qty}</td></tr>`).join('')}</tbody>
+        </table>
+      </div>`;
+    }
+    const rangeLabel = range.from === range.to ? fmtDate(range.from) : fmtDate(range.from) + ' – ' + fmtDate(range.to);
+    const totalUnits = filtered.reduce((sum, o) => sum + (o.items || []).reduce((s, i) => s + i.quantity, 0), 0);
+    const totalOrders = filtered.length;
+    const totalClients = clientMap.size;
+    const win = window.open('', '_blank');
+    win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Invoicing Summary</title><style>${printStyles}</style></head><body>
+      <div class="no-print"><button class="print-btn" onclick="window.print()">Print / Save PDF</button></div>
+      <div class="header-section">
+        <div><div style="font-size:14px;letter-spacing:.2em;font-weight:600;">VILLAGE BAKERY + PROVISIONS</div><div class="title">Invoicing Summary</div></div>
+        <div class="range"><div>${rangeLabel}</div><div>Printed ${new Date().toLocaleDateString()}</div></div>
+      </div>
+      <div style="display:flex; gap: 20px; margin-bottom: 24px; flex-wrap:wrap; font-size:20px; font-weight:600;">
+        <div><strong>${totalClients}</strong> Clients</div>
+        <div><strong>${totalOrders}</strong> Orders</div>
+        <div><strong>${totalUnits}</strong> Total Units</div>
+      </div>
+      ${bodyHtml}
+    </body></html>`);
+    win.document.close();
+    setTimeout(() => win.print(), 500);
+    return;
   }
 
   // ----- PRODUCTION & PACKING BRANCH -----
@@ -1629,7 +1677,7 @@ function printTab(tab) {
       body += `</div>`;
     }
   } else {
-    // PACKING – allow breaks between client cards
+    // PACKING – each client card stays whole, but date group can break between cards
     const sortedDates = Object.keys(byDate).sort();
     for (const date of sortedDates) {
       const dayOrders = byDate[date];
