@@ -15,8 +15,10 @@ const TODAY = `${now0.getFullYear()}-${String(now0.getMonth() + 1).padStart(2, '
 const filterState = {
   production: { mode: 'today', from: TODAY, to: TODAY },
   packing: { mode: 'today', from: TODAY, to: TODAY },
-  invoicing: { mode: 'thisweek', from: '', to: '' }
+  invoicing: { mode: 'thisweek', from: '', to: '' },
+  orders: { mode: 'upcoming', from: '', to: '' }
 };
+let orderStatusFilter = 'all'; // 'all' | 'New' | 'Seen' | 'Done'
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -25,6 +27,69 @@ function localDateStr(d) {
 }
 function show(id) {
   ['v-loading', 'v-auth', 'v-unauthorized', 'v-app'].forEach(v => document.getElementById(v).classList.toggle('hidden', v !== id));
+}
+
+function ordersFilterBarHtml() {
+  const fs = filterState.orders;
+  const modes = [
+    { key: 'upcoming', label: 'Upcoming' },
+    { key: 'today', label: 'Today' },
+    { key: 'thisweek', label: 'This Week' },
+    { key: 'nextweek', label: 'Next Week' },
+    { key: 'all', label: 'All Time' },
+    { key: 'custom', label: 'Custom' }
+  ];
+  const fromVal = fs.mode === 'custom' ? fs.from : '';
+  const toVal = fs.mode === 'custom' ? fs.to : '';
+  const statuses = [
+    { key: 'all', label: 'All' },
+    { key: 'New', label: 'New' },
+    { key: 'Seen', label: 'Seen' },
+    { key: 'Done', label: 'Done' }
+  ];
+  return `<div class="filter-bar" id="filter-bar-orders">
+      ${modes.map(m => `<button class="filter-btn${fs.mode === m.key ? ' active' : ''}" onclick="setOrdersDateFilter('${m.key}',this)">${m.label}</button>`).join('')}
+      <div class="filter-sep"></div>
+      <span id="custom-label-orders" style="display:${fs.mode === 'custom' ? 'flex' : 'none'};align-items:center;gap:10px">
+        <input class="filter-date-input" type="date" id="filter-from-orders" value="${fromVal}" onchange="setOrdersCustomRange()">
+        <span>to</span>
+        <input class="filter-date-input" type="date" id="filter-to-orders" value="${toVal}" onchange="setOrdersCustomRange()">
+      </span>
+    </div>
+    <div class="filter-bar" style="margin-top:-14px">
+      ${statuses.map(s => `<button class="filter-btn status-pill${orderStatusFilter === s.key ? ' active' : ''}" onclick="setOrdersStatusFilter('${s.key}',this)">${s.label}</button>`).join('')}
+    </div>`;
+}
+
+function setOrdersDateFilter(mode, btn) {
+  filterState.orders.mode = mode;
+  if (mode !== 'custom') {
+    const r = getDateRange(mode);
+    if (r) { filterState.orders.from = r.from; filterState.orders.to = r.to; }
+  } else {
+    const fromInput = document.getElementById('filter-from-orders');
+    if (fromInput) filterState.orders.from = fromInput.value;
+    const toInput = document.getElementById('filter-to-orders');
+    if (toInput) filterState.orders.to = toInput.value;
+  }
+  document.querySelectorAll('#filter-bar-orders .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const cl = document.getElementById('custom-label-orders');
+  if (cl) cl.style.display = mode === 'custom' ? 'flex' : 'none';
+  renderOrders();
+}
+function setOrdersCustomRange() {
+  const from = document.getElementById('filter-from-orders')?.value;
+  const to = document.getElementById('filter-to-orders')?.value;
+  if (from) filterState.orders.from = from;
+  if (to) filterState.orders.to = to;
+  renderOrders();
+}
+function setOrdersStatusFilter(status, btn) {
+  orderStatusFilter = status;
+  document.querySelectorAll('#panel-orders .status-pill').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderOrders();
 }
 
 // ==================== INVOICING HELPER ====================
@@ -58,6 +123,8 @@ function getDateRange(mode) {
     case 'tomorrow': return { from: fmt(tmr), to: fmt(tmr) };
     case 'thisweek': return { from: fmt(mon), to: fmt(sun) };
     case 'nextweek': return { from: fmt(nmon), to: fmt(nsun) };
+    case 'upcoming': return { from: todayStr, to: '9999-12-31' };
+    case 'all': return { from: '0000-01-01', to: '9999-12-31' };
     default: return null;
   }
 }
@@ -859,77 +926,79 @@ async function clearPricing(vendorId) {
 // ---------- Render functions ----------
 function renderOrders() {
   const el = document.getElementById('orders-list');
-  if (!el) {
-    console.error("orders-list element not found");
+  if (!el) return;
+
+  let orders = filterOrders('orders');
+  if (orderStatusFilter !== 'all') orders = orders.filter(o => (o.status || 'New') === orderStatusFilter);
+
+  const filterBarEl = document.getElementById('orders-filter-bar');
+  if (filterBarEl) filterBarEl.innerHTML = ordersFilterBarHtml();
+
+  if (!orders.length) {
+    el.innerHTML = '<div class="empty-state">No orders match this filter.</div>';
     return;
   }
-  
-  if (!allOrders || allOrders.length === 0) {
-    el.innerHTML = '<div class="empty-state">No orders yet.</div>';
-    return;
-  }
-  
-  // Group orders by delivery date
+
   const byDate = {};
-  allOrders.forEach(order => {
-    const date = order.delivery_date;
-    if (!date) return;
-    if (!byDate[date]) byDate[date] = [];
-    byDate[date].push(order);
+  orders.forEach(o => {
+    if (!o.delivery_date) return;
+    if (!byDate[o.delivery_date]) byDate[o.delivery_date] = [];
+    byDate[o.delivery_date].push(o);
   });
-  
   const sortedDates = Object.keys(byDate).sort();
-  if (sortedDates.length === 0) {
-    el.innerHTML = '<div class="empty-state">No orders with valid delivery dates.</div>';
-    return;
-  }
-  
+
   let html = '';
-  
   for (const date of sortedDates) {
-    const orders = byDate[date];
+    const dayOrders = byDate[date];
     const d = new Date(date + 'T12:00:00');
     const label = d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
-    const units = orders.reduce((sum, order) => {
-      const orderItems = order.items || [];
-      return sum + orderItems.reduce((itemSum, item) => itemSum + (item.quantity || 0), 0);
-    }, 0);
-    
+    const units = dayOrders.reduce((s, o) => s + (o.items || []).reduce((ss, i) => ss + i.quantity, 0), 0);
+
     html += `<div class="date-group">
       <div class="date-header">
         <div class="date-header-label">${date === TODAY ? 'Today — ' : ''}${label}</div>
-        <div class="date-header-stats">${orders.length} order${orders.length !== 1 ? 's' : ''} &middot; ${units} units</div>
+        <div class="date-header-stats">${dayOrders.length} order${dayOrders.length !== 1 ? 's' : ''} &middot; ${units} units</div>
       </div>`;
-    
-    for (const order of orders) {
+
+    // sort within a day by time
+    dayOrders.sort((a, b) => (a.delivery_time || '').localeCompare(b.delivery_time || ''));
+
+    for (const order of dayOrders) {
       const items = order.items || [];
-      const totalUnits = items.reduce((sum, item) => sum + (item.quantity || 0), 0);
-      const itemsText = items.map(item => `${item.item_name || 'Unknown'} &times; ${item.quantity || 0}`).join(', ');
-      const statusClass = (order.status || 'new').toLowerCase();
-      
-      html += `<div class="order-row">
-        <div style="flex:1">
-          <div class="order-vendor">${escapeHtml(order.vendor_name || 'Unknown Vendor')}${order.created_by_admin ? '<span style="font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-left:10px;border:1px solid var(--border);padding:2px 7px">Phone</span>' : ''}</div>
-          <div class="order-items-text">${itemsText || 'No items'}</div>
-          ${order.notes ? `<div class="order-notes-text">${escapeHtml(order.notes)}</div>` : ''}
+      const totalUnits = items.reduce((s, i) => s + i.quantity, 0);
+      const statusClass = (order.status || 'New').toLowerCase();
+      const itemsHtml = items.length
+        ? items.map(i => `<div class="oc-item"><span>${escapeHtml(i.item_name)}</span><span class="oc-item-qty">${i.quantity} ${i.unit === 'each' ? 'each' : (i.quantity !== 1 ? i.unit + 's' : i.unit)}</span></div>`).join('')
+        : '<div class="oc-item" style="color:var(--text3)">No items</div>';
+
+      html += `<div class="order-card">
+        <div class="oc-header">
+          <div class="oc-header-left">
+            <span class="oc-vendor">${escapeHtml(order.vendor_name || 'Unknown Vendor')}</span>
+            ${order.created_by_admin ? '<span class="oc-tag">Phone</span>' : ''}
+          </div>
+          <div class="oc-header-right">
+            <span class="oc-time">${(order.delivery_time || '').slice(0,5) || '--:--'}</span>
+            <select class="status-select ${statusClass}" onchange="updateStatus('${order.id}',this)">
+              <option value="New" ${order.status === 'New' ? 'selected' : ''}>New</option>
+              <option value="Seen" ${order.status === 'Seen' ? 'selected' : ''}>Seen</option>
+              <option value="Done" ${order.status === 'Done' ? 'selected' : ''}>Done</option>
+            </select>
+          </div>
         </div>
-        <div class="order-row-right">
-          <div class="order-time">${(order.delivery_time || '').slice(0,5) || '--:--'}</div>
-          <div class="order-units">${totalUnits} units</div>
-          <select class="status-select ${statusClass}" onchange="updateStatus('${order.id}',this)">
-            <option value="New" ${order.status === 'New' ? 'selected' : ''}>New</option>
-            <option value="Seen" ${order.status === 'Seen' ? 'selected' : ''}>Seen</option>
-            <option value="Done" ${order.status === 'Done' ? 'selected' : ''}>Done</option>
-          </select>
-          <button class="btn-invoice" onclick="openInvoice('${order.id}')">Invoice</button>
-          <button class="btn-invoice" style="color:var(--err);border-color:var(--err)" onclick="deleteOrderAdmin('${order.id}')">Delete</button>
+        <div class="oc-items">${itemsHtml}</div>
+        ${order.notes ? `<div class="oc-notes">${escapeHtml(order.notes)}</div>` : ''}
+        <div class="oc-footer">
+          <span class="oc-total">${totalUnits} total units</span>
+          <div class="oc-actions">
+            <button class="btn-invoice" onclick="openInvoice('${order.id}')">Invoice</button>
+            <button class="btn-invoice" style="color:var(--err);border-color:var(--err)" onclick="deleteOrderAdmin('${order.id}')">Delete</button>
+          </div>
         </div>
       </div>`;
     }
-    
     html += `</div>`;
   }
-  
   el.innerHTML = html;
 }
 
