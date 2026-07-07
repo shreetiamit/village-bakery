@@ -456,6 +456,184 @@ async function submitCreateWeeklyOrders() {
   } catch (e) { if (errEl) { errEl.textContent = e.message; errEl.style.display = 'block'; } }
 }
 
+// ============================================================
+// ---------- REPEAT ORDER (client + past-order picker) -------
+// ============================================================
+let roSelectedOrder = null;
+
+function toggleRepeatOrder() {
+  const form = document.getElementById('repeat-order-form');
+  if (!form) return;
+  const opening = !form.classList.contains('open');
+  form.classList.toggle('open');
+  if (opening) buildRepeatOrderForm();
+}
+
+function buildRepeatOrderForm() {
+  roSelectedOrder = null;
+  const sel = document.getElementById('ro-vendor-select');
+  if (!sel) return;
+  sel.innerHTML = '<option value="">Select client...</option>';
+  allVendors.filter(v => v.approved && v.active !== false).forEach(v => {
+    const opt = document.createElement('option');
+    opt.value = v.id;
+    opt.textContent = v.business_name || (v.email || 'Unnamed');
+    sel.appendChild(opt);
+  });
+  const listEl = document.getElementById('ro-past-orders');
+  if (listEl) listEl.innerHTML = '';
+  const detailsEl = document.getElementById('ro-details');
+  if (detailsEl) detailsEl.style.display = 'none';
+  const errEl = document.getElementById('ro-error');
+  if (errEl) errEl.style.display = 'none';
+}
+
+function onRoVendorChange() {
+  const vendorId = document.getElementById('ro-vendor-select')?.value;
+  const listEl = document.getElementById('ro-past-orders');
+  const detailsEl = document.getElementById('ro-details');
+  roSelectedOrder = null;
+  if (detailsEl) detailsEl.style.display = 'none';
+  if (!listEl) return;
+  if (!vendorId) { listEl.innerHTML = ''; return; }
+
+  const pastOrders = allOrders
+    .filter(o => o.vendor_id === vendorId)
+    .sort((a, b) => b.delivery_date.localeCompare(a.delivery_date) || (b.delivery_time || '').localeCompare(a.delivery_time || ''))
+    .slice(0, 8);
+
+  if (!pastOrders.length) {
+    listEl.innerHTML = '<div class="empty-state" style="padding:24px 0">No previous orders for this client.</div>';
+    return;
+  }
+
+  listEl.innerHTML = `<div style="font-size:var(--fs-xs);font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--text2);margin:20px 0 10px;padding-top:14px;border-top:1px solid var(--border)">Select an order to repeat</div>` +
+    pastOrders.map(o => {
+      const items = o.items || [];
+      const itemsText = items.map(i => `${i.item_name} × ${i.quantity}`).join(', ');
+      const units = items.reduce((s, i) => s + i.quantity, 0);
+      return `<div class="co-item-row ro-order-row" onclick="selectRepeatOrder('${o.id}', this)" id="ro-opt-${o.id}">
+        <div style="flex:1">
+          <div class="co-item-name">${fmtDate(o.delivery_date)}</div>
+          <div style="font-size:var(--fs-sm);color:var(--text3);margin-top:3px">${itemsText || 'No items'}</div>
+        </div>
+        <div style="font-size:var(--fs-sm);color:var(--text2);font-weight:600;flex-shrink:0">${units} units</div>
+      </div>`;
+    }).join('');
+}
+
+function selectRepeatOrder(orderId, el) {
+  roSelectedOrder = allOrders.find(o => o.id === orderId);
+  document.querySelectorAll('#ro-past-orders .ro-order-row').forEach(r => r.classList.remove('selected'));
+  if (el) el.classList.add('selected');
+  const detailsEl = document.getElementById('ro-details');
+  if (detailsEl) detailsEl.style.display = 'block';
+  const roDate = document.getElementById('ro-date');
+  if (roDate) roDate.value = TODAY;
+  const roTime = document.getElementById('ro-time');
+  if (roTime) roTime.value = (roSelectedOrder.delivery_time || '08:00').slice(0, 5);
+  const roNotes = document.getElementById('ro-notes');
+  if (roNotes) roNotes.value = roSelectedOrder.notes || '';
+  const errEl = document.getElementById('ro-error');
+  if (errEl) errEl.style.display = 'none';
+}
+
+async function submitRepeatOrder() {
+  const errEl = document.getElementById('ro-error');
+  if (errEl) errEl.style.display = 'none';
+  if (!roSelectedOrder) { if (errEl) { errEl.textContent = 'Please select an order to repeat.'; errEl.style.display = 'block'; } return; }
+  const date = document.getElementById('ro-date')?.value;
+  const time = document.getElementById('ro-time')?.value;
+  const notes = document.getElementById('ro-notes')?.value.trim() || '';
+  if (!date) { if (errEl) { errEl.textContent = 'Please set a delivery date.'; errEl.style.display = 'block'; } return; }
+  if (!time) { if (errEl) { errEl.textContent = 'Please set a delivery time.'; errEl.style.display = 'block'; } return; }
+  try {
+    await db.collection('orders').add({
+      vendor_id: roSelectedOrder.vendor_id,
+      vendor_name: roSelectedOrder.vendor_name,
+      delivery_date: date,
+      delivery_time: time,
+      notes,
+      status: 'New',
+      created_at: firebase.firestore.FieldValue.serverTimestamp(),
+      items: roSelectedOrder.items || [],
+      created_by_admin: true
+    });
+    await loadOrders();
+    renderOrders();
+    const form = document.getElementById('repeat-order-form');
+    if (form) form.classList.remove('open');
+    roSelectedOrder = null;
+  } catch (e) { if (errEl) { errEl.textContent = e.message; errEl.style.display = 'block'; } }
+}
+
+// ============================================================
+// ---------- QUICK REPEAT (one click from an order row) ------
+// ============================================================
+let quickRepeatSourceOrder = null;
+
+function quickRepeatOrder(orderId) {
+  const order = allOrders.find(o => o.id === orderId);
+  if (!order) return;
+  quickRepeatSourceOrder = order;
+  const items = order.items || [];
+  const itemsText = items.map(i => `${i.item_name} × ${i.quantity}`).join(', ');
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.id = 'quick-repeat-overlay';
+  overlay.innerHTML = `
+    <div class="modal-box">
+      <div class="modal-title">Repeat Order</div>
+      <div class="modal-sub">${escapeHtml(order.vendor_name)} &middot; ${escapeHtml(itemsText || 'No items')}</div>
+      <div class="co-date-row">
+        <div class="field"><label>New Delivery Date</label><input class="admin-form-input" type="date" id="qr-date" value="${TODAY}"></div>
+        <div class="field"><label>Delivery Time</label><input class="admin-form-input" type="time" id="qr-time" value="${(order.delivery_time || '08:00').slice(0, 5)}"></div>
+      </div>
+      <div class="field"><label>Notes (optional)</label><input class="admin-form-input" type="text" id="qr-notes" value="${escapeHtml(order.notes || '')}"></div>
+      <p class="error-msg" id="qr-error" style="margin-bottom:0"></p>
+      <div class="form-actions">
+        <button class="btn-action" onclick="confirmQuickRepeat()">Place Order</button>
+        <button class="btn-action-cancel" onclick="closeQuickRepeat()">Cancel</button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) closeQuickRepeat(); });
+}
+
+function closeQuickRepeat() {
+  const overlay = document.getElementById('quick-repeat-overlay');
+  if (overlay) overlay.remove();
+  quickRepeatSourceOrder = null;
+}
+
+async function confirmQuickRepeat() {
+  const errEl = document.getElementById('qr-error');
+  if (!quickRepeatSourceOrder) return;
+  const date = document.getElementById('qr-date')?.value;
+  const time = document.getElementById('qr-time')?.value;
+  const notes = document.getElementById('qr-notes')?.value.trim() || '';
+  if (!date) { if (errEl) { errEl.textContent = 'Please set a delivery date.'; errEl.style.display = 'block'; } return; }
+  if (!time) { if (errEl) { errEl.textContent = 'Please set a delivery time.'; errEl.style.display = 'block'; } return; }
+  try {
+    await db.collection('orders').add({
+      vendor_id: quickRepeatSourceOrder.vendor_id,
+      vendor_name: quickRepeatSourceOrder.vendor_name,
+      delivery_date: date,
+      delivery_time: time,
+      notes,
+      status: 'New',
+      created_at: firebase.firestore.FieldValue.serverTimestamp(),
+      items: quickRepeatSourceOrder.items || [],
+      created_by_admin: true
+    });
+    await loadOrders();
+    renderOrders();
+    closeQuickRepeat();
+  } catch (e) {
+    if (errEl) { errEl.textContent = e.message; errEl.style.display = 'block'; }
+  }
+}
+
 // ---------- Vendors / Clients functions ----------
 function toggleAddClient() {
   const form = document.getElementById('add-client-form');
@@ -792,6 +970,7 @@ function renderOrders() {
             <option value="Seen" ${order.status === 'Seen' ? 'selected' : ''}>Seen</option>
             <option value="Done" ${order.status === 'Done' ? 'selected' : ''}>Done</option>
           </select>
+          <button class="btn-repeat" onclick="quickRepeatOrder('${order.id}')">Repeat</button>
           <button class="btn-invoice" onclick="openInvoice('${order.id}')">Invoice</button>
           <button class="btn-invoice" style="color:var(--err);border-color:var(--err)" onclick="deleteOrderAdmin('${order.id}')">Delete</button>
         </div>
