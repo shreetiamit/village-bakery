@@ -1359,39 +1359,43 @@ function renderInvoicingContent() {
 // ---------- Print function ----------
 function printTab(tab) {
   const printStyles = `
-    /* ── Date group: allow breaking BETWEEN items, never mid-item ── */
-    .date-group { page-break-inside: auto; margin-bottom: 34px; }
-    .date-header { page-break-after: avoid; display: flex; justify-content: space-between; align-items: baseline; padding: 10px 0; border-bottom: 4px solid #000; margin-bottom: 14px; }
-    .date-header-left { font-size: 24px; font-weight: 800; text-transform: uppercase; }
-    .date-header-right { font-size: 15px; font-weight: 700; color: #333; }
-
-    .category-header { page-break-after: avoid; font-size: 20px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; margin: 18px 0 8px; border-bottom: 2px solid #000; padding-bottom: 4px; }
-
-    .item-row { page-break-inside: avoid; break-inside: avoid; display: flex; align-items: center; gap: 16px; padding: 12px 0; border-bottom: 2px solid #ccc; }
-    .item-checkbox { width: 26px; height: 26px; border: 3px solid #000; flex-shrink: 0; }
-    .item-name { font-size: 20px; font-weight: 700; }
-    .item-vendors { font-size: 14px; color: #444; font-weight: 500; margin-top: 2px; }
-    .item-qty-block { text-align: right; flex-shrink: 0; }
-    .item-qty { font-size: 34px; font-weight: 800; }
-    .item-unit { font-size: 14px; font-weight: 700; text-transform: uppercase; color: #333; margin-left: 4px; }
-
-    /* ── Client cards: allow breaking BETWEEN rows, never mid-row ── */
-    .client-card { page-break-inside: auto; border: 3px solid #000; margin-bottom: 20px; }
-    .client-header { page-break-after: avoid; background: #eee; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #000; }
-    .client-name { font-size: 22px; font-weight: 800; }
-    .client-meta { font-size: 15px; font-weight: 700; color: #333; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'DM Sans', 'Helvetica Neue', Arial, sans-serif;
+      color: #1a1916;
+      background: white;
+      padding: 0;
+      margin: 0;
+    }
+    @media print {
+      body { margin: 0; padding: 0; }
+      .no-print { display: none !important; }
+      @page { margin: 8mm; }
+    }
+    .no-print { text-align: center; margin-bottom: 10px; }
+    .print-btn { background: #1a1916; color: white; border: none; padding: 6px 16px; font-size: 10px; cursor: pointer; }
+    .header-section { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 16px; padding-bottom: 6px; border-bottom: 1px solid #ccc; }
+    .title { font-size: 18px; font-weight: 700; text-transform: uppercase; }
+    .range { font-size: 10px; color: #6b6860; }
+    .date-group { margin-bottom: 24px; page-break-inside: avoid; }
+    .date-header { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1.5px solid #000; margin-bottom: 10px; font-weight: 600; }
+    .date-header-left { font-size: 12px; text-transform: uppercase; }
+    .date-header-right { font-size: 9px; color: #6b6860; }
+    .client-card { border: 1px solid #ccc; margin-bottom: 12px; page-break-inside: avoid; }
+    .client-header { background: #f5f5f5; padding: 6px 10px; display: flex; justify-content: space-between; border-bottom: 1px solid #ccc; font-weight: 600; font-size: 11px; }
+    .client-name { font-size: 12px; }
+    .client-meta { font-size: 9px; color: #6b6860; }
     .client-items { width: 100%; border-collapse: collapse; }
-    .client-items tr { page-break-inside: avoid; break-inside: avoid; }
-    .client-items td { padding: 12px 16px; font-size: 18px; font-weight: 600; border-bottom: 2px solid #ddd; }
-    .client-items tr:last-child td { border-bottom: none; }
-    .client-items td:first-child { display: flex; align-items: center; gap: 14px; }
-    .client-items td:last-child { text-align: right; font-weight: 800; font-size: 20px; white-space: nowrap; }
-    .pack-checkbox { width: 22px; height: 22px; border: 3px solid #000; flex-shrink: 0; display: inline-block; }
-
-    /* ── Kill blank first page: never break before the very first block ── */
-    .date-group:first-of-type,
-    .client-card:first-of-type { page-break-before: avoid !important; margin-top: 0 !important; }
-    .header-section { page-break-after: avoid; page-break-before: avoid; }
+    .client-items td { padding: 5px 10px; font-size: 10px; border-bottom: 1px solid #f0ece6; }
+    .client-items td:last-child { text-align: right; font-weight: 600; }
+    .invoice-client-card { margin-bottom: 16px; border: 1px solid #ccc; page-break-inside: avoid; }
+    .invoice-client-header { background: #f5efdf; padding: 6px 10px; border-bottom: 1px solid #ccc; }
+    .invoice-client-name { font-size: 13px; font-weight: 700; }
+    .invoice-client-stats { font-size: 9px; color: #6b6860; }
+    .invoice-items-table { width: 100%; border-collapse: collapse; }
+    .invoice-items-table th { text-align: left; padding: 4px 10px; font-size: 9px; background: #f5f5f5; }
+    .invoice-items-table td { padding: 4px 10px; font-size: 10px; border-bottom: 1px solid #f0ece6; }
+    .invoice-items-table td:last-child { text-align: right; font-weight: 600; }
   `;
 
   if (tab === 'invoicing') {
@@ -1490,17 +1494,11 @@ function printTab(tab) {
       }
       const sortedCats = Object.keys(categoryGroups).sort();
       for (const cat of sortedCats) {
-        body += `<div class="category-header">${cat}</div>`;
+        body += `<div class="category-header" style="font-size:11px; font-weight:700; color:#C4852A; margin:10px 0 5px;">${cat}</div>`;
         for (const data of categoryGroups[cat]) {
-          body += `<div class="item-row">
-            <div class="item-checkbox"></div>
-            <div style="flex:1">
-              <div class="item-name">${data.name}</div>
-              <div class="item-vendors">${data.vendors.join(', ')}</div>
-            </div>
-            <div class="item-qty-block">
-              <span class="item-qty">${data.qty}</span><span class="item-unit">${data.unit === 'each' ? 'each' : (data.qty !== 1 ? data.unit + 's' : data.unit)}</span>
-            </div>
+          body += `<div class="item-row" style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid #f0ece6;">
+            <div><div style="font-weight:600; font-size:11px;">${data.name}</div><div style="font-size:9px; color:#6b6860;">${data.vendors.join(', ')}</div></div>
+            <div style="font-size:12px; font-weight:700; text-align:right;">${data.qty} <span style="font-size:9px; font-weight:400;">${data.unit === 'each' ? 'each' : (data.qty !== 1 ? data.unit + 's' : data.unit)}</span></div>
           </div>`;
         }
       }
@@ -1536,12 +1534,12 @@ function printTab(tab) {
         body += `<div class="client-card">
           <div class="client-header">
             <span class="client-name">${escapeHtml(vendor)}</span>
-            <div class="client-meta">${data.time ? `Deliver by ${data.time.slice(0,5)}` : ''} &nbsp;·&nbsp; ${data.total} unit${data.total !== 1 ? 's' : ''}</div>
+            <div class="client-meta">${data.time ? `Delivery: ${data.time.slice(0,5)}` : ''} · ${data.total} unit${data.total !== 1 ? 's' : ''}</div>
           </div>
           <table class="client-items">
-            ${data.items.map(item => `<tr><td><span class="pack-checkbox"></span>${escapeHtml(item.name)}</td><td>${item.qty} ${item.unit === 'each' ? 'each' : (item.qty !== 1 ? item.unit + 's' : item.unit)}</td></tr>`).join('')}
+            ${data.items.map(item => `<tr><td>${escapeHtml(item.name)}</td><td>${item.qty} ${item.unit === 'each' ? 'each' : (item.qty !== 1 ? item.unit + 's' : item.unit)}</td></tr>`).join('')}
           </table>
-          ${data.notes ? `<div style="padding: 12px 16px; font-size: 15px; font-weight:600; font-style: italic; border-top: 2px dashed #000;">Note: ${escapeHtml(data.notes)}</div>` : ''}
+          ${data.notes ? `<div style="padding: 5px 10px; font-size: 9px; font-style: italic; border-top: 1px dashed #ccc;">Note: ${escapeHtml(data.notes)}</div>` : ''}
         </div>`;
       }
       body += `</div>`;
@@ -1569,11 +1567,10 @@ w.document.write(fullHtml);
 w.document.close();
 
 w.addEventListener('load', () => {
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      w.print();
-    });
-  });
+  // Small delay ensures layout is fully computed (especially for complex tables)
+  setTimeout(() => {
+    w.print();
+  }, 200);
 });
 }
 
