@@ -1356,7 +1356,7 @@ function renderInvoicingContent() {
   if (bodyDiv) bodyDiv.innerHTML = html;
 }
 
-// ---------- Print function ----------
+// ---------- Print function (FIXED: client/invoice cards no longer split across pages) ----------
 function printTab(tab) {
   // ----- LARGER, BOLDER PRINT STYLES with bulletproof page breaks -----
   const printStyles = `
@@ -1428,23 +1428,21 @@ function printTab(tab) {
       font-weight: 600;
       color: #000;
     }
-    /* CLIENT CARD – MUST STAY TOGETHER */
+    /* CLIENT CARD – MUST STAY TOGETHER
+       NOTE: display:inline-block (instead of block) is a deliberate Chrome-print
+       workaround. Block-level boxes at the top of the flow are pagination's
+       weakest case; atomic inline-level boxes respect break-inside far more
+       reliably. Do not change back to display:block. */
     .client-card {
+      display: inline-block;
+      width: 100%;
+      vertical-align: top;
       border: 2px solid #000;
       margin-bottom: 20px;
       page-break-inside: avoid !important;
       break-inside: avoid-page !important;
       page-break-after: avoid;
       break-after: avoid-page;
-      display: block;
-      overflow: hidden; /* helps contain floats */
-    }
-    .client-card table,
-    .client-card .client-items {
-      page-break-inside: avoid !important;
-      break-inside: avoid-page !important;
-      width: 100%;
-      border-collapse: collapse;
     }
     .client-header {
       background: #f0f0f0;
@@ -1464,13 +1462,19 @@ function printTab(tab) {
       font-weight: 600;
       color: #000;
     }
-    .client-items td {
+    /* Item rows as divs, NOT a <table> — tables are their own layout context
+       and Chrome will slice them across a page break even when the
+       containing card has break-inside:avoid-page set. */
+    .client-items { width: 100%; }
+    .client-item-row {
+      display: flex;
+      justify-content: space-between;
       padding: 12px 16px;
       font-size: 18px;
       font-weight: 600;
       border-bottom: 1px solid #ccc;
     }
-    .client-items td:last-child {
+    .client-item-row span:last-child {
       text-align: right;
       font-weight: 800;
       font-size: 20px;
@@ -1508,8 +1512,11 @@ function printTab(tab) {
       font-size: 16px;
       font-weight: 600;
     }
-    /* Invoicing */
+    /* Invoicing — same table-to-div fix as client-card */
     .invoice-client-card {
+      display: inline-block;
+      width: 100%;
+      vertical-align: top;
       margin-bottom: 24px;
       border: 2px solid #000;
       page-break-inside: avoid !important;
@@ -1531,29 +1538,28 @@ function printTab(tab) {
       font-weight: 600;
       color: #000;
     }
-    .invoice-items-table {
-      width: 100%;
-      border-collapse: collapse;
-      page-break-inside: avoid !important;
-      break-inside: avoid-page !important;
-    }
-    .invoice-items-table th {
-      padding: 12px 16px;
-      font-size: 18px;
-      font-weight: 700;
-      background: #f5f5f5;
-      border-bottom: 2px solid #000;
-      text-align: left;
-    }
-    .invoice-items-table td {
+    .invoice-items { width: 100%; }
+    .invoice-item-row {
+      display: flex;
+      justify-content: space-between;
       padding: 12px 16px;
       font-size: 18px;
       font-weight: 600;
       border-bottom: 1px solid #ccc;
     }
-    .invoice-items-table td:last-child {
+    .invoice-item-row span:first-child { font-weight: 700; }
+    .invoice-item-row span:last-child {
       text-align: right;
       font-weight: 800;
+    }
+    .invoice-items-header-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 16px;
+      font-size: 18px;
+      font-weight: 700;
+      background: #f5f5f5;
+      border-bottom: 2px solid #000;
     }
     /* Prevent blank pages before first element */
     .date-group:first-of-type,
@@ -1564,7 +1570,7 @@ function printTab(tab) {
     }
   `;
 
-  // ----- INVOICING BRANCH (unchanged) -----
+  // ----- INVOICING BRANCH -----
   if (tab === 'invoicing') {
     const fs = filterState.invoicing;
     const range = fs.mode === 'custom' ? { from: fs.from, to: fs.to } : getDateRange(fs.mode);
@@ -1589,10 +1595,10 @@ function printTab(tab) {
           <div class="invoice-client-name">${escapeHtml(clientName)}</div>
           <div class="invoice-client-stats">${sortedItems.length} item(s) · ${sortedItems.reduce((s,i)=>s+i[1],0)} units</div>
         </div>
-        <table class="invoice-items-table">
-          <thead><tr><th>Item</th><th style="text-align:right">Total Qty</th></tr></thead>
-          <tbody>${sortedItems.map(([itemName, qty]) => `<tr><td>${escapeHtml(itemName)}</td><td style="text-align:right">${qty}</td></tr>`).join('')}</tbody>
-        </table>
+        <div class="invoice-items">
+          <div class="invoice-items-header-row"><span>Item</span><span>Total Qty</span></div>
+          ${sortedItems.map(([itemName, qty]) => `<div class="invoice-item-row"><span>${escapeHtml(itemName)}</span><span>${qty}</span></div>`).join('')}
+        </div>
       </div>`;
     }
     const rangeLabel = range.from === range.to ? fmtDate(range.from) : fmtDate(range.from) + ' – ' + fmtDate(range.to);
@@ -1677,7 +1683,8 @@ function printTab(tab) {
       body += `</div>`;
     }
   } else {
-    // PACKING – each client card stays whole, but date group can break between cards
+    // PACKING – each client card stays whole (div rows, not a <table>),
+    // but the date group can break between cards.
     const sortedDates = Object.keys(byDate).sort();
     for (const date of sortedDates) {
       const dayOrders = byDate[date];
@@ -1707,9 +1714,9 @@ function printTab(tab) {
             <span class="client-name">${escapeHtml(vendor)}</span>
             <div class="client-meta">${data.time ? `Delivery: ${data.time.slice(0,5)}` : ''} · ${data.total} unit${data.total !== 1 ? 's' : ''}</div>
           </div>
-          <table class="client-items">
-            ${data.items.map(item => `<tr><td>${escapeHtml(item.name)}</td><td>${item.qty} ${item.unit === 'each' ? 'each' : (item.qty !== 1 ? item.unit + 's' : item.unit)}</td></tr>`).join('')}
-          </table>
+          <div class="client-items">
+            ${data.items.map(item => `<div class="client-item-row"><span>${escapeHtml(item.name)}</span><span>${item.qty} ${item.unit === 'each' ? 'each' : (item.qty !== 1 ? item.unit + 's' : item.unit)}</span></div>`).join('')}
+          </div>
           ${data.notes ? `<div style="padding: 8px 16px; font-size: 16px; font-weight: 600; font-style: italic; border-top: 2px dashed #000;">Note: ${escapeHtml(data.notes)}</div>` : ''}
         </div>`;
       }
