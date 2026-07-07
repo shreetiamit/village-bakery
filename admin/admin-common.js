@@ -1358,12 +1358,12 @@ function renderInvoicingContent() {
 
 // ---------- Print function ----------
 function printTab(tab) {
-  // ----- LARGER, BOLDER PRINT STYLES -----
+  // ----- LARGER, BOLDER PRINT STYLES with better page‑break control -----
   const printStyles = `
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'DM Sans', 'Helvetica Neue', Arial, sans-serif;
-      font-size: 18px;          /* base size increased */
+      font-size: 18px;
       font-weight: 600;
       color: #000;
       background: #fff;
@@ -1373,7 +1373,7 @@ function printTab(tab) {
     @media print {
       body { margin: 0; padding: 0; }
       .no-print { display: none !important; }
-      @page { margin: 12mm; }
+      @page { margin: 10mm; }   /* reasonable margins, no extra blank page */
     }
     .no-print { text-align: center; margin-bottom: 12px; }
     .print-btn { background: #1a1916; color: white; border: none; padding: 10px 24px; font-size: 16px; cursor: pointer; }
@@ -1384,6 +1384,7 @@ function printTab(tab) {
       margin-bottom: 24px;
       padding-bottom: 12px;
       border-bottom: 3px solid #000;
+      page-break-after: avoid;   /* keep header with first content */
     }
     .title {
       font-size: 28px;
@@ -1398,7 +1399,13 @@ function printTab(tab) {
     }
     .date-group {
       margin-bottom: 36px;
+      /* For production: keep together if small, but allow break if too big */
       page-break-inside: avoid;
+      page-break-after: avoid;
+    }
+    /* For packing, we allow breaks inside the date-group because a day can be long */
+    .date-group.packing {
+      page-break-inside: auto;
     }
     .date-header {
       display: flex;
@@ -1418,11 +1425,11 @@ function printTab(tab) {
       font-weight: 600;
       color: #000;
     }
-    /* Packing client cards */
     .client-card {
       border: 2px solid #000;
       margin-bottom: 20px;
-      page-break-inside: avoid;
+      page-break-inside: avoid;   /* keep a vendor's order together */
+      page-break-after: avoid;
     }
     .client-header {
       background: #f0f0f0;
@@ -1457,7 +1464,6 @@ function printTab(tab) {
       font-weight: 800;
       font-size: 20px;
     }
-    /* Production category & item rows */
     .category-header {
       font-size: 20px;
       font-weight: 800;
@@ -1490,11 +1496,12 @@ function printTab(tab) {
       font-size: 16px;
       font-weight: 600;
     }
-    /* Invoicing (optional) */
+    /* Invoicing */
     .invoice-client-card {
       margin-bottom: 24px;
       border: 2px solid #000;
       page-break-inside: avoid;
+      page-break-after: avoid;
     }
     .invoice-client-header {
       background: #f5efdf;
@@ -1532,9 +1539,15 @@ function printTab(tab) {
       text-align: right;
       font-weight: 800;
     }
+    /* Prevent blank pages before first element */
+    .date-group:first-of-type,
+    .client-card:first-of-type,
+    .invoice-client-card:first-of-type {
+      page-break-before: avoid;
+    }
   `;
 
-  // ----- INVOICING BRANCH (unchanged logic, but uses updated styles) -----
+  // ----- INVOICING BRANCH (unchanged logic) -----
   if (tab === 'invoicing') {
     const fs = filterState.invoicing;
     const range = fs.mode === 'custom' ? { from: fs.from, to: fs.to } : getDateRange(fs.mode);
@@ -1600,7 +1613,6 @@ function printTab(tab) {
   if (!orders.length) {
     body = '<p style="font-size:20px;font-weight:600;">No orders for this period.</p>';
   } else if (tab === 'production') {
-    // ----- PRODUCTION (larger, bolder) -----
     const sortedDates = Object.keys(byDate).sort();
     for (const date of sortedDates) {
       const dayOrders = byDate[date];
@@ -1648,16 +1660,15 @@ function printTab(tab) {
       body += `</div>`;
     }
   } else {
-    // ----- PACKING (larger, bolder) -----
+    // PACKING – allow page breaks inside .date-group
     const sortedDates = Object.keys(byDate).sort();
     for (const date of sortedDates) {
       const dayOrders = byDate[date];
-      body += `<div class="date-group">
+      body += `<div class="date-group packing">   <!-- added class "packing" to allow breaks -->
         <div class="date-header">
           <div class="date-header-left">${fmtDate(date)}</div>
           <div class="date-header-right">${dayOrders.length} order${dayOrders.length !== 1 ? 's' : ''}</div>
         </div>`;
-      // Group by vendor
       const vendorMap = {};
       dayOrders.forEach(order => {
         const vendor = order.vendor_name;
@@ -1689,12 +1700,8 @@ function printTab(tab) {
     }
   }
 
-  // Allow page breaks inside date-group for packing so a long day doesn't force a blank first page
-  const tabSpecificStyles = tab === 'packing'
-    ? '\n.date-group { page-break-inside: auto !important; }'
-    : '';
-
-  const fullHtml = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${title}</title><style>${printStyles}${tabSpecificStyles}</style></head><body>
+  // No need for additional overrides – the .packing class controls break behaviour
+  const fullHtml = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${title}</title><style>${printStyles}</style></head><body>
     <div class="no-print"><button class="print-btn" onclick="window.print()">Print / Save PDF</button></div>
     <div class="header-section">
       <div><div style="font-size:14px;letter-spacing:.2em;font-weight:600;">VILLAGE BAKERY + PROVISIONS</div><div class="title">${title}</div></div>
