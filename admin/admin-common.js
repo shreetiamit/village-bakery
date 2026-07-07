@@ -1358,7 +1358,7 @@ function renderInvoicingContent() {
 
 // ---------- Print function ----------
 function printTab(tab) {
-  // ----- LARGER, BOLDER PRINT STYLES with better page‑break control -----
+  // ----- LARGER, BOLDER PRINT STYLES with rock‑solid page‑break control -----
   const printStyles = `
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -1373,7 +1373,7 @@ function printTab(tab) {
     @media print {
       body { margin: 0; padding: 0; }
       .no-print { display: none !important; }
-      @page { margin: 10mm; }   /* reasonable margins, no extra blank page */
+      @page { margin: 10mm; }
     }
     .no-print { text-align: center; margin-bottom: 12px; }
     .print-btn { background: #1a1916; color: white; border: none; padding: 10px 24px; font-size: 16px; cursor: pointer; }
@@ -1384,7 +1384,7 @@ function printTab(tab) {
       margin-bottom: 24px;
       padding-bottom: 12px;
       border-bottom: 3px solid #000;
-      page-break-after: avoid;   /* keep header with first content */
+      page-break-after: avoid;
     }
     .title {
       font-size: 28px;
@@ -1399,13 +1399,14 @@ function printTab(tab) {
     }
     .date-group {
       margin-bottom: 36px;
-      /* For production: keep together if small, but allow break if too big */
+      /* For production: keep together; for packing we override below */
       page-break-inside: avoid;
       page-break-after: avoid;
     }
-    /* For packing, we allow breaks inside the date-group because a day can be long */
+    /* Packing: allow breaks between client cards, but never inside a card */
     .date-group.packing {
       page-break-inside: auto;
+      break-inside: auto;
     }
     .date-header {
       display: flex;
@@ -1425,11 +1426,19 @@ function printTab(tab) {
       font-weight: 600;
       color: #000;
     }
+    /* CLIENT CARD – MUST STAY TOGETHER */
     .client-card {
       border: 2px solid #000;
       margin-bottom: 20px;
-      page-break-inside: avoid;   /* keep a vendor's order together */
+      page-break-inside: avoid;
+      break-inside: avoid-page;
       page-break-after: avoid;
+      break-after: avoid-page;
+      display: block;
+    }
+    .client-card table {
+      page-break-inside: avoid;
+      break-inside: avoid-page;
     }
     .client-header {
       background: #f0f0f0;
@@ -1464,6 +1473,7 @@ function printTab(tab) {
       font-weight: 800;
       font-size: 20px;
     }
+    /* Production styles */
     .category-header {
       font-size: 20px;
       font-weight: 800;
@@ -1501,7 +1511,9 @@ function printTab(tab) {
       margin-bottom: 24px;
       border: 2px solid #000;
       page-break-inside: avoid;
+      break-inside: avoid-page;
       page-break-after: avoid;
+      break-after: avoid-page;
     }
     .invoice-client-header {
       background: #f5efdf;
@@ -1520,6 +1532,8 @@ function printTab(tab) {
     .invoice-items-table {
       width: 100%;
       border-collapse: collapse;
+      page-break-inside: avoid;
+      break-inside: avoid-page;
     }
     .invoice-items-table th {
       padding: 12px 16px;
@@ -1544,6 +1558,7 @@ function printTab(tab) {
     .client-card:first-of-type,
     .invoice-client-card:first-of-type {
       page-break-before: avoid;
+      break-before: avoid-page;
     }
   `;
 
@@ -1660,11 +1675,11 @@ function printTab(tab) {
       body += `</div>`;
     }
   } else {
-    // PACKING – allow page breaks inside .date-group
+    // PACKING – allow page breaks inside .date-group, but never inside a client-card
     const sortedDates = Object.keys(byDate).sort();
     for (const date of sortedDates) {
       const dayOrders = byDate[date];
-      body += `<div class="date-group packing">   <!-- added class "packing" to allow breaks -->
+      body += `<div class="date-group packing">
         <div class="date-header">
           <div class="date-header-left">${fmtDate(date)}</div>
           <div class="date-header-right">${dayOrders.length} order${dayOrders.length !== 1 ? 's' : ''}</div>
@@ -1700,7 +1715,6 @@ function printTab(tab) {
     }
   }
 
-  // No need for additional overrides – the .packing class controls break behaviour
   const fullHtml = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${title}</title><style>${printStyles}</style></head><body>
     <div class="no-print"><button class="print-btn" onclick="window.print()">Print / Save PDF</button></div>
     <div class="header-section">
