@@ -1359,6 +1359,26 @@ function renderInvoicingContent() {
 // ---------- Print function ----------
 function printTab(tab) {
   const printStyles = `
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'DM Sans', 'Helvetica Neue', Arial, sans-serif;
+      color: #000;
+      background: white;
+      font-size: 16px;
+    }
+    @media print {
+      body { margin: 0 !important; padding: 0 !important; }
+      .no-print { display: none !important; }
+      @page { margin: 10mm; }
+    }
+    .no-print { text-align: center; margin-bottom: 14px; }
+    .print-btn { background: #000; color: white; border: none; padding: 12px 28px; font-size: 14px; font-weight: 700; cursor: pointer; }
+
+    .header-section { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 3px solid #000; page-break-after: avoid; page-break-before: avoid; }
+    .brand-label { font-size: 13px; font-weight: 700; letter-spacing: .2em; }
+    .title { font-size: 30px; font-weight: 800; text-transform: uppercase; letter-spacing: .02em; }
+    .range { font-size: 14px; font-weight: 600; color: #333; text-align: right; }
+
     /* ── Date group: allow breaking BETWEEN items, never mid-item ── */
     .date-group { page-break-inside: auto; margin-bottom: 34px; }
     .date-header { page-break-after: avoid; display: flex; justify-content: space-between; align-items: baseline; padding: 10px 0; border-bottom: 4px solid #000; margin-bottom: 14px; }
@@ -1388,10 +1408,20 @@ function printTab(tab) {
     .client-items td:last-child { text-align: right; font-weight: 800; font-size: 20px; white-space: nowrap; }
     .pack-checkbox { width: 22px; height: 22px; border: 3px solid #000; flex-shrink: 0; display: inline-block; }
 
+    /* ── Invoicing (kept normal size, unaffected) ── */
+    .invoice-client-card { margin-bottom: 16px; border: 1px solid #ccc; page-break-inside: avoid; }
+    .invoice-client-header { background: #f5efdf; padding: 6px 10px; border-bottom: 1px solid #ccc; }
+    .invoice-client-name { font-size: 13px; font-weight: 700; }
+    .invoice-client-stats { font-size: 9px; color: #6b6860; }
+    .invoice-items-table { width: 100%; border-collapse: collapse; }
+    .invoice-items-table th { text-align: left; padding: 4px 10px; font-size: 9px; background: #f5f5f5; }
+    .invoice-items-table td { padding: 4px 10px; font-size: 10px; border-bottom: 1px solid #f0ece6; }
+    .invoice-items-table td:last-child { text-align: right; font-weight: 600; }
+
     /* ── Kill blank first page: never break before the very first block ── */
     .date-group:first-of-type,
-    .client-card:first-of-type { page-break-before: avoid !important; margin-top: 0 !important; }
-    .header-section { page-break-after: avoid; page-break-before: avoid; }
+    .client-card:first-of-type,
+    .invoice-client-card:first-of-type { page-break-before: avoid !important; margin-top: 0 !important; }
   `;
 
   if (tab === 'invoicing') {
