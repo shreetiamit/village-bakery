@@ -1359,38 +1359,15 @@ function renderInvoicingContent() {
 // ---------- Print function ----------
 function printTab(tab) {
   const printStyles = `
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'DM Sans', 'Helvetica Neue', Arial, sans-serif;
-      color: #000;
-      background: white;
-      padding: 0;
-      margin: 0;
-      font-size: 16px;
-    }
-    @media print {
-      body { margin: 0; padding: 0; }
-      .no-print { display: none !important; }
-      @page { margin: 10mm; }
-    }
-    .no-print { text-align: center; margin-bottom: 14px; }
-    .print-btn { background: #000; color: white; border: none; padding: 12px 28px; font-size: 14px; font-weight: 700; cursor: pointer; }
-    .header-section { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 3px solid #000; }
-    .brand-label { font-size: 13px; font-weight: 700; letter-spacing: .2em; }
-    .title { font-size: 30px; font-weight: 800; text-transform: uppercase; letter-spacing: .02em; }
-    .range { font-size: 14px; font-weight: 600; color: #333; text-align: right; }
-
-    /* ── Date group ── */
-    .date-group { margin-bottom: 34px; page-break-inside: avoid; }
-    .date-header { display: flex; justify-content: space-between; align-items: baseline; padding: 10px 0; border-bottom: 4px solid #000; margin-bottom: 14px; }
+    /* ── Date group: allow breaking BETWEEN items, never mid-item ── */
+    .date-group { page-break-inside: auto; margin-bottom: 34px; }
+    .date-header { page-break-after: avoid; display: flex; justify-content: space-between; align-items: baseline; padding: 10px 0; border-bottom: 4px solid #000; margin-bottom: 14px; }
     .date-header-left { font-size: 24px; font-weight: 800; text-transform: uppercase; }
     .date-header-right { font-size: 15px; font-weight: 700; color: #333; }
 
-    /* ── Category headers (Production) ── */
-    .category-header { font-size: 20px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; margin: 18px 0 8px; border-bottom: 2px solid #000; padding-bottom: 4px; }
+    .category-header { page-break-after: avoid; font-size: 20px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; margin: 18px 0 8px; border-bottom: 2px solid #000; padding-bottom: 4px; }
 
-    /* ── Item rows (Production) ── */
-    .item-row { display: flex; align-items: center; gap: 16px; padding: 12px 0; border-bottom: 2px solid #ccc; }
+    .item-row { page-break-inside: avoid; break-inside: avoid; display: flex; align-items: center; gap: 16px; padding: 12px 0; border-bottom: 2px solid #ccc; }
     .item-checkbox { width: 26px; height: 26px; border: 3px solid #000; flex-shrink: 0; }
     .item-name { font-size: 20px; font-weight: 700; }
     .item-vendors { font-size: 14px; color: #444; font-weight: 500; margin-top: 2px; }
@@ -1398,27 +1375,23 @@ function printTab(tab) {
     .item-qty { font-size: 34px; font-weight: 800; }
     .item-unit { font-size: 14px; font-weight: 700; text-transform: uppercase; color: #333; margin-left: 4px; }
 
-    /* ── Client cards (Packing) ── */
-    .client-card { border: 3px solid #000; margin-bottom: 20px; page-break-inside: avoid; }
-    .client-header { background: #eee; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #000; }
+    /* ── Client cards: allow breaking BETWEEN rows, never mid-row ── */
+    .client-card { page-break-inside: auto; border: 3px solid #000; margin-bottom: 20px; }
+    .client-header { page-break-after: avoid; background: #eee; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #000; }
     .client-name { font-size: 22px; font-weight: 800; }
     .client-meta { font-size: 15px; font-weight: 700; color: #333; }
     .client-items { width: 100%; border-collapse: collapse; }
+    .client-items tr { page-break-inside: avoid; break-inside: avoid; }
     .client-items td { padding: 12px 16px; font-size: 18px; font-weight: 600; border-bottom: 2px solid #ddd; }
     .client-items tr:last-child td { border-bottom: none; }
     .client-items td:first-child { display: flex; align-items: center; gap: 14px; }
     .client-items td:last-child { text-align: right; font-weight: 800; font-size: 20px; white-space: nowrap; }
     .pack-checkbox { width: 22px; height: 22px; border: 3px solid #000; flex-shrink: 0; display: inline-block; }
 
-    /* ── Invoicing (kept normal size, unaffected) ── */
-    .invoice-client-card { margin-bottom: 16px; border: 1px solid #ccc; page-break-inside: avoid; }
-    .invoice-client-header { background: #f5efdf; padding: 6px 10px; border-bottom: 1px solid #ccc; }
-    .invoice-client-name { font-size: 13px; font-weight: 700; }
-    .invoice-client-stats { font-size: 9px; color: #6b6860; }
-    .invoice-items-table { width: 100%; border-collapse: collapse; }
-    .invoice-items-table th { text-align: left; padding: 4px 10px; font-size: 9px; background: #f5f5f5; }
-    .invoice-items-table td { padding: 4px 10px; font-size: 10px; border-bottom: 1px solid #f0ece6; }
-    .invoice-items-table td:last-child { text-align: right; font-weight: 600; }
+    /* ── Kill blank first page: never break before the very first block ── */
+    .date-group:first-of-type,
+    .client-card:first-of-type { page-break-before: avoid !important; margin-top: 0 !important; }
+    .header-section { page-break-after: avoid; page-break-before: avoid; }
   `;
 
   if (tab === 'invoicing') {
@@ -1596,12 +1569,12 @@ w.document.write(fullHtml);
 w.document.close();
 
 w.addEventListener('load', () => {
-  // Small delay ensures layout is fully computed (especially for complex tables)
-  setTimeout(() => {
-    w.print();
-  }, 200);
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      w.print();
+    });
+  });
 });
-}
 
 // ---------- Category update function ----------
 async function updateCategory(itemId, category) {
