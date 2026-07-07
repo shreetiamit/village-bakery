@@ -65,9 +65,13 @@
         <div class="stat-card"><div class="stat-val green-c" id="stat-units">0</div><div class="stat-lbl">Total units</div></div>
       </div>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
-        <button class="btn-add" onclick="toggleCreateOrder()">+ Create Order</button>
-        <button onclick="exportCSV()" class="print-btn">Export CSV</button>
-      </div>
+  <div style="display:flex;gap:10px">
+    <button class="btn-add" onclick="toggleCreateOrder()">+ Create Order</button>
+    <button class="btn-add" style="background:none;color:var(--accent);border:1px solid var(--accent)" onclick="toggleRepeatOrder()">↻ Repeat Order</button>
+  </div>
+  <button onclick="exportCSV()" class="print-btn">Export CSV</button>
+</div>
+      
       <div class="admin-form-box" id="create-order-form">
         <div class="admin-form-title">Create Order for Client</div>
         <div class="order-type-tabs">
@@ -122,6 +126,22 @@
           </div>
         </div>
       </div>
+      <div class="admin-form-box" id="repeat-order-form">
+  <div class="admin-form-title">Repeat a Previous Order</div>
+  <div style="margin-bottom:4px">
+    <div style="font-size:var(--fs-xs);font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--text2);margin-bottom:10px">Client</div>
+    <select class="admin-form-select" id="ro-vendor-select" onchange="onRoVendorChange()">
+      <option value="">Select client...</option>
+    </select>
+  </div>
+  <p class="error-msg" id="ro-error"></p>
+  <div id="ro-past-orders" style="margin-top:10px">
+    <div class="empty-state" style="padding:24px 0">Select a client to see their past orders.</div>
+  </div>
+  <div class="form-actions">
+    <button class="btn-action-cancel" onclick="toggleRepeatOrder()">Close</button>
+  </div>
+</div>
       <!-- THIS IS THE CRITICAL MISSING DIV -->
       <div id="orders-list"><div class="empty-state">No orders yet.</div></div>
     </div>

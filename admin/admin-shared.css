@@ -731,17 +731,8 @@ body{font-weight:500;color:var(--text);}
   border-color: var(--accent);
 }
 
-/* ── Repeat Order button (per-row) ── */
-.btn-repeat{background:none;border:1px solid var(--border);color:var(--text2);padding:8px 14px;font-family:'DM Sans',sans-serif;font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:all .15s;white-space:nowrap;}
-.btn-repeat:hover{border-color:var(--accent);color:var(--accent);}
-
-/* ── Quick Repeat modal ── */
-.modal-overlay{position:fixed;inset:0;background:rgba(44,26,14,.55);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px;}
-.modal-box{background:var(--surface);border:1px solid var(--border);padding:32px;max-width:440px;width:100%;box-shadow:0 8px 40px rgba(44,26,14,.25);}
-.modal-title{font-size:var(--fs-sm);font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
-.modal-sub{font-size:var(--fs-sm);color:var(--text2);margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border);}
-
-/* ── Repeat Order picker (past-order rows) ── */
-.ro-order-row{cursor:pointer;transition:background .12s;}
-.ro-order-row:hover{background:#FEF8EE;}
-.ro-order-row.selected{background:#FEF8EE;border-color:var(--accent);}
+.ro-order-row{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid var(--border);gap:16px;}
+.ro-order-date{font-size:var(--fs-base);font-weight:700;color:var(--text);}
+.ro-order-items{font-size:var(--fs-sm);color:#5A3B1C;margin-top:4px;}
+.ro-repeat-panel{padding:16px 0 20px;border-bottom:1px solid var(--border);}
+.ro-repeat-panel.hidden{display:none;}
