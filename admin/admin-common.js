@@ -1358,46 +1358,183 @@ function renderInvoicingContent() {
 
 // ---------- Print function ----------
 function printTab(tab) {
+  // ----- LARGER, BOLDER PRINT STYLES -----
   const printStyles = `
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'DM Sans', 'Helvetica Neue', Arial, sans-serif;
-      color: #1a1916;
-      background: white;
+      font-size: 18px;          /* base size increased */
+      font-weight: 600;
+      color: #000;
+      background: #fff;
       padding: 0;
       margin: 0;
     }
     @media print {
       body { margin: 0; padding: 0; }
       .no-print { display: none !important; }
-      @page { margin: 8mm; }
+      @page { margin: 12mm; }
     }
-    .no-print { text-align: center; margin-bottom: 10px; }
-    .print-btn { background: #1a1916; color: white; border: none; padding: 6px 16px; font-size: 10px; cursor: pointer; }
-    .header-section { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 16px; padding-bottom: 6px; border-bottom: 1px solid #ccc; }
-    .title { font-size: 18px; font-weight: 700; text-transform: uppercase; }
-    .range { font-size: 10px; color: #6b6860; }
-    .date-group { margin-bottom: 24px; page-break-inside: avoid; }
-    .date-header { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1.5px solid #000; margin-bottom: 10px; font-weight: 600; }
-    .date-header-left { font-size: 12px; text-transform: uppercase; }
-    .date-header-right { font-size: 9px; color: #6b6860; }
-    .client-card { border: 1px solid #ccc; margin-bottom: 12px; page-break-inside: avoid; }
-    .client-header { background: #f5f5f5; padding: 6px 10px; display: flex; justify-content: space-between; border-bottom: 1px solid #ccc; font-weight: 600; font-size: 11px; }
-    .client-name { font-size: 12px; }
-    .client-meta { font-size: 9px; color: #6b6860; }
-    .client-items { width: 100%; border-collapse: collapse; }
-    .client-items td { padding: 5px 10px; font-size: 10px; border-bottom: 1px solid #f0ece6; }
-    .client-items td:last-child { text-align: right; font-weight: 600; }
-    .invoice-client-card { margin-bottom: 16px; border: 1px solid #ccc; page-break-inside: avoid; }
-    .invoice-client-header { background: #f5efdf; padding: 6px 10px; border-bottom: 1px solid #ccc; }
-    .invoice-client-name { font-size: 13px; font-weight: 700; }
-    .invoice-client-stats { font-size: 9px; color: #6b6860; }
-    .invoice-items-table { width: 100%; border-collapse: collapse; }
-    .invoice-items-table th { text-align: left; padding: 4px 10px; font-size: 9px; background: #f5f5f5; }
-    .invoice-items-table td { padding: 4px 10px; font-size: 10px; border-bottom: 1px solid #f0ece6; }
-    .invoice-items-table td:last-child { text-align: right; font-weight: 600; }
+    .no-print { text-align: center; margin-bottom: 12px; }
+    .print-btn { background: #1a1916; color: white; border: none; padding: 10px 24px; font-size: 16px; cursor: pointer; }
+    .header-section {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 24px;
+      padding-bottom: 12px;
+      border-bottom: 3px solid #000;
+    }
+    .title {
+      font-size: 28px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .range {
+      font-size: 16px;
+      font-weight: 600;
+      color: #000;
+    }
+    .date-group {
+      margin-bottom: 36px;
+      page-break-inside: avoid;
+    }
+    .date-header {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 3px solid #000;
+      margin-bottom: 16px;
+      font-weight: 700;
+    }
+    .date-header-left {
+      font-size: 24px;
+      text-transform: uppercase;
+      font-weight: 800;
+    }
+    .date-header-right {
+      font-size: 18px;
+      font-weight: 600;
+      color: #000;
+    }
+    /* Packing client cards */
+    .client-card {
+      border: 2px solid #000;
+      margin-bottom: 20px;
+      page-break-inside: avoid;
+    }
+    .client-header {
+      background: #f0f0f0;
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 2px solid #000;
+      font-weight: 700;
+      font-size: 18px;
+    }
+    .client-name {
+      font-size: 22px;
+      font-weight: 800;
+    }
+    .client-meta {
+      font-size: 16px;
+      font-weight: 600;
+      color: #000;
+    }
+    .client-items {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .client-items td {
+      padding: 12px 16px;
+      font-size: 18px;
+      font-weight: 600;
+      border-bottom: 1px solid #ccc;
+    }
+    .client-items td:last-child {
+      text-align: right;
+      font-weight: 800;
+      font-size: 20px;
+    }
+    /* Production category & item rows */
+    .category-header {
+      font-size: 20px;
+      font-weight: 800;
+      color: #7A5012;
+      margin: 16px 0 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .item-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #ccc;
+    }
+    .item-row .item-name {
+      font-weight: 700;
+      font-size: 20px;
+    }
+    .item-row .item-vendors {
+      font-size: 16px;
+      font-weight: 600;
+      color: #000;
+    }
+    .item-row .item-qty {
+      font-size: 28px;
+      font-weight: 800;
+      text-align: right;
+    }
+    .item-row .item-unit {
+      font-size: 16px;
+      font-weight: 600;
+    }
+    /* Invoicing (optional) */
+    .invoice-client-card {
+      margin-bottom: 24px;
+      border: 2px solid #000;
+      page-break-inside: avoid;
+    }
+    .invoice-client-header {
+      background: #f5efdf;
+      padding: 12px 16px;
+      border-bottom: 2px solid #000;
+    }
+    .invoice-client-name {
+      font-size: 22px;
+      font-weight: 800;
+    }
+    .invoice-client-stats {
+      font-size: 16px;
+      font-weight: 600;
+      color: #000;
+    }
+    .invoice-items-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .invoice-items-table th {
+      padding: 12px 16px;
+      font-size: 18px;
+      font-weight: 700;
+      background: #f5f5f5;
+      border-bottom: 2px solid #000;
+      text-align: left;
+    }
+    .invoice-items-table td {
+      padding: 12px 16px;
+      font-size: 18px;
+      font-weight: 600;
+      border-bottom: 1px solid #ccc;
+    }
+    .invoice-items-table td:last-child {
+      text-align: right;
+      font-weight: 800;
+    }
   `;
 
+  // ----- INVOICING BRANCH (unchanged logic, but uses updated styles) -----
   if (tab === 'invoicing') {
     const fs = filterState.invoicing;
     const range = fs.mode === 'custom' ? { from: fs.from, to: fs.to } : getDateRange(fs.mode);
@@ -1436,10 +1573,10 @@ function printTab(tab) {
     win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Invoicing Summary</title><style>${printStyles}</style></head><body>
       <div class="no-print"><button class="print-btn" onclick="window.print()">Print / Save PDF</button></div>
       <div class="header-section">
-        <div><div style="font-size:9px;letter-spacing:.2em;">VILLAGE BAKERY + PROVISIONS</div><div class="title">Invoicing Summary</div></div>
+        <div><div style="font-size:14px;letter-spacing:.2em;font-weight:600;">VILLAGE BAKERY + PROVISIONS</div><div class="title">Invoicing Summary</div></div>
         <div class="range"><div>${rangeLabel}</div><div>Printed ${new Date().toLocaleDateString()}</div></div>
       </div>
-      <div style="display:flex; gap: 16px; margin-bottom: 20px; flex-wrap:wrap;">
+      <div style="display:flex; gap: 20px; margin-bottom: 24px; flex-wrap:wrap; font-size:20px; font-weight:600;">
         <div><strong>${totalClients}</strong> Clients</div>
         <div><strong>${totalOrders}</strong> Orders</div>
         <div><strong>${totalUnits}</strong> Total Units</div>
@@ -1451,7 +1588,7 @@ function printTab(tab) {
     return;
   }
 
-  // Production or packing print
+  // ----- PRODUCTION & PACKING BRANCH -----
   const orders = filterOrders(tab);
   const fs = filterState[tab];
   const range = fs.mode === 'custom' ? { from: fs.from, to: fs.to } : getDateRange(fs.mode);
@@ -1461,9 +1598,9 @@ function printTab(tab) {
   orders.forEach(o => { if (!byDate[o.delivery_date]) byDate[o.delivery_date] = []; byDate[o.delivery_date].push(o); });
   let body = '';
   if (!orders.length) {
-    body = '<p>No orders for this period.</p>';
+    body = '<p style="font-size:20px;font-weight:600;">No orders for this period.</p>';
   } else if (tab === 'production') {
-    // Production – categorized items (works)
+    // ----- PRODUCTION (larger, bolder) -----
     const sortedDates = Object.keys(byDate).sort();
     for (const date of sortedDates) {
       const dayOrders = byDate[date];
@@ -1494,18 +1631,24 @@ function printTab(tab) {
       }
       const sortedCats = Object.keys(categoryGroups).sort();
       for (const cat of sortedCats) {
-        body += `<div class="category-header" style="font-size:11px; font-weight:700; color:#C4852A; margin:10px 0 5px;">${cat}</div>`;
+        body += `<div class="category-header">${cat}</div>`;
         for (const data of categoryGroups[cat]) {
-          body += `<div class="item-row" style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid #f0ece6;">
-            <div><div style="font-weight:600; font-size:11px;">${data.name}</div><div style="font-size:9px; color:#6b6860;">${data.vendors.join(', ')}</div></div>
-            <div style="font-size:12px; font-weight:700; text-align:right;">${data.qty} <span style="font-size:9px; font-weight:400;">${data.unit === 'each' ? 'each' : (data.qty !== 1 ? data.unit + 's' : data.unit)}</span></div>
+          body += `<div class="item-row">
+            <div>
+              <div class="item-name">${data.name}</div>
+              <div class="item-vendors">${data.vendors.join(', ')}</div>
+            </div>
+            <div>
+              <span class="item-qty">${data.qty}</span>
+              <span class="item-unit"> ${data.unit === 'each' ? 'each' : (data.qty !== 1 ? data.unit + 's' : data.unit)}</span>
+            </div>
           </div>`;
         }
       }
       body += `</div>`;
     }
   } else {
-    // Packing – clean, simple layout
+    // ----- PACKING (larger, bolder) -----
     const sortedDates = Object.keys(byDate).sort();
     for (const date of sortedDates) {
       const dayOrders = byDate[date];
@@ -1539,17 +1682,14 @@ function printTab(tab) {
           <table class="client-items">
             ${data.items.map(item => `<tr><td>${escapeHtml(item.name)}</td><td>${item.qty} ${item.unit === 'each' ? 'each' : (item.qty !== 1 ? item.unit + 's' : item.unit)}</td></tr>`).join('')}
           </table>
-          ${data.notes ? `<div style="padding: 5px 10px; font-size: 9px; font-style: italic; border-top: 1px dashed #ccc;">Note: ${escapeHtml(data.notes)}</div>` : ''}
+          ${data.notes ? `<div style="padding: 8px 16px; font-size: 16px; font-weight: 600; font-style: italic; border-top: 2px dashed #000;">Note: ${escapeHtml(data.notes)}</div>` : ''}
         </div>`;
       }
       body += `</div>`;
     }
   }
 
-  // ── FIX: for packing, allow page breaks inside .date-group since a full
-  //    day of many vendor cards far exceeds one page. Without this override,
-  //    the browser tries to honour page-break-inside:avoid on an oversized
-  //    block and pushes it entirely to page 2, leaving page 1 blank.
+  // Allow page breaks inside date-group for packing so a long day doesn't force a blank first page
   const tabSpecificStyles = tab === 'packing'
     ? '\n.date-group { page-break-inside: auto !important; }'
     : '';
@@ -1557,21 +1697,19 @@ function printTab(tab) {
   const fullHtml = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${title}</title><style>${printStyles}${tabSpecificStyles}</style></head><body>
     <div class="no-print"><button class="print-btn" onclick="window.print()">Print / Save PDF</button></div>
     <div class="header-section">
-      <div><div style="font-size:9px;letter-spacing:.2em;">VILLAGE BAKERY + PROVISIONS</div><div class="title">${title}</div></div>
+      <div><div style="font-size:14px;letter-spacing:.2em;font-weight:600;">VILLAGE BAKERY + PROVISIONS</div><div class="title">${title}</div></div>
       <div class="range"><div>${rangeLabel}</div><div>Printed ${new Date().toLocaleDateString()}</div></div>
     </div>
     ${body}
   </body></html>`;
   const w = window.open('', '_blank');
-w.document.write(fullHtml);
-w.document.close();
-
-w.addEventListener('load', () => {
-  // Small delay ensures layout is fully computed (especially for complex tables)
-  setTimeout(() => {
-    w.print();
-  }, 200);
-});
+  w.document.write(fullHtml);
+  w.document.close();
+  w.addEventListener('load', () => {
+    setTimeout(() => {
+      w.print();
+    }, 200);
+  });
 }
 
 // ---------- Category update function ----------
